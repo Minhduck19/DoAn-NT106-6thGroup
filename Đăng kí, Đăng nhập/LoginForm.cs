@@ -198,13 +198,13 @@ namespace APP_DOAN
 
         private void btnCancel_Click_1(object sender, EventArgs e)
         {
-            // Vì đây là form chính, nhấn Cancel (hoặc nút X) sẽ đóng ứng dụng
+            
             this.Close();
         }
 
         private void linkRegister_LinkClicked_1(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            // Logic này giữ nguyên, dùng để mở form đăng ký
+           
             this.Hide();
             using (RegisterForm registerForm = new RegisterForm())
             {
