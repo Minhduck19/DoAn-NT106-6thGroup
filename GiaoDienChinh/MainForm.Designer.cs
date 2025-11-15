@@ -220,6 +220,7 @@
             lvJoinedCourses.TabIndex = 0;
             lvJoinedCourses.UseCompatibleStateImageBehavior = false;
             lvJoinedCourses.View = View.Details;
+            lvJoinedCourses.SelectedIndexChanged += lvJoinedCourses_SelectedIndexChanged_2;
             // 
             // cmsUserOptions
             // 
