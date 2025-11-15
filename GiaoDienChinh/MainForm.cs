@@ -313,7 +313,10 @@ namespace APP_DOAN
 
         }
 
-       
+        private void lvJoinedCourses_SelectedIndexChanged_2(object sender, EventArgs e)
+        {
+
+        }
     }
 
 

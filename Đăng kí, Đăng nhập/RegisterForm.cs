@@ -158,7 +158,7 @@ namespace APP_DOAN
             }
         }
 
-        // (Hàm SendVerificationEmailAsync giữ nguyên)
+        
         private async Task SendVerificationEmailAsync(string idToken)
         {
             using var httpClient = new HttpClient();
@@ -171,17 +171,17 @@ namespace APP_DOAN
             if (!response.IsSuccessStatusCode)
             {
                 Debug.WriteLine("Không thể gửi email xác minh.");
-                // (Không cần báo lỗi cho người dùng ở đây)
+              
             }
         }
 
-        // (Hàm IsValidEmail giữ nguyên)
+        
         private static bool IsValidEmail(string email)
         {
             try { _ = new MailAddress(email); return true; } catch { return false; }
         }
 
-        // (Hàm ToggleUiEnabled giữ nguyên)
+       
         private void ToggleUiEnabled(bool enabled)
         {
             txtNewEmail.Enabled = enabled;
