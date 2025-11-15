@@ -214,5 +214,22 @@ namespace APP_DOAN
         }
 
         private void LoginForm_Load(object sender, EventArgs e) { }
+
+        private void LoginForm_Load_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void guna2HtmlLabel1_Click(object sender, EventArgs e)
+        {
+            ForgotPasswordForm forgotPasswordForm = new ForgotPasswordForm();
+            forgotPasswordForm.ShowDialog();
+
+        }
+
+        private void pnlLoginCard_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 }
