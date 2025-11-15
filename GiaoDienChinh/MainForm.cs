@@ -259,7 +259,6 @@ namespace APP_DOAN
 
             if (result == DialogResult.Yes)
             {
-                isLoggingOut = true; // Đánh dấu là đang chủ động đăng xuất
 
                 // 1. Tạo một instance của GiaoDienGoc (Form gốc)
                 // (Đảm bảo bạn đã có Form tên GiaoDienGoc trong dự án)
@@ -267,6 +266,8 @@ namespace APP_DOAN
 
                 // 2. Hiển thị form GiaoDienGoc
                 login.Show();
+
+                this.Hide();
 
                 // 3. Đóng Form chính (MainForm)
                 this.Close();
@@ -290,8 +291,9 @@ namespace APP_DOAN
             }
         }
 
-        // Hàm này có code logic, chúng ta giữ lại
-        private void lvJoinedCourses_SelectedIndexChanged(object sender, EventArgs e)
+
+        // Hàm này có code logic, chúng ta giữ lại
+        private void lvJoinedCourses_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (lvJoinedCourses.SelectedItems.Count == 0) return;
 

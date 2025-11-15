@@ -14,21 +14,58 @@
         }
 
         #region Windows Form Designer generated code
+        // Khai báo Controls sử dụng Guna.UI2
+        private Guna.UI2.WinForms.Guna2Panel panelLeft;
+        private Guna.UI2.WinForms.Guna2Panel panelTop;
+        private Guna.UI2.WinForms.Guna2Panel panelMainContent;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblWelcome;
+        private Guna.UI2.WinForms.Guna2Button btnLogout;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblTitle;
+
+        // Giữ lại ListView và FlowLayoutPanel
+        private System.Windows.Forms.ListView lvMyCourses;
+        private System.Windows.Forms.FlowLayoutPanel flpActions;
+        private Guna.UI2.WinForms.Guna2Button btnCreateCourse;
+        private Guna.UI2.WinForms.Guna2Button btnEditCourse;
+        private Guna.UI2.WinForms.Guna2Button btnDeleteCourse;
+
+        // Khai báo ColumnHeader cho ListView
+        private System.Windows.Forms.ColumnHeader colCourseID;
+        private System.Windows.Forms.ColumnHeader colName;
+        private System.Windows.Forms.ColumnHeader colStudentCount;
+        private System.Windows.Forms.ColumnHeader colStatus;
 
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm_GiangVien));
-            panelLeft = new Panel();
-            btnLogout = new Button();
-            lblWelcome = new Label();
-            panelTop = new Panel();
-            lblTitle = new Label();
-            panelMainContent = new Panel();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges3 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges4 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges1 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges2 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges5 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges6 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges13 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges14 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges7 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges8 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges9 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges10 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges11 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges12 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            panelLeft = new Guna.UI2.WinForms.Guna2Panel();
+            btnLogout = new Guna.UI2.WinForms.Guna2Button();
+            lblWelcome = new Guna.UI2.WinForms.Guna2HtmlLabel();
+            panelTop = new Guna.UI2.WinForms.Guna2Panel();
+            lblTitle = new Guna.UI2.WinForms.Guna2HtmlLabel();
+            panelMainContent = new Guna.UI2.WinForms.Guna2Panel();
             lvMyCourses = new ListView();
+            colCourseID = new ColumnHeader();
+            colName = new ColumnHeader();
+            colStudentCount = new ColumnHeader();
+            colStatus = new ColumnHeader();
             flpActions = new FlowLayoutPanel();
-            btnCreateCourse = new Button();
-            btnEditCourse = new Button();
-            btnDeleteCourse = new Button();
+            btnCreateCourse = new Guna.UI2.WinForms.Guna2Button();
+            btnEditCourse = new Guna.UI2.WinForms.Guna2Button();
+            btnDeleteCourse = new Guna.UI2.WinForms.Guna2Button();
             panelLeft.SuspendLayout();
             panelTop.SuspendLayout();
             panelMainContent.SuspendLayout();
@@ -37,45 +74,44 @@
             // 
             // panelLeft
             // 
-            panelLeft.BackColor = Color.FromArgb(45, 45, 48);
-            panelLeft.BackgroundImage = (Image)resources.GetObject("panelLeft.BackgroundImage");
-            panelLeft.BackgroundImageLayout = ImageLayout.Stretch;
+            panelLeft.BackColor = Color.DodgerBlue;
             panelLeft.Controls.Add(btnLogout);
             panelLeft.Controls.Add(lblWelcome);
+            panelLeft.CustomizableEdges = customizableEdges3;
             panelLeft.Dock = DockStyle.Left;
+            panelLeft.ForeColor = Color.Cyan;
             panelLeft.Location = new Point(0, 0);
-            panelLeft.Margin = new Padding(3, 4, 3, 4);
             panelLeft.Name = "panelLeft";
-            panelLeft.Size = new Size(200, 691);
+            panelLeft.ShadowDecoration.CustomizableEdges = customizableEdges4;
+            panelLeft.ShadowDecoration.Depth = 15;
+            panelLeft.ShadowDecoration.Enabled = true;
+            panelLeft.Size = new Size(240, 691);
             panelLeft.TabIndex = 0;
             // 
             // btnLogout
             // 
-            btnLogout.BackColor = Color.White;
-            btnLogout.BackgroundImage = (Image)resources.GetObject("btnLogout.BackgroundImage");
-            btnLogout.BackgroundImageLayout = ImageLayout.Stretch;
-            btnLogout.Dock = DockStyle.Bottom;
-            btnLogout.FlatAppearance.BorderSize = 0;
-            btnLogout.FlatStyle = FlatStyle.Flat;
-            btnLogout.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnLogout.BackColor = Color.Transparent;
+            btnLogout.BorderRadius = 15;
+            btnLogout.CustomizableEdges = customizableEdges1;
+            btnLogout.FillColor = Color.White;
+            btnLogout.Font = new Font("Segoe UI", 11F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnLogout.ForeColor = Color.Black;
-            btnLogout.Location = new Point(0, 641);
-            btnLogout.Margin = new Padding(3, 4, 3, 4);
+            btnLogout.Location = new Point(20, 620);
             btnLogout.Name = "btnLogout";
+            btnLogout.ShadowDecoration.CustomizableEdges = customizableEdges2;
             btnLogout.Size = new Size(200, 50);
             btnLogout.TabIndex = 1;
             btnLogout.Text = "Đăng xuất";
-            btnLogout.UseVisualStyleBackColor = false;
             btnLogout.Click += btnLogout_Click_1;
             // 
             // lblWelcome
             // 
             lblWelcome.BackColor = Color.Transparent;
-            lblWelcome.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblWelcome.ForeColor = Color.White;
-            lblWelcome.Location = new Point(12, 25);
+            lblWelcome.Font = new Font("Segoe UI", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblWelcome.ForeColor = Color.FromArgb(236, 240, 241);
+            lblWelcome.Location = new Point(20, 30);
             lblWelcome.Name = "lblWelcome";
-            lblWelcome.Size = new Size(176, 75);
+            lblWelcome.Size = new Size(269, 33);
             lblWelcome.TabIndex = 2;
             lblWelcome.Text = "Chào mừng,\n[Giảng viên]";
             // 
@@ -83,51 +119,73 @@
             // 
             panelTop.BackColor = Color.White;
             panelTop.Controls.Add(lblTitle);
+            panelTop.CustomizableEdges = customizableEdges5;
             panelTop.Dock = DockStyle.Top;
-            panelTop.Location = new Point(200, 0);
-            panelTop.Margin = new Padding(3, 4, 3, 4);
+            panelTop.ForeColor = SystemColors.ActiveCaptionText;
+            panelTop.Location = new Point(240, 0);
             panelTop.Name = "panelTop";
-            panelTop.Size = new Size(782, 75);
+            panelTop.ShadowDecoration.CustomizableEdges = customizableEdges6;
+            panelTop.Size = new Size(742, 70);
             panelTop.TabIndex = 1;
             // 
             // lblTitle
             // 
-            lblTitle.AutoSize = true;
-            lblTitle.Font = new Font("Segoe UI", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblTitle.ForeColor = Color.FromArgb(45, 45, 48);
-            lblTitle.Location = new Point(20, 12);
+            lblTitle.BackColor = Color.Transparent;
+            lblTitle.Font = new Font("Segoe UI", 20F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblTitle.ForeColor = Color.DodgerBlue;
+            lblTitle.Location = new Point(30, 15);
             lblTitle.Name = "lblTitle";
-            lblTitle.Size = new Size(232, 37);
+            lblTitle.Size = new Size(254, 47);
             lblTitle.TabIndex = 0;
-            lblTitle.Text = "Quản Lý Lớp Học";
+            lblTitle.Text = "Quản lý Lớp học";
             // 
             // panelMainContent
             // 
-            panelMainContent.BackColor = SystemColors.Control;
+            panelMainContent.BackColor = Color.White;
             panelMainContent.Controls.Add(lvMyCourses);
             panelMainContent.Controls.Add(flpActions);
+            panelMainContent.CustomizableEdges = customizableEdges13;
             panelMainContent.Dock = DockStyle.Fill;
-            panelMainContent.Location = new Point(200, 75);
-            panelMainContent.Margin = new Padding(3, 4, 3, 4);
+            panelMainContent.Location = new Point(240, 70);
             panelMainContent.Name = "panelMainContent";
-            panelMainContent.Padding = new Padding(10, 12, 10, 12);
-            panelMainContent.Size = new Size(782, 616);
+            panelMainContent.Padding = new Padding(15);
+            panelMainContent.ShadowDecoration.CustomizableEdges = customizableEdges14;
+            panelMainContent.Size = new Size(742, 621);
             panelMainContent.TabIndex = 2;
             // 
             // lvMyCourses
             // 
+            lvMyCourses.Columns.AddRange(new ColumnHeader[] { colCourseID, colName, colStudentCount, colStatus });
             lvMyCourses.Dock = DockStyle.Fill;
-            lvMyCourses.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lvMyCourses.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lvMyCourses.FullRowSelect = true;
-            lvMyCourses.GridLines = true;
-            lvMyCourses.Location = new Point(10, 74);
-            lvMyCourses.Margin = new Padding(3, 4, 3, 4);
+            lvMyCourses.Location = new Point(15, 77);
             lvMyCourses.Name = "lvMyCourses";
-            lvMyCourses.Size = new Size(762, 530);
+            lvMyCourses.Size = new Size(712, 529);
             lvMyCourses.TabIndex = 1;
             lvMyCourses.UseCompatibleStateImageBehavior = false;
             lvMyCourses.View = View.Details;
             lvMyCourses.SelectedIndexChanged += lvMyCourses_SelectedIndexChanged;
+            // 
+            // colCourseID
+            // 
+            colCourseID.Text = "Mã Lớp";
+            colCourseID.Width = 100;
+            // 
+            // colName
+            // 
+            colName.Text = "Tên Môn học";
+            colName.Width = 300;
+            // 
+            // colStudentCount
+            // 
+            colStudentCount.Text = "Số Sinh viên";
+            colStudentCount.Width = 120;
+            // 
+            // colStatus
+            // 
+            colStatus.Text = "Trạng thái";
+            colStatus.Width = 150;
             // 
             // flpActions
             // 
@@ -135,58 +193,54 @@
             flpActions.Controls.Add(btnEditCourse);
             flpActions.Controls.Add(btnDeleteCourse);
             flpActions.Dock = DockStyle.Top;
-            flpActions.Location = new Point(10, 12);
-            flpActions.Margin = new Padding(3, 4, 3, 4);
+            flpActions.Location = new Point(15, 15);
             flpActions.Name = "flpActions";
-            flpActions.Size = new Size(762, 62);
+            flpActions.Size = new Size(712, 62);
             flpActions.TabIndex = 0;
             // 
             // btnCreateCourse
             // 
-            btnCreateCourse.BackColor = Color.FromArgb(40, 167, 69);
-            btnCreateCourse.FlatAppearance.BorderSize = 0;
-            btnCreateCourse.FlatStyle = FlatStyle.Flat;
-            btnCreateCourse.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnCreateCourse.BorderRadius = 10;
+            btnCreateCourse.CustomizableEdges = customizableEdges7;
+            btnCreateCourse.FillColor = Color.FromArgb(46, 204, 113);
+            btnCreateCourse.Font = new Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnCreateCourse.ForeColor = Color.White;
-            btnCreateCourse.Location = new Point(3, 4);
-            btnCreateCourse.Margin = new Padding(3, 4, 3, 4);
+            btnCreateCourse.Location = new Point(3, 3);
             btnCreateCourse.Name = "btnCreateCourse";
-            btnCreateCourse.Size = new Size(120, 50);
+            btnCreateCourse.ShadowDecoration.CustomizableEdges = customizableEdges8;
+            btnCreateCourse.Size = new Size(150, 50);
             btnCreateCourse.TabIndex = 0;
-            btnCreateCourse.Text = "Tạo Lớp Mới";
-            btnCreateCourse.UseVisualStyleBackColor = false;
+            btnCreateCourse.Text = "➕ Tạo Lớp Mới";
             btnCreateCourse.Click += btnCreateCourse_Click_1;
             // 
             // btnEditCourse
             // 
-            btnEditCourse.BackColor = Color.FromArgb(255, 193, 7);
-            btnEditCourse.FlatAppearance.BorderSize = 0;
-            btnEditCourse.FlatStyle = FlatStyle.Flat;
-            btnEditCourse.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnEditCourse.ForeColor = Color.Black;
-            btnEditCourse.Location = new Point(129, 4);
-            btnEditCourse.Margin = new Padding(3, 4, 3, 4);
+            btnEditCourse.BorderRadius = 10;
+            btnEditCourse.CustomizableEdges = customizableEdges9;
+            btnEditCourse.FillColor = Color.FromArgb(241, 196, 15);
+            btnEditCourse.Font = new Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnEditCourse.ForeColor = Color.FromArgb(44, 62, 80);
+            btnEditCourse.Location = new Point(159, 3);
             btnEditCourse.Name = "btnEditCourse";
-            btnEditCourse.Size = new Size(120, 50);
+            btnEditCourse.ShadowDecoration.CustomizableEdges = customizableEdges10;
+            btnEditCourse.Size = new Size(150, 50);
             btnEditCourse.TabIndex = 1;
-            btnEditCourse.Text = "Sửa Lớp";
-            btnEditCourse.UseVisualStyleBackColor = false;
+            btnEditCourse.Text = "✏️ Sửa Lớp";
             btnEditCourse.Click += btnEditCourse_Click_1;
             // 
             // btnDeleteCourse
             // 
-            btnDeleteCourse.BackColor = Color.FromArgb(220, 53, 69);
-            btnDeleteCourse.FlatAppearance.BorderSize = 0;
-            btnDeleteCourse.FlatStyle = FlatStyle.Flat;
-            btnDeleteCourse.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnDeleteCourse.BorderRadius = 10;
+            btnDeleteCourse.CustomizableEdges = customizableEdges11;
+            btnDeleteCourse.FillColor = Color.FromArgb(231, 76, 60);
+            btnDeleteCourse.Font = new Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnDeleteCourse.ForeColor = Color.White;
-            btnDeleteCourse.Location = new Point(255, 4);
-            btnDeleteCourse.Margin = new Padding(3, 4, 3, 4);
+            btnDeleteCourse.Location = new Point(315, 3);
             btnDeleteCourse.Name = "btnDeleteCourse";
-            btnDeleteCourse.Size = new Size(120, 50);
+            btnDeleteCourse.ShadowDecoration.CustomizableEdges = customizableEdges12;
+            btnDeleteCourse.Size = new Size(150, 50);
             btnDeleteCourse.TabIndex = 2;
-            btnDeleteCourse.Text = "Xóa Lớp";
-            btnDeleteCourse.UseVisualStyleBackColor = false;
+            btnDeleteCourse.Text = "🗑️ Xóa Lớp";
             btnDeleteCourse.Click += btnDeleteCourse_Click_1;
             // 
             // MainForm_GiangVien
@@ -198,31 +252,18 @@
             Controls.Add(panelTop);
             Controls.Add(panelLeft);
             Margin = new Padding(3, 4, 3, 4);
-            MinimumSize = new Size(800, 738);
+            MinimumSize = new Size(1000, 738);
             Name = "MainForm_GiangVien";
             Text = "Trang chủ Giảng viên";
             Load += MainForm_GiangVien_Load;
             panelLeft.ResumeLayout(false);
+            panelLeft.PerformLayout();
             panelTop.ResumeLayout(false);
             panelTop.PerformLayout();
             panelMainContent.ResumeLayout(false);
             flpActions.ResumeLayout(false);
             ResumeLayout(false);
-
         }
-
-        #endregion
-
-        private System.Windows.Forms.Panel panelLeft;
-        private System.Windows.Forms.Panel panelTop;
-        private System.Windows.Forms.Panel panelMainContent;
-        private System.Windows.Forms.Label lblWelcome;
-        private System.Windows.Forms.Button btnLogout;
-        private System.Windows.Forms.Label lblTitle;
-        private System.Windows.Forms.ListView lvMyCourses;
-        private System.Windows.Forms.FlowLayoutPanel flpActions;
-        private System.Windows.Forms.Button btnCreateCourse;
-        private System.Windows.Forms.Button btnEditCourse;
-        private System.Windows.Forms.Button btnDeleteCourse;
     }
+    #endregion
 }

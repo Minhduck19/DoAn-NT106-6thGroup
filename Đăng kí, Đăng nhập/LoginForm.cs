@@ -214,5 +214,11 @@ namespace APP_DOAN
         }
 
         private void LoginForm_Load(object sender, EventArgs e) { }
+
+        private void linkRegister_Click(object sender, EventArgs e)
+        {
+            RegisterForm registerForm = new RegisterForm();
+            registerForm.Show();
+        }
     }
 }

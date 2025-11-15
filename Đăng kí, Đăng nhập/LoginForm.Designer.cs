@@ -153,13 +153,14 @@ namespace APP_DOAN
             linkRegister.Size = new Size(259, 25);
             linkRegister.TabIndex = 5;
             linkRegister.Text = "<a href='#'>Chưa có tài khoản? Đăng ký ngay</a>";
+            linkRegister.Click += linkRegister_Click;
             // 
             // label1
             // 
             label1.BackColor = Color.Transparent;
             label1.Location = new Point(0, 0);
             label1.Name = "label1";
-            label1.Size = new Size(0, 0);
+            label1.Size = new Size(3, 2);
             label1.TabIndex = 0;
             label1.Text = null;
             label1.Visible = false;
@@ -169,7 +170,7 @@ namespace APP_DOAN
             label2.BackColor = Color.Transparent;
             label2.Location = new Point(0, 0);
             label2.Name = "label2";
-            label2.Size = new Size(0, 0);
+            label2.Size = new Size(3, 2);
             label2.TabIndex = 0;
             label2.Text = null;
             label2.Visible = false;
@@ -178,7 +179,6 @@ namespace APP_DOAN
             // 
             ClientSize = new Size(1010, 702);
             Controls.Add(pnlLoginCard);
-
             MaximizeBox = false;
             Name = "LoginForm";
             pnlLoginCard.ResumeLayout(false);
