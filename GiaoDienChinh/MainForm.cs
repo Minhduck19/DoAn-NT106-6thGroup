@@ -293,14 +293,16 @@ namespace APP_DOAN
         // Hàm này có code logic, chúng ta giữ lại
         private void lvJoinedCourses_SelectedIndexChanged(object sender, EventArgs e)
         {
-            // Optional: show more details or allow leaving the course
-            if (lvJoinedCourses.SelectedItems.Count == 0) return;
-            var id = lvJoinedCourses.SelectedItems[0].Tag?.ToString();
+            if (lvJoinedCourses.SelectedItems.Count == 0) return;
+
+            var id = lvJoinedCourses.SelectedItems[0].Tag.ToString();
             var course = _allCourses.FirstOrDefault(c => c.Id == id);
-            if (course != null)
-            {
-                MessageBox.Show($"{course.Name}\nGiảng viên: {course.Instructor}", "Chi tiết khóa học", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
+            if (course == null) return;
+
+            ChiTietLopHoc form = new ChiTietLopHoc(course);
+            form.ShowDialog();  
+
+            
         }
     }
 
