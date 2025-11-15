@@ -2,7 +2,7 @@
   "profiles": {
     "APP_DOAN": {
       "commandName": "Project",
-      "workingDirectory": "D:\\Đồ Án LTMCB real"
+      "workingDirectory": "$(ProjectDir)" 
     }
   }
 }
