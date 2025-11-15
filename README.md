@@ -5,7 +5,7 @@
 - **Thành viên:**
   - Võ Minh Đức - 24520332
   - Ngô Văn Dũng - 24520338
-  - Nguyễn Tiến Dũng - 2452
+  - Nguyễn Tiến Dũng - 24520341
 - **Giảng viên hướng dẫn:** Cô: Trần Hồng Nghi 
 
 ---
