@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "APP_DOAN": {
+      "commandName": "Project",
+      "workingDirectory": "$(ProjectDir)" 
+    }
+  }
+}
