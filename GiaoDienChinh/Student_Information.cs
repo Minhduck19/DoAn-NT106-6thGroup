@@ -10,14 +10,18 @@ using System.Windows.Forms;
 
 namespace APP_DOAN.GiaoDienChinh
 {
-    public partial class Student_Infomation : Form
+    public partial class Student_Information : Form
     {
-        public Student_Infomation()
+        public Student_Information(string loggedInEmail)
         {
             InitializeComponent();
         }
 
-        private void Student_Infomation_Load(object sender, EventArgs e)
+        public Student_Information(string loggedInEmail, string userRole) : this(loggedInEmail)
+        {
+        }
+
+        private void lblEmail_Click(object sender, EventArgs e)
         {
 
         }
