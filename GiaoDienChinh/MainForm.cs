@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using APP_DOAN.GiaoDienChinh;
 
 namespace APP_DOAN
 {
@@ -210,8 +211,11 @@ namespace APP_DOAN
         // Hàm này vẫn hiển thị MessageBox thông tin hồ sơ
         private void profileToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
-            // Open profile screen or show simple info
-            MessageBox.Show($"Hồ sơ: {loggedInEmail}\nVai trò: {(userRole == "Lecturer" ? "Giảng viên" : "Sinh viên")}", "Hồ sơ", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            this.Hide();
+            Student_Information profileForm = new Student_Information(this.loggedInEmail, this.userRole);
+            profileForm.ShowDialog();
+            this.Show();
+            
         }
 
         private void messagesToolStripMenuItem_Click_1(object sender, EventArgs e)
@@ -309,7 +313,10 @@ namespace APP_DOAN
 
         }
 
-       
+        private void lvJoinedCourses_SelectedIndexChanged_2(object sender, EventArgs e)
+        {
+
+        }
     }
 
 

@@ -220,46 +220,47 @@
             lvJoinedCourses.TabIndex = 0;
             lvJoinedCourses.UseCompatibleStateImageBehavior = false;
             lvJoinedCourses.View = View.Details;
+            lvJoinedCourses.SelectedIndexChanged += lvJoinedCourses_SelectedIndexChanged_2;
             // 
             // cmsUserOptions
             // 
             cmsUserOptions.ImageScalingSize = new Size(20, 20);
             cmsUserOptions.Items.AddRange(new ToolStripItem[] { profileToolStripMenuItem, messagesToolStripMenuItem, scheduleToolStripMenuItem, gradesToolStripMenuItem, changePasswordToolStripMenuItem });
             cmsUserOptions.Name = "cmsUserOptions";
-            cmsUserOptions.Size = new Size(168, 124);
+            cmsUserOptions.Size = new Size(211, 152);
             // 
             // profileToolStripMenuItem
             // 
             profileToolStripMenuItem.Name = "profileToolStripMenuItem";
-            profileToolStripMenuItem.Size = new Size(167, 24);
+            profileToolStripMenuItem.Size = new Size(210, 24);
             profileToolStripMenuItem.Text = "Hồ sơ";
             profileToolStripMenuItem.Click += profileToolStripMenuItem_Click_1;
             // 
             // messagesToolStripMenuItem
             // 
             messagesToolStripMenuItem.Name = "messagesToolStripMenuItem";
-            messagesToolStripMenuItem.Size = new Size(167, 24);
+            messagesToolStripMenuItem.Size = new Size(210, 24);
             messagesToolStripMenuItem.Text = "Tin nhắn";
             messagesToolStripMenuItem.Click += messagesToolStripMenuItem_Click_1;
             // 
             // scheduleToolStripMenuItem
             // 
             scheduleToolStripMenuItem.Name = "scheduleToolStripMenuItem";
-            scheduleToolStripMenuItem.Size = new Size(167, 24);
+            scheduleToolStripMenuItem.Size = new Size(210, 24);
             scheduleToolStripMenuItem.Text = "Lịch học";
             scheduleToolStripMenuItem.Click += scheduleToolStripMenuItem_Click_1;
             // 
             // gradesToolStripMenuItem
             // 
             gradesToolStripMenuItem.Name = "gradesToolStripMenuItem";
-            gradesToolStripMenuItem.Size = new Size(167, 24);
+            gradesToolStripMenuItem.Size = new Size(210, 24);
             gradesToolStripMenuItem.Text = "Điểm";
             gradesToolStripMenuItem.Click += gradesToolStripMenuItem_Click_1;
             // 
             // changePasswordToolStripMenuItem
             // 
             changePasswordToolStripMenuItem.Name = "changePasswordToolStripMenuItem";
-            changePasswordToolStripMenuItem.Size = new Size(167, 24);
+            changePasswordToolStripMenuItem.Size = new Size(210, 24);
             changePasswordToolStripMenuItem.Text = "Đổi mật khẩu";
             changePasswordToolStripMenuItem.Click += changePasswordToolStripMenuItem_Click;
             // 
