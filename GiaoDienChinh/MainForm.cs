@@ -295,33 +295,14 @@ namespace APP_DOAN
         {
             if (lvJoinedCourses.SelectedItems.Count == 0) return;
 
-            string id = lvJoinedCourses.SelectedItems[0].Tag.ToString();
+            var id = lvJoinedCourses.SelectedItems[0].Tag.ToString();
             var course = _allCourses.FirstOrDefault(c => c.Id == id);
+            if (course == null) return;
 
-            if (course != null)
-            {
-                // Mở form chi tiết lớp học
-                ChiTietLopHoc form = new ChiTietLopHoc(course);
-                form.ShowDialog();
-            }
+            ChiTietLopHoc form = new ChiTietLopHoc(course);
+            form.ShowDialog();   // Phải dùng ShowDialog để chặn
 
-            // Bỏ chọn để click được lần tiếp theo
             lvJoinedCourses.SelectedItems.Clear();
-        }
-
-        private void lvJoinedCourses_SelectedIndexChanged_1(object sender, EventArgs e)
-        {
-
-        }
-
-        private void panelLeft_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void lvJoinedCourses_SelectedIndexChanged_2(object sender, EventArgs e)
-        {
-
         }
     }
 
