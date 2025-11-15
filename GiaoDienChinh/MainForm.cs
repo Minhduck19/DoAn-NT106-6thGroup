@@ -300,9 +300,9 @@ namespace APP_DOAN
             if (course == null) return;
 
             ChiTietLopHoc form = new ChiTietLopHoc(course);
-            form.ShowDialog();   // Phải dùng ShowDialog để chặn
+            form.ShowDialog();  
 
-            lvJoinedCourses.SelectedItems.Clear();
+            
         }
     }
 
