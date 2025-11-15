@@ -1,144 +1,189 @@
-﻿namespace APP_DOAN
+﻿using Guna.UI2.WinForms;
+using System.ComponentModel;
+using System.Drawing.Drawing2D;
+
+namespace APP_DOAN
 {
     partial class LoginForm
     {
-        // ... (các biến private cho điều khiển) ...
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox txtEmail;
-        private System.Windows.Forms.TextBox txtPassword;
-        private System.Windows.Forms.Button btnLogin;
-        private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.LinkLabel linkRegister;
+        // Thay đổi khai báo controls sang Guna UI
+        private Guna2HtmlLabel label1;
+        private Guna2HtmlLabel label2;
+        private Guna2TextBox txtEmail;
+        private Guna2TextBox txtPassword;
+        private Guna2Button btnLogin;
+        private Guna2Button btnCancel;
+        private Guna2HtmlLabel linkRegister; // Dùng HtmlLabel giả làm Link
+        private Container components;
+        private Guna2Panel pnlLoginCard; // Card đăng nhập
+        private Guna2HtmlLabel lblMainTitle; // Tiêu đề lớn
 
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        public LinearGradientMode GradientMode { get; private set; }
+        public Color FillColor { get; private set; }
+        public Color GradientColor { get; private set; }
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+        // ... (Khai báo components giữ nguyên) ...
 
         #region Windows Form Designer generated code
 
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LoginForm));
-            label1 = new Label();
-            label2 = new Label();
-            txtEmail = new TextBox();
-            txtPassword = new TextBox();
-            btnLogin = new Button();
-            btnCancel = new Button();
-            linkRegister = new LinkLabel();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges9 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges10 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges1 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges2 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges3 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges4 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges5 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges6 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges7 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges8 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            pnlLoginCard = new Guna2Panel();
+            lblMainTitle = new Guna2HtmlLabel();
+            txtPassword = new Guna2TextBox();
+            txtEmail = new Guna2TextBox();
+            btnLogin = new Guna2Button();
+            btnCancel = new Guna2Button();
+            linkRegister = new Guna2HtmlLabel();
+            label1 = new Guna2HtmlLabel();
+            label2 = new Guna2HtmlLabel();
+            pnlLoginCard.SuspendLayout();
             SuspendLayout();
             // 
-            // label1
+            // pnlLoginCard
             // 
-            label1.AutoSize = true;
-            label1.BackColor = Color.Transparent;
-            label1.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label1.ForeColor = Color.White;
-            label1.Location = new Point(502, 304);
-            label1.Name = "label1";
-            label1.Size = new Size(63, 28);
-            label1.TabIndex = 6;
-            label1.Text = "Email:";
+            pnlLoginCard.BackColor = Color.Transparent;
+            pnlLoginCard.BorderColor = Color.FromArgb(224, 247, 250);
+            pnlLoginCard.BorderRadius = 25;
+            pnlLoginCard.Controls.Add(lblMainTitle);
+            pnlLoginCard.Controls.Add(txtPassword);
+            pnlLoginCard.Controls.Add(txtEmail);
+            pnlLoginCard.Controls.Add(btnLogin);
+            pnlLoginCard.Controls.Add(btnCancel);
+            pnlLoginCard.Controls.Add(linkRegister);
+            pnlLoginCard.CustomizableEdges = customizableEdges9;
+            pnlLoginCard.FillColor = Color.White;
+            pnlLoginCard.Location = new Point(350, 150);
+            pnlLoginCard.Name = "pnlLoginCard";
+            pnlLoginCard.ShadowDecoration.CustomizableEdges = customizableEdges10;
+            pnlLoginCard.ShadowDecoration.Enabled = true;
+            pnlLoginCard.Size = new Size(350, 400);
+            pnlLoginCard.TabIndex = 0;
             // 
-            // label2
+            // lblMainTitle
             // 
-            label2.AutoSize = true;
-            label2.BackColor = Color.Transparent;
-            label2.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label2.ForeColor = Color.White;
-            label2.Location = new Point(502, 348);
-            label2.Name = "label2";
-            label2.Size = new Size(98, 28);
-            label2.TabIndex = 5;
-            label2.Text = "Mật khẩu:";
-            // 
-            // txtEmail
-            // 
-            txtEmail.Location = new Point(571, 308);
-            txtEmail.Name = "txtEmail";
-            txtEmail.Size = new Size(275, 27);
-            txtEmail.TabIndex = 4;
+            lblMainTitle.BackColor = Color.Transparent;
+            lblMainTitle.Font = new Font("Segoe UI", 24F, FontStyle.Bold);
+            lblMainTitle.ForeColor = Color.FromArgb(52, 152, 219);
+            lblMainTitle.Location = new Point(50, 30);
+            lblMainTitle.Name = "lblMainTitle";
+            lblMainTitle.Size = new Size(248, 56);
+            lblMainTitle.TabIndex = 0;
+            lblMainTitle.Text = "ĐĂNG NHẬP";
             // 
             // txtPassword
             // 
-            txtPassword.Location = new Point(606, 348);
+            txtPassword.BorderRadius = 12;
+            txtPassword.CustomizableEdges = customizableEdges1;
+            txtPassword.DefaultText = "";
+            txtPassword.Font = new Font("Segoe UI", 9F);
+            txtPassword.Location = new Point(50, 160);
+            txtPassword.Margin = new Padding(3, 4, 3, 4);
             txtPassword.Name = "txtPassword";
-            txtPassword.PasswordChar = '*';
-            txtPassword.Size = new Size(240, 27);
-            txtPassword.TabIndex = 3;
+            txtPassword.PasswordChar = '●';
+            txtPassword.PlaceholderText = "Mật khẩu";
+            txtPassword.SelectedText = "";
+            txtPassword.ShadowDecoration.CustomizableEdges = customizableEdges2;
+            txtPassword.Size = new Size(250, 40);
+            txtPassword.TabIndex = 2;
+            // 
+            // txtEmail
+            // 
+            txtEmail.BorderRadius = 12;
+            txtEmail.CustomizableEdges = customizableEdges3;
+            txtEmail.DefaultText = "";
+            txtEmail.Font = new Font("Segoe UI", 9F);
+            txtEmail.Location = new Point(50, 100);
+            txtEmail.Margin = new Padding(3, 4, 3, 4);
+            txtEmail.Name = "txtEmail";
+            txtEmail.PlaceholderText = "Email";
+            txtEmail.SelectedText = "";
+            txtEmail.ShadowDecoration.CustomizableEdges = customizableEdges4;
+            txtEmail.Size = new Size(250, 40);
+            txtEmail.TabIndex = 1;
             // 
             // btnLogin
             // 
-            btnLogin.BackgroundImage = (Image)resources.GetObject("btnLogin.BackgroundImage");
-            btnLogin.BackgroundImageLayout = ImageLayout.Stretch;
-            btnLogin.ForeColor = SystemColors.ActiveCaptionText;
-            btnLogin.Location = new Point(556, 401);
+            btnLogin.BorderRadius = 15;
+            btnLogin.CustomizableEdges = customizableEdges5;
+            btnLogin.FillColor = Color.FromArgb(46, 204, 113);
+            btnLogin.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            btnLogin.ForeColor = Color.White;
+            btnLogin.Location = new Point(50, 240);
             btnLogin.Name = "btnLogin";
-            btnLogin.Size = new Size(128, 37);
-            btnLogin.TabIndex = 2;
+            btnLogin.ShadowDecoration.CustomizableEdges = customizableEdges6;
+            btnLogin.Size = new Size(250, 45);
+            btnLogin.TabIndex = 3;
             btnLogin.Text = "Đăng nhập";
             btnLogin.Click += btnLogin_Click_1;
             // 
             // btnCancel
             // 
-            btnCancel.BackgroundImage = (Image)resources.GetObject("btnCancel.BackgroundImage");
-            btnCancel.BackgroundImageLayout = ImageLayout.Stretch;
-            btnCancel.Location = new Point(705, 401);
+            btnCancel.BorderRadius = 15;
+            btnCancel.CustomizableEdges = customizableEdges7;
+            btnCancel.FillColor = Color.FromArgb(231, 76, 60);
+            btnCancel.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            btnCancel.ForeColor = Color.White;
+            btnCancel.Location = new Point(50, 300);
             btnCancel.Name = "btnCancel";
-            btnCancel.Size = new Size(141, 37);
-            btnCancel.TabIndex = 1;
+            btnCancel.ShadowDecoration.CustomizableEdges = customizableEdges8;
+            btnCancel.Size = new Size(250, 45);
+            btnCancel.TabIndex = 4;
             btnCancel.Text = "Hủy";
             btnCancel.Click += btnCancel_Click_1;
             // 
             // linkRegister
             // 
-            linkRegister.AutoSize = true;
             linkRegister.BackColor = Color.Transparent;
-            linkRegister.ForeColor = Color.White;
-            linkRegister.LinkColor = Color.White;
-            linkRegister.Location = new Point(628, 459);
+            linkRegister.Cursor = Cursors.Hand;
+            linkRegister.Font = new Font("Segoe UI", 10F);
+            linkRegister.ForeColor = Color.FromArgb(52, 152, 219);
+            linkRegister.Location = new Point(60, 360);
             linkRegister.Name = "linkRegister";
-            linkRegister.Size = new Size(229, 20);
-            linkRegister.TabIndex = 0;
-            linkRegister.TabStop = true;
-            linkRegister.Text = "Chưa có tài khoản? Đăng ký ngay";
-            linkRegister.LinkClicked += linkRegister_LinkClicked_1;
+            linkRegister.Size = new Size(259, 25);
+            linkRegister.TabIndex = 5;
+            linkRegister.Text = "<a href='#'>Chưa có tài khoản? Đăng ký ngay</a>";
+            // 
+            // label1
+            // 
+            label1.BackColor = Color.Transparent;
+            label1.Location = new Point(0, 0);
+            label1.Name = "label1";
+            label1.Size = new Size(0, 0);
+            label1.TabIndex = 0;
+            label1.Text = null;
+            label1.Visible = false;
+            // 
+            // label2
+            // 
+            label2.BackColor = Color.Transparent;
+            label2.Location = new Point(0, 0);
+            label2.Name = "label2";
+            label2.Size = new Size(0, 0);
+            label2.TabIndex = 0;
+            label2.Text = null;
+            label2.Visible = false;
             // 
             // LoginForm
             // 
-            BackgroundImage = (Image)resources.GetObject("$this.BackgroundImage");
-            BackgroundImageLayout = ImageLayout.Stretch;
-            ClientSize = new Size(1419, 756);
-            Controls.Add(linkRegister);
-            Controls.Add(btnCancel);
-            Controls.Add(btnLogin);
-            Controls.Add(txtPassword);
-            Controls.Add(txtEmail);
-            Controls.Add(label2);
-            Controls.Add(label1);
+            ClientSize = new Size(1010, 702);
+            Controls.Add(pnlLoginCard);
+
+            MaximizeBox = false;
             Name = "LoginForm";
-            Text = "Đăng nhập";
-            Load += LoginForm_Load;
+            pnlLoginCard.ResumeLayout(false);
+            pnlLoginCard.PerformLayout();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
