@@ -153,6 +153,7 @@ namespace APP_DOAN
             linkRegister.Size = new Size(259, 25);
             linkRegister.TabIndex = 5;
             linkRegister.Text = "<a href='#'>Chưa có tài khoản? Đăng ký ngay</a>";
+            linkRegister.Click += linkRegister_Click;
             // 
             // label1
             // 

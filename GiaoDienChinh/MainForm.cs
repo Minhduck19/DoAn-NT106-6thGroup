@@ -209,26 +209,26 @@ namespace APP_DOAN
 
         // --- GIỮ NGUYÊN HÀM NÀY ---
         // Hàm này vẫn hiển thị MessageBox thông tin hồ sơ
-        private void profileToolStripMenuItem_Click_1(object sender, EventArgs e)
+        private void profileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.Hide();
             Student_Information profileForm = new Student_Information(this.loggedInEmail, this.userRole);
             profileForm.ShowDialog();
             this.Show();
-            
+
         }
 
-        private void messagesToolStripMenuItem_Click_1(object sender, EventArgs e)
+        private void messagesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Tin nhắn (chức năng mẫu).", "Tin nhắn", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private void scheduleToolStripMenuItem_Click_1(object sender, EventArgs e)
+        private void scheduleToolStripMenuItem_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Lịch học (chức năng mẫu).", "Lịch học", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private void gradesToolStripMenuItem_Click_1(object sender, EventArgs e)
+        private void gradesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Điểm (chức năng mẫu).", "Điểm", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
@@ -259,7 +259,6 @@ namespace APP_DOAN
 
             if (result == DialogResult.Yes)
             {
-                isLoggingOut = true; // Đánh dấu là đang chủ động đăng xuất
 
                 // 1. Tạo một instance của GiaoDienGoc (Form gốc)
                 // (Đảm bảo bạn đã có Form tên GiaoDienGoc trong dự án)
@@ -267,6 +266,8 @@ namespace APP_DOAN
 
                 // 2. Hiển thị form GiaoDienGoc
                 login.Show();
+
+                this.Hide();
 
                 // 3. Đóng Form chính (MainForm)
                 this.Close();
@@ -290,8 +291,9 @@ namespace APP_DOAN
             }
         }
 
-        // Hàm này có code logic, chúng ta giữ lại
-        private void lvJoinedCourses_SelectedIndexChanged(object sender, EventArgs e)
+
+        // Hàm này có code logic, chúng ta giữ lại
+        private void lvJoinedCourses_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (lvJoinedCourses.SelectedItems.Count == 0) return;
 
@@ -300,10 +302,22 @@ namespace APP_DOAN
             if (course == null) return;
 
             ChiTietLopHoc form = new ChiTietLopHoc(course);
-            form.ShowDialog();  
+            form.ShowDialog();
 
-            
+
         }
+
+        private void cmsUserOptions_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+
+        }
+
+        private void grpJoinedCourses_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        
     }
 
 
