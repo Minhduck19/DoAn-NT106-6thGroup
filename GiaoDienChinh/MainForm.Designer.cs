@@ -337,6 +337,6 @@ namespace APP_DOAN
         }
         #endregion
 
-        private Guna2DataGridView dgvAvailableCourses;
+        
     }
 }
