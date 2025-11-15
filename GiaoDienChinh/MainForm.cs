@@ -263,10 +263,10 @@ namespace APP_DOAN
 
                 // 1. Tạo một instance của GiaoDienGoc (Form gốc)
                 // (Đảm bảo bạn đã có Form tên GiaoDienGoc trong dự án)
-                GiaoDienGoc formGoc = new GiaoDienGoc();
+                LoginForm login = new LoginForm();
 
                 // 2. Hiển thị form GiaoDienGoc
-                formGoc.Show();
+                login.Show();
 
                 // 3. Đóng Form chính (MainForm)
                 this.Close();
