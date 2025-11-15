@@ -6,29 +6,23 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Firebase.Database; 
-using Firebase.Database.Query; 
+using Firebase.Database;
+using Firebase.Database.Query;
 
 namespace APP_DOAN
 {
     public partial class LoginForm : Form
     {
-        
         private readonly string webApiKey = "AIzaSyA7fh7FLwmHFHrwchTX1gcATk1ulr45QLs";
         private readonly string firebaseDatabaseUrl = "https://nt106-minhduc-default-rtdb.firebaseio.com/"; // URL thật của bạn
 
-        
-        public string IdToken { get; private set; }
-        public string UserEmail { get; private set; }
-        public string UserRole { get; private set; }
+        // Không cần các thuộc tính public IdToken, UserEmail, UserRole nữa
+        // vì form này sẽ tự xử lý điều hướng.
 
         public LoginForm()
         {
             InitializeComponent();
 
-           
-
-            
             if (string.IsNullOrWhiteSpace(webApiKey) || webApiKey.Contains("YOUR_KEY"))
             {
                 MessageBox.Show("Lỗi: webApiKey chưa được cấu hình trong LoginForm.cs.", "Lỗi Cấu Hình", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -37,7 +31,6 @@ namespace APP_DOAN
             }
         }
 
-        
         private async void btnLogin_Click_1(object sender, EventArgs e)
         {
             string email = txtEmail.Text.Trim();
@@ -54,19 +47,19 @@ namespace APP_DOAN
 
             try
             {
-               
+                // 1. Đăng nhập để lấy Token và UID
                 var loginResult = await SignInWithEmailPasswordAsync(email, password);
 
                 if (!loginResult.Success)
                 {
                     HandleFirebaseError(loginResult.ErrorMessage);
-                    return;
+                    return; // Dừng lại, finally sẽ kích hoạt UI
                 }
 
                 string idToken = loginResult.IdToken;
-                string uid = loginResult.LocalId;     
+                string uid = loginResult.LocalId;
 
-                
+                // 2. Dùng Token để xác thực và lấy Role từ Realtime Database
                 var authClient = new FirebaseClient(
                     firebaseDatabaseUrl,
                     new FirebaseOptions
@@ -74,7 +67,6 @@ namespace APP_DOAN
                         AuthTokenAsyncFactory = () => Task.FromResult(idToken)
                     });
 
-                
                 var userRole = await authClient
                     .Child("Users")
                     .Child(uid)
@@ -84,20 +76,42 @@ namespace APP_DOAN
                 if (userRole == null)
                 {
                     MessageBox.Show("Đăng nhập thành công nhưng không thể tìm thấy vai trò (Role) trong cơ sở dữ liệu.", "Lỗi Dữ Liệu", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
+                    return; // Dừng lại, finally sẽ kích hoạt UI
                 }
 
-               
-                this.IdToken = idToken;
-                this.UserEmail = email;
-                this.UserRole = userRole;
+                // 3. Logic điều hướng (ĐÃ CHUYỂN TỪ GIAODIENGOC VÀO ĐÂY)
 
-                this.DialogResult = DialogResult.OK;
+                // Ẩn form đăng nhập
+                this.Hide();
+
+                if (userRole == "GiangVien")
+                {
+                    using (MainForm_GiangVien mainFormGV = new MainForm_GiangVien(email, idToken))
+                    {
+                        mainFormGV.ShowDialog();
+                    }
+                }
+                else if (userRole == "SinhVien")
+                {
+                    using (MainForm mainFormSV = new MainForm(email, idToken))
+                    {
+                        mainFormSV.ShowDialog();
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Vai trò không xác định. Vui lòng liên hệ quản trị viên.", "Lỗi Vai Trò", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    // Hiển thị lại form đăng nhập nếu vai trò lỗi
+                    this.Show();
+                    return; // Không đóng ứng dụng
+                }
+
+                // Sau khi MainForm (GV hoặc SV) bị đóng, ShowDialog() kết thúc
+                // Ta tiến hành đóng Form đăng nhập (cũng là form chính) để kết thúc ứng dụng.
                 this.Close();
             }
             catch (Exception ex)
             {
-               
                 MessageBox.Show($"Lỗi không xác định khi đăng nhập: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
@@ -107,7 +121,6 @@ namespace APP_DOAN
             }
         }
 
-       
         private async Task<(bool Success, string IdToken, string LocalId, string ErrorMessage)> SignInWithEmailPasswordAsync(string email, string password)
         {
             string signInUrl = $"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={webApiKey}";
@@ -143,7 +156,7 @@ namespace APP_DOAN
                 using var doc = JsonDocument.Parse(body);
                 var root = doc.RootElement;
                 var idToken = root.GetProperty("idToken").GetString();
-                var localId = root.GetProperty("localId").GetString(); 
+                var localId = root.GetProperty("localId").GetString();
                 return (true, idToken, localId, null);
             }
             catch (Exception ex)
@@ -153,13 +166,12 @@ namespace APP_DOAN
             }
         }
 
-        
         private void HandleFirebaseError(string errorMessage)
         {
             string thongBaoLoi;
             switch (errorMessage)
             {
-                case "INVALID_LOGIN_CREDENTIALS": 
+                case "INVALID_LOGIN_CREDENTIALS":
                     thongBaoLoi = "Sai Email hoặc Mật khẩu. Vui lòng thử lại.";
                     break;
                 case "INVALID_PASSWORD": thongBaoLoi = "Sai mật khẩu. Vui lòng thử lại."; break;
@@ -170,13 +182,11 @@ namespace APP_DOAN
             MessageBox.Show(thongBaoLoi, "Lỗi Đăng Nhập", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
-       
         private static bool IsValidEmail(string email)
         {
             try { _ = new MailAddress(email); return true; } catch { return false; }
         }
 
-        
         private void ToggleUiEnabled(bool enabled)
         {
             txtEmail.Enabled = enabled;
@@ -186,15 +196,15 @@ namespace APP_DOAN
             linkRegister.Enabled = enabled;
         }
 
-        
-        private void btnCancel_Click_1(object sender, EventArgs e) 
+        private void btnCancel_Click_1(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.Cancel;
+            // Vì đây là form chính, nhấn Cancel (hoặc nút X) sẽ đóng ứng dụng
             this.Close();
         }
 
-        private void linkRegister_LinkClicked_1(object sender, LinkLabelLinkClickedEventArgs e) 
+        private void linkRegister_LinkClicked_1(object sender, LinkLabelLinkClickedEventArgs e)
         {
+            // Logic này giữ nguyên, dùng để mở form đăng ký
             this.Hide();
             using (RegisterForm registerForm = new RegisterForm())
             {
@@ -204,7 +214,5 @@ namespace APP_DOAN
         }
 
         private void LoginForm_Load(object sender, EventArgs e) { }
-
-        
     }
 }

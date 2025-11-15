@@ -25,5 +25,16 @@ namespace APP_DOAN.GiaoDienChinh
         {
 
         }
+
+        private void grpAcademicInfo_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnLogout_Click(object sender, EventArgs e)
+        {
+            this.Close();
+
+        }
     }
 }
