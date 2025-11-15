@@ -201,6 +201,7 @@
             grpAcademicInfo.TabIndex = 1;
             grpAcademicInfo.TabStop = false;
             grpAcademicInfo.Text = "Thông tin học tập";
+            grpAcademicInfo.Enter += grpAcademicInfo_Enter;
             // 
             // lblClass
             // 

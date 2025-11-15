@@ -25,5 +25,10 @@ namespace APP_DOAN.GiaoDienChinh
         {
 
         }
+
+        private void grpAcademicInfo_Enter(object sender, EventArgs e)
+        {
+
+        }
     }
 }
