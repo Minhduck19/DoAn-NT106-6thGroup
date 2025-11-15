@@ -38,9 +38,7 @@ namespace APP_DOAN
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges6 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges7 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges8 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            ComponentResourceManager resources = new ComponentResourceManager(typeof(LoginForm));
             pnlLoginCard = new Guna2Panel();
-            guna2HtmlLabel1 = new Guna2HtmlLabel();
             lblMainTitle = new Guna2HtmlLabel();
             txtPassword = new Guna2TextBox();
             txtEmail = new Guna2TextBox();
@@ -54,11 +52,9 @@ namespace APP_DOAN
             // 
             // pnlLoginCard
             // 
-            pnlLoginCard.Anchor = AnchorStyles.None;
             pnlLoginCard.BackColor = Color.Transparent;
-            pnlLoginCard.BorderColor = Color.White;
+            pnlLoginCard.BorderColor = Color.FromArgb(224, 247, 250);
             pnlLoginCard.BorderRadius = 25;
-            pnlLoginCard.Controls.Add(guna2HtmlLabel1);
             pnlLoginCard.Controls.Add(lblMainTitle);
             pnlLoginCard.Controls.Add(txtPassword);
             pnlLoginCard.Controls.Add(txtEmail);
@@ -66,35 +62,20 @@ namespace APP_DOAN
             pnlLoginCard.Controls.Add(btnCancel);
             pnlLoginCard.Controls.Add(linkRegister);
             pnlLoginCard.CustomizableEdges = customizableEdges9;
-            pnlLoginCard.FillColor = Color.AliceBlue;
-            pnlLoginCard.ForeColor = Color.Snow;
-            pnlLoginCard.Location = new Point(517, 151);
+            pnlLoginCard.FillColor = Color.White;
+            pnlLoginCard.Location = new Point(350, 150);
             pnlLoginCard.Name = "pnlLoginCard";
             pnlLoginCard.ShadowDecoration.CustomizableEdges = customizableEdges10;
             pnlLoginCard.ShadowDecoration.Enabled = true;
-            pnlLoginCard.Size = new Size(384, 431);
+            pnlLoginCard.Size = new Size(350, 400);
             pnlLoginCard.TabIndex = 0;
-            pnlLoginCard.Paint += pnlLoginCard_Paint;
-            // 
-            // guna2HtmlLabel1
-            // 
-            guna2HtmlLabel1.BackColor = Color.Transparent;
-            guna2HtmlLabel1.Cursor = Cursors.Hand;
-            guna2HtmlLabel1.Font = new Font("Segoe UI", 10F);
-            guna2HtmlLabel1.ForeColor = Color.FromArgb(52, 152, 219);
-            guna2HtmlLabel1.Location = new Point(60, 391);
-            guna2HtmlLabel1.Name = "guna2HtmlLabel1";
-            guna2HtmlLabel1.Size = new Size(130, 25);
-            guna2HtmlLabel1.TabIndex = 6;
-            guna2HtmlLabel1.Text = "<a href='#'>Quên mật khẩu? </a>";
-            guna2HtmlLabel1.Click += guna2HtmlLabel1_Click;
             // 
             // lblMainTitle
             // 
             lblMainTitle.BackColor = Color.Transparent;
             lblMainTitle.Font = new Font("Segoe UI", 24F, FontStyle.Bold);
             lblMainTitle.ForeColor = Color.FromArgb(52, 152, 219);
-            lblMainTitle.Location = new Point(71, 27);
+            lblMainTitle.Location = new Point(50, 30);
             lblMainTitle.Name = "lblMainTitle";
             lblMainTitle.Size = new Size(248, 56);
             lblMainTitle.TabIndex = 0;
@@ -106,7 +87,7 @@ namespace APP_DOAN
             txtPassword.CustomizableEdges = customizableEdges1;
             txtPassword.DefaultText = "";
             txtPassword.Font = new Font("Segoe UI", 9F);
-            txtPassword.Location = new Point(71, 159);
+            txtPassword.Location = new Point(50, 160);
             txtPassword.Margin = new Padding(3, 4, 3, 4);
             txtPassword.Name = "txtPassword";
             txtPassword.PasswordChar = '●';
@@ -122,7 +103,7 @@ namespace APP_DOAN
             txtEmail.CustomizableEdges = customizableEdges3;
             txtEmail.DefaultText = "";
             txtEmail.Font = new Font("Segoe UI", 9F);
-            txtEmail.Location = new Point(71, 100);
+            txtEmail.Location = new Point(50, 100);
             txtEmail.Margin = new Padding(3, 4, 3, 4);
             txtEmail.Name = "txtEmail";
             txtEmail.PlaceholderText = "Email";
@@ -135,10 +116,10 @@ namespace APP_DOAN
             // 
             btnLogin.BorderRadius = 15;
             btnLogin.CustomizableEdges = customizableEdges5;
-            btnLogin.FillColor = Color.DeepSkyBlue;
+            btnLogin.FillColor = Color.FromArgb(52, 152, 219);
             btnLogin.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             btnLogin.ForeColor = Color.White;
-            btnLogin.Location = new Point(71, 234);
+            btnLogin.Location = new Point(50, 240);
             btnLogin.Name = "btnLogin";
             btnLogin.ShadowDecoration.CustomizableEdges = customizableEdges6;
             btnLogin.Size = new Size(250, 45);
@@ -150,13 +131,13 @@ namespace APP_DOAN
             // 
             btnCancel.BorderRadius = 15;
             btnCancel.CustomizableEdges = customizableEdges7;
-            btnCancel.FillColor = Color.DeepSkyBlue;
+            btnCancel.FillColor = Color.FromArgb(231, 76, 60);
             btnCancel.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             btnCancel.ForeColor = Color.White;
-            btnCancel.Location = new Point(71, 296);
+            btnCancel.Location = new Point(50, 300);
             btnCancel.Name = "btnCancel";
             btnCancel.ShadowDecoration.CustomizableEdges = customizableEdges8;
-            btnCancel.Size = new Size(250, 44);
+            btnCancel.Size = new Size(250, 45);
             btnCancel.TabIndex = 4;
             btnCancel.Text = "Hủy";
             btnCancel.Click += btnCancel_Click_1;
@@ -195,24 +176,16 @@ namespace APP_DOAN
             // 
             // LoginForm
             // 
-            BackgroundImage = (Image)resources.GetObject("$this.BackgroundImage");
-            BackgroundImageLayout = ImageLayout.Stretch;
-            ClientSize = new Size(1343, 717);
+            BackColor = SystemColors.MenuHighlight;
+            ClientSize = new Size(1010, 702);
             Controls.Add(pnlLoginCard);
-            Cursor = Cursors.Arrow;
-            ForeColor = SystemColors.ActiveCaption;
-            FormBorderStyle = FormBorderStyle.None;
             MaximizeBox = false;
             Name = "LoginForm";
-            WindowState = FormWindowState.Maximized;
-            Load += LoginForm_Load_1;
             pnlLoginCard.ResumeLayout(false);
             pnlLoginCard.PerformLayout();
             ResumeLayout(false);
         }
 
         #endregion
-
-        private Guna2HtmlLabel guna2HtmlLabel1;
     }
 }
