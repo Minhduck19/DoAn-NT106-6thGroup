@@ -302,21 +302,6 @@ namespace APP_DOAN
                 MessageBox.Show($"{course.Name}\nGiảng viên: {course.Instructor}", "Chi tiết khóa học", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
-
-        private void lvJoinedCourses_SelectedIndexChanged_1(object sender, EventArgs e)
-        {
-
-        }
-
-        private void panelLeft_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void lvJoinedCourses_SelectedIndexChanged_2(object sender, EventArgs e)
-        {
-
-        }
     }
 
 
