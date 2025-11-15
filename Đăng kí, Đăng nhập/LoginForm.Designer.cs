@@ -116,7 +116,7 @@ namespace APP_DOAN
             // 
             btnLogin.BorderRadius = 15;
             btnLogin.CustomizableEdges = customizableEdges5;
-            btnLogin.FillColor = Color.FromArgb(46, 204, 113);
+            btnLogin.FillColor = Color.FromArgb(52, 152, 219);
             btnLogin.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             btnLogin.ForeColor = Color.White;
             btnLogin.Location = new Point(50, 240);
@@ -177,6 +177,7 @@ namespace APP_DOAN
             // 
             // LoginForm
             // 
+            BackColor = SystemColors.MenuHighlight;
             ClientSize = new Size(1010, 702);
             Controls.Add(pnlLoginCard);
             MaximizeBox = false;
