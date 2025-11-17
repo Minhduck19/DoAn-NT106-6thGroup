@@ -1,5 +1,4 @@
-﻿// --- THÊM CÁC 'USING' MỚI ---
-using Firebase.Database;
+﻿using Firebase.Database;
 using Firebase.Database.Query;
 using Newtonsoft.Json.Linq;
 using System;
@@ -12,19 +11,21 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+
 namespace APP_DOAN
 {
     public partial class RegisterForm : Form
     {
         private readonly string webApiKey = "AIzaSyA7fh7FLwmHFHrwchTX1gcATk1ulr45QLs";
-        private readonly string firebaseDatabaseUrl = "https://nt106-minhduc-default-rtdb.firebaseio.com/"; // URL thật của bạn
+        private readonly string firebaseDatabaseUrl = "https://nt106-minhduc-default-rtdb.firebaseio.com/";
 
 
+        private readonly EmailService _emailService;
 
         public RegisterForm()
         {
             InitializeComponent();
-
+            _emailService = new EmailService();
 
             if (string.IsNullOrWhiteSpace(webApiKey) || webApiKey == "YOUR_FIREBASE_WEB_API_KEY")
             {
@@ -42,7 +43,6 @@ namespace APP_DOAN
             if (rbSinhVien.Checked) role = "SinhVien";
             else if (rbGiangVien.Checked) role = "GiangVien";
 
-            // (Kiểm tra dữ liệu đầu vào...)
             if (!IsValidEmail(email) || password.Length < 6 || string.IsNullOrEmpty(role))
             {
                 MessageBox.Show("Vui lòng nhập email hợp lệ, mật khẩu (ít nhất 6 ký tự) và chọn vai trò.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -52,55 +52,74 @@ namespace APP_DOAN
             ToggleUiEnabled(false);
             Cursor = Cursors.WaitCursor;
 
+            string idToken = null;
+
             try
             {
-
+                // BƯỚC 1: TẠO TÀI KHOẢN TRÊN FIREBASE AUTH
                 var registerResult = await RegisterWithEmailPasswordAsync(email, password);
 
                 if (!registerResult.Success)
                 {
-
                     string thongBaoLoi = registerResult.ErrorMessage switch
                     {
-                        "EMAIL_EXISTS" => "Email này đã tồn tại. Vui lòng sử dụng một email khác.",
-                        "WEAK_PASSWORD" => "Mật khẩu quá yếu. Vui lòng chọn mật khẩu mạnh hơn (ít nhất 6 ký tự).",
+                        "EMAIL_EXISTS" => "Email này đã tồn tại.",
+                        "WEAK_PASSWORD" => "Mật khẩu quá yếu (ít nhất 6 ký tự).",
                         _ => $"Lỗi đăng ký: {registerResult.ErrorMessage}"
                     };
                     MessageBox.Show(thongBaoLoi, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
-                // --- BƯỚC 3B: LƯU VAI TRÒ VÀO REALTIME DATABASE ---
-                string idToken = registerResult.IdToken;
-                string localId = registerResult.LocalId; // Đây là UID (CMND)
+                idToken = registerResult.IdToken; // Lấy token
+                string localId = registerResult.LocalId; // Lấy UID
 
+                // BƯỚC 2: TẠO VÀ GỬI OTP (LUỒNG MỚI)
+                string otpCode = new Random().Next(100000, 999999).ToString();
+
+                MessageBox.Show("Đang gửi mã OTP đến email của bạn...", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                bool emailSent = await _emailService.SendVerificationCodeAsync(email, otpCode);
+
+                if (!emailSent)
+                {
+                    MessageBox.Show("Không thể gửi mã xác minh. Vui lòng thử lại sau.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    // Vì không gửi được mail, chúng ta nên xóa tài khoản vừa tạo
+                    await DeleteUserAsync(idToken);
+                    return;
+                }
+
+                // BƯỚC 3: MỞ FORM OTP ĐỂ XÁC MINH
+                // Tạo đối tượng để lưu vào DB (nếu xác minh thành công)
                 var userToSave = new { Email = email, Role = role, CreatedDate = DateTime.UtcNow };
 
-                // *** PHẦN SỬA LỖI QUAN TRỌNG NHẤT ***
-                // Tạo một client MỚI, có "CMND" (idToken)
-                var authClient = new FirebaseClient(
-                    firebaseDatabaseUrl,
-                    new FirebaseOptions
+                using (var otpForm = new frmXacMinhOTP(otpCode, idToken, localId, email, role, firebaseDatabaseUrl))
+                {
+                    var dialogResult = otpForm.ShowDialog();
+
+                    if (dialogResult == DialogResult.OK)
                     {
-                        // "Factory" này sẽ "gắn" idToken vào yêu cầu
-                        AuthTokenAsyncFactory = () => Task.FromResult(idToken)
-                    });
 
-                // Dùng client ĐÃ XÁC THỰC (authClient) để-ghi-dữ-liệu
-                await authClient
-                    .Child("Users")
-                    .Child(localId)
-                    .PutAsync(userToSave);
-
-                // --- BƯỚC 4: HOÀN TẤT ---
-                await SendVerificationEmailAsync(idToken);
-                MessageBox.Show("Đăng ký thành công! Vui lòng kiểm tra email xác minh.", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                this.Close(); // Đóng form
+                        MessageBox.Show("Đăng ký và xác minh thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        this.Close();
+                    }
+                    else
+                    {
+                        // Người dùng đã đóng form OTP (hoặc xác minh thất bại)
+                        MessageBox.Show("Quá trình đăng ký đã bị hủy.", "Đã hủy", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        // BƯỚC 4: XÓA TÀI KHOẢN KHỎI AUTH VÌ KHÔNG XÁC MINH
+                        await DeleteUserAsync(idToken);
+                    }
+                }
             }
             catch (Exception ex)
             {
-                // Nếu bạn vẫn thấy "Permission Denied", nó sẽ bị bắt ở đây
                 MessageBox.Show($"Lỗi không xác định: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Nếu có lỗi và đã tạo user, hãy xóa đi
+                if (idToken != null)
+                {
+                    await DeleteUserAsync(idToken);
+                }
             }
             finally
             {
@@ -109,9 +128,31 @@ namespace APP_DOAN
             }
         }
 
-        // *** HÀM NÀY GIỮ NGUYÊN (VÌ NÓ TRẢ VỀ 'LocalId' LÀ ĐÚNG) ***
+        // *** HÀM MỚI ***
+        // Hàm này dùng để xóa user khỏi Firebase Auth nếu họ hủy OTP
+        private async Task DeleteUserAsync(string idToken)
+        {
+            try
+            {
+                using var httpClient = new HttpClient();
+                var payload = new { idToken = idToken };
+                var json = JsonSerializer.Serialize(payload);
+                await httpClient.PostAsync(
+                    $"https://identitytoolkit.googleapis.com/v1/accounts:delete?key={webApiKey}",
+                    new StringContent(json, Encoding.UTF8, "application/json")
+                );
+            }
+            catch (Exception ex)
+            {
+                // Ghi log lỗi xóa user (không cần báo cho người dùng)
+                Debug.WriteLine($"Lỗi khi dọn dẹp user: {ex.Message}");
+            }
+        }
+
+       
         private async Task<(bool Success, string IdToken, string LocalId, string ErrorMessage)> RegisterWithEmailPasswordAsync(string email, string password)
         {
+            // ... (Giữ nguyên code của bạn)
             using var httpClient = new HttpClient();
             var payload = new { email = email, password = password, returnSecureToken = true };
             var json = JsonSerializer.Serialize(payload);
@@ -158,30 +199,19 @@ namespace APP_DOAN
             }
         }
 
-
+        // (Hàm này KHÔNG CẦN DÙNG NỮA, nhưng có thể giữ lại)
         private async Task SendVerificationEmailAsync(string idToken)
         {
-            using var httpClient = new HttpClient();
-            var content = new { requestType = "VERIFY_EMAIL", idToken = idToken };
-            var json = JsonSerializer.Serialize(content);
-            var response = await httpClient.PostAsync(
-                $"https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key={webApiKey}",
-                new StringContent(json, Encoding.UTF8, "application/json")
-            );
-            if (!response.IsSuccessStatusCode)
-            {
-                Debug.WriteLine("Không thể gửi email xác minh.");
-
-            }
+            // ... (Code cũ của bạn, chúng ta không gọi hàm này nữa)
         }
 
-
+        // (Hàm này giữ nguyên)
         private static bool IsValidEmail(string email)
         {
             try { _ = new MailAddress(email); return true; } catch { return false; }
         }
 
-
+        // (Hàm này giữ nguyên)
         private void ToggleUiEnabled(bool enabled)
         {
             txtNewEmail.Enabled = enabled;
@@ -192,9 +222,11 @@ namespace APP_DOAN
             gbRole.Enabled = enabled;
         }
 
+        // (Hàm này giữ nguyên)
         private void RegisterForm_Load(object sender, EventArgs e) { }
         private void txtNewPassword_TextChanged(object sender, EventArgs e) { }
 
+        // (Hàm này giữ nguyên)
         private void linkLogin_Click(object sender, EventArgs e)
         {
             LoginForm loginForm = new LoginForm();
