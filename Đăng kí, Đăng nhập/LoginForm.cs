@@ -27,7 +27,7 @@ namespace APP_DOAN
             }
         }
 
-        
+
         private async void btnLogin_Click_1(object sender, EventArgs e)
         {
             string email = txtEmail.Text.Trim();
@@ -52,7 +52,7 @@ namespace APP_DOAN
                     return;
                 }
                 string idToken = loginResult.IdToken;
-                string uid = loginResult.LocalId; 
+                string uid = loginResult.LocalId;
 
                 User userProfile = await GetUserProfileAsync(uid, idToken);
                 if (userProfile == null)
@@ -61,15 +61,15 @@ namespace APP_DOAN
                     return;
                 }
 
-                
+
                 string hoTen = userProfile.HoTen;
                 string userRole = userProfile.Role;
 
-               
+
                 this.Hide();
                 if (userRole == "GiangVien")
                 {
-                   
+
                     using (MainForm_GiangVien mainFormGV = new MainForm_GiangVien(uid, hoTen))
                     {
                         mainFormGV.ShowDialog();
@@ -77,8 +77,8 @@ namespace APP_DOAN
                 }
                 else if (userRole == "SinhVien")
                 {
-                    
-                    using (MainForm mainFormSV = new MainForm(uid, hoTen, email, idToken ))
+
+                    using (MainForm mainFormSV = new MainForm(uid, hoTen, email, idToken))
                     {
                         mainFormSV.ShowDialog();
                     }
@@ -103,12 +103,12 @@ namespace APP_DOAN
             }
         }
 
-        
+
         private async Task<User> GetUserProfileAsync(string uid, string idToken)
         {
             try
             {
-               
+
                 var authClient = new FirebaseClient(
                     firebaseDatabaseUrl,
                     new FirebaseOptions
@@ -116,7 +116,7 @@ namespace APP_DOAN
                         AuthTokenAsyncFactory = () => Task.FromResult(idToken)
                     });
 
-                
+
                 var user = await authClient
                     .Child("Users")
                     .Child(uid)
@@ -212,7 +212,7 @@ namespace APP_DOAN
             this.Close();
         }
 
-        private void linkRegister_LinkClicked_1(object sender, LinkLabelLinkClickedEventArgs e)
+        private void linkRegister_Click_1(object sender, EventArgs e)
         {
             this.Hide();
             using (RegisterForm registerForm = new RegisterForm())
@@ -222,10 +222,6 @@ namespace APP_DOAN
             this.Show();
         }
 
-        
-        private void LoginForm_Load(object sender, EventArgs e) { }
-        private void linkRegister_Click(object sender, EventArgs e) { }
-        private void LoginForm_Load_1(object sender, EventArgs e) { }
 
         
     }
