@@ -154,7 +154,7 @@ namespace APP_DOAN
             linkRegister.Size = new Size(259, 25);
             linkRegister.TabIndex = 5;
             linkRegister.Text = "<a href='#'>Chưa có tài khoản? Đăng ký ngay</a>";
-            linkRegister.Click += linkRegister_Click;
+            
             // 
             // label1
             // 
@@ -186,8 +186,7 @@ namespace APP_DOAN
             MaximizeBox = false;
             Name = "LoginForm";
             WindowState = FormWindowState.Maximized;
-            Load += LoginForm_Load_1;
-            pnlLoginCard.ResumeLayout(false);
+                        pnlLoginCard.ResumeLayout(false);
             pnlLoginCard.PerformLayout();
             ResumeLayout(false);
         }

@@ -349,7 +349,7 @@ namespace APP_DOAN
             ResumeLayout(false);
         }
 
-        
+
         #endregion
     }
 }
