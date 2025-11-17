@@ -259,15 +259,14 @@ namespace APP_DOAN
 
             if (result == DialogResult.Yes)
             {
+                this.isLoggingOut = true;
 
-                // 1. Tạo một instance của GiaoDienGoc (Form gốc)
-                // (Đảm bảo bạn đã có Form tên GiaoDienGoc trong dự án)
-                LoginForm login = new LoginForm();
+                LoginForm login = new LoginForm();
 
                 // 2. Hiển thị form GiaoDienGoc
                 login.Show();
 
-                this.Hide();
+                
 
                 // 3. Đóng Form chính (MainForm)
                 this.Close();
@@ -317,7 +316,10 @@ namespace APP_DOAN
 
         }
 
-        
+        private void panelLeft_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 
 
