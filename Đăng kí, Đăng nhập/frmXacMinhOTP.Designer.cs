@@ -128,7 +128,6 @@ namespace APP_DOAN
             guna2ControlBox1.ShadowDecoration.CustomizableEdges = customizableEdges4;
             guna2ControlBox1.Size = new Size(45, 36);
             guna2ControlBox1.TabIndex = 1;
-            guna2ControlBox1.Click += guna2ControlBox1_Click;
             // 
             // guna2BorderlessForm1
             // 
