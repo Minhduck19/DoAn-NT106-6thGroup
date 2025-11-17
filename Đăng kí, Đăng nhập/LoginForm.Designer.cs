@@ -52,6 +52,7 @@ namespace APP_DOAN
             // 
             // pnlLoginCard
             // 
+            pnlLoginCard.Anchor = AnchorStyles.None;
             pnlLoginCard.BackColor = Color.Transparent;
             pnlLoginCard.BorderColor = Color.FromArgb(224, 247, 250);
             pnlLoginCard.BorderRadius = 25;
@@ -63,11 +64,11 @@ namespace APP_DOAN
             pnlLoginCard.Controls.Add(linkRegister);
             pnlLoginCard.CustomizableEdges = customizableEdges9;
             pnlLoginCard.FillColor = Color.White;
-            pnlLoginCard.Location = new Point(350, 150);
+            pnlLoginCard.Location = new Point(703, 159);
             pnlLoginCard.Name = "pnlLoginCard";
             pnlLoginCard.ShadowDecoration.CustomizableEdges = customizableEdges10;
             pnlLoginCard.ShadowDecoration.Enabled = true;
-            pnlLoginCard.Size = new Size(350, 400);
+            pnlLoginCard.Size = new Size(354, 400);
             pnlLoginCard.TabIndex = 0;
             // 
             // lblMainTitle
@@ -178,10 +179,13 @@ namespace APP_DOAN
             // LoginForm
             // 
             BackColor = SystemColors.MenuHighlight;
-            ClientSize = new Size(1010, 702);
+            ClientSize = new Size(1758, 702);
             Controls.Add(pnlLoginCard);
+            FormBorderStyle = FormBorderStyle.SizableToolWindow;
             MaximizeBox = false;
             Name = "LoginForm";
+            WindowState = FormWindowState.Maximized;
+            Load += LoginForm_Load_1;
             pnlLoginCard.ResumeLayout(false);
             pnlLoginCard.PerformLayout();
             ResumeLayout(false);
