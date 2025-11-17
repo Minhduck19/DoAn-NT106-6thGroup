@@ -52,6 +52,7 @@ namespace APP_DOAN
             // 
             // pnlLoginCard
             // 
+            pnlLoginCard.Anchor = AnchorStyles.None;
             pnlLoginCard.BackColor = Color.Transparent;
             pnlLoginCard.BorderColor = Color.FromArgb(224, 247, 250);
             pnlLoginCard.BorderRadius = 25;
@@ -63,11 +64,11 @@ namespace APP_DOAN
             pnlLoginCard.Controls.Add(linkRegister);
             pnlLoginCard.CustomizableEdges = customizableEdges9;
             pnlLoginCard.FillColor = Color.White;
-            pnlLoginCard.Location = new Point(350, 150);
+            pnlLoginCard.Location = new Point(703, 159);
             pnlLoginCard.Name = "pnlLoginCard";
             pnlLoginCard.ShadowDecoration.CustomizableEdges = customizableEdges10;
             pnlLoginCard.ShadowDecoration.Enabled = true;
-            pnlLoginCard.Size = new Size(350, 400);
+            pnlLoginCard.Size = new Size(354, 400);
             pnlLoginCard.TabIndex = 0;
             // 
             // lblMainTitle
@@ -153,7 +154,7 @@ namespace APP_DOAN
             linkRegister.Size = new Size(259, 25);
             linkRegister.TabIndex = 5;
             linkRegister.Text = "<a href='#'>Chưa có tài khoản? Đăng ký ngay</a>";
-            linkRegister.Click += linkRegister_Click;
+            linkRegister.Click += linkRegister_Click_1;
             // 
             // label1
             // 
@@ -177,11 +178,14 @@ namespace APP_DOAN
             // 
             // LoginForm
             // 
-            BackColor = SystemColors.MenuHighlight;
-            ClientSize = new Size(1010, 702);
+            BackColor = SystemColors.HighlightText;
+            BackgroundImage = Properties.Resources.d552cbffdb75d65d2130679ea07d6ac2;
+            ClientSize = new Size(1758, 702);
             Controls.Add(pnlLoginCard);
+            FormBorderStyle = FormBorderStyle.SizableToolWindow;
             MaximizeBox = false;
             Name = "LoginForm";
+            WindowState = FormWindowState.Maximized;
             pnlLoginCard.ResumeLayout(false);
             pnlLoginCard.PerformLayout();
             ResumeLayout(false);
