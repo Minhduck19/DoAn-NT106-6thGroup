@@ -1,16 +1,14 @@
-﻿// Tên file: frmDangKyThongTin.cs
-using Firebase.Database;
+﻿using Firebase.Database;
 using Firebase.Database.Query;
 using System;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-// Đảm bảo namespace này khớp với project của bạn
+
 namespace APP_DOAN
 {
     public partial class frmDangKyThongTin : Form
     {
-        // Biến lưu trữ thông tin xác thực và thông tin cơ bản
         private readonly string _idToken;
         private readonly string _localId;
         private readonly string _email;
@@ -31,7 +29,7 @@ namespace APP_DOAN
         {
 
 
-            // Focus vào ô Họ Tên
+            
             txtHoTen.Focus();
         }
 
