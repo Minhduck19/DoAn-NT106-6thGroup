@@ -63,6 +63,16 @@ namespace APP_DOAN.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap avatar_trang_1_cd729c335b {
+            get {
+                object obj = ResourceManager.GetObject("avatar_trang_1_cd729c335b", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap d552cbffdb75d65d2130679ea07d6ac2 {
             get {
                 object obj = ResourceManager.GetObject("d552cbffdb75d65d2130679ea07d6ac2", resourceCulture);
