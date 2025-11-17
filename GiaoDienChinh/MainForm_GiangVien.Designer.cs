@@ -106,14 +106,16 @@
             // 
             // lblWelcome
             // 
+            lblWelcome.AutoSize = false;
             lblWelcome.BackColor = Color.Transparent;
             lblWelcome.Font = new Font("Segoe UI", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lblWelcome.ForeColor = Color.FromArgb(236, 240, 241);
             lblWelcome.Location = new Point(20, 30);
             lblWelcome.Name = "lblWelcome";
-            lblWelcome.Size = new Size(269, 33);
+            lblWelcome.Size = new Size(217, 111);
             lblWelcome.TabIndex = 2;
             lblWelcome.Text = "Chào mừng,\n[Giảng viên]";
+            lblWelcome.Click += lblWelcome_Click;
             // 
             // panelTop
             // 
@@ -257,7 +259,6 @@
             Text = "Trang chủ Giảng viên";
             Load += MainForm_GiangVien_Load;
             panelLeft.ResumeLayout(false);
-            panelLeft.PerformLayout();
             panelTop.ResumeLayout(false);
             panelTop.PerformLayout();
             panelMainContent.ResumeLayout(false);

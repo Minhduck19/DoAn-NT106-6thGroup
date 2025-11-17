@@ -1,4 +1,5 @@
-﻿using Firebase.Database;
+﻿using APP_DOAN.GiaoDienChinh;
+using Firebase.Database;
 using Firebase.Database.Query;
 using System;
 using System.Threading.Tasks;
@@ -15,6 +16,9 @@ namespace APP_DOAN
         private readonly string _email;
         private readonly string _role;
         private readonly string _firebaseDatabaseUrl;
+
+        public GiangVienData NewGiangVienInfo { get; private set; }
+
 
         public frmDangKyThongTinGV(string idToken, string localId, string email, string role, string dbUrl)
         {
@@ -40,6 +44,9 @@ namespace APP_DOAN
             string khoa = cboKhoa.Text;
             string chucVu = cboChucVu.Text;
 
+            string bang = txtBang.Text.Trim();
+
+
             // 2. Kiểm tra dữ liệu
             if (string.IsNullOrEmpty(hoTen) || string.IsNullOrEmpty(maGV))
             {
@@ -62,6 +69,7 @@ namespace APP_DOAN
                     NgaySinh = ngaySinh,
                     Khoa = khoa,
                     ChucVu = chucVu,
+                    Bang = bang,
                     CreatedDate = DateTime.UtcNow
                 };
 
@@ -79,8 +87,22 @@ namespace APP_DOAN
                     .Child(_localId) // Dùng UID làm key
                     .PutAsync(giangVienProfile);
 
+                NewGiangVienInfo = new GiangVienData
+                {
+                    HoTen = hoTen,
+                    MaGiangVien = maGV,
+                    NgaySinh = ngaySinh,
+                    Khoa = khoa,
+                    MonHoc = chucVu,
+                    Bang = bang,
+                    Email = _email,
+                };
+
+
+
                 MessageBox.Show("Hoàn tất đăng ký thông tin giảng viên!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 this.DialogResult = DialogResult.OK; // Báo thành công
+                
                 this.Close();
             }
             catch (Exception ex)
