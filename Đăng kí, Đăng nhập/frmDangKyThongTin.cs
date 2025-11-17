@@ -23,14 +23,27 @@ namespace APP_DOAN
             _email = email;
             _role = role;
             _firebaseDatabaseUrl = dbUrl;
+            this.Resize += frmDangKyThongTin_Resize;
+
+        }
+
+        private void frmDangKyThongTin_Resize(object sender, EventArgs e)
+        {
+            CenterPanel();
         }
 
         private void frmDangKyThongTin_Load(object sender, EventArgs e)
         {
 
+            CenterPanel();
 
-            
             txtHoTen.Focus();
+        }
+
+        private void CenterPanel()
+        {
+            guna2Panel1.Left = (this.ClientSize.Width - guna2Panel1.Width) / 2;
+            guna2Panel1.Top = (this.ClientSize.Height - guna2Panel1.Height) / 2;
         }
 
         private async void btnHoanTat_Click(object sender, EventArgs e)

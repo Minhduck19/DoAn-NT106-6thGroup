@@ -21,10 +21,12 @@ namespace APP_DOAN
             components = new System.ComponentModel.Container();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges1 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges2 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges5 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges6 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges7 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges8 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges3 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges4 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges5 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges6 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             guna2ShadowForm1 = new Guna.UI2.WinForms.Guna2ShadowForm(components);
             panelMain = new Guna.UI2.WinForms.Guna2ShadowPanel();
             btnXacMinh = new Guna.UI2.WinForms.Guna2Button();
@@ -32,6 +34,7 @@ namespace APP_DOAN
             label1 = new Label();
             guna2ControlBox1 = new Guna.UI2.WinForms.Guna2ControlBox();
             guna2BorderlessForm1 = new Guna.UI2.WinForms.Guna2BorderlessForm(components);
+            btnCancel = new Guna.UI2.WinForms.Guna2Button();
             panelMain.SuspendLayout();
             SuspendLayout();
             // 
@@ -45,6 +48,7 @@ namespace APP_DOAN
             // 
             panelMain.Anchor = AnchorStyles.None;
             panelMain.BackColor = Color.Transparent;
+            panelMain.Controls.Add(btnCancel);
             panelMain.Controls.Add(btnXacMinh);
             panelMain.Controls.Add(txtOTP);
             panelMain.Controls.Add(label1);
@@ -71,7 +75,7 @@ namespace APP_DOAN
             btnXacMinh.FillColor = Color.FromArgb(0, 118, 221);
             btnXacMinh.Font = new Font("Segoe UI", 10.8F, FontStyle.Bold);
             btnXacMinh.ForeColor = Color.White;
-            btnXacMinh.Location = new Point(62, 272);
+            btnXacMinh.Location = new Point(64, 218);
             btnXacMinh.Margin = new Padding(3, 4, 3, 4);
             btnXacMinh.Name = "btnXacMinh";
             btnXacMinh.ShadowDecoration.CustomizableEdges = customizableEdges2;
@@ -85,7 +89,7 @@ namespace APP_DOAN
             txtOTP.Animated = true;
             txtOTP.BorderRadius = 8;
             txtOTP.Cursor = Cursors.IBeam;
-            txtOTP.CustomizableEdges = customizableEdges5;
+            txtOTP.CustomizableEdges = customizableEdges7;
             txtOTP.DefaultText = "";
             txtOTP.DisabledState.BorderColor = Color.FromArgb(208, 208, 208);
             txtOTP.DisabledState.FillColor = Color.FromArgb(226, 226, 226);
@@ -94,13 +98,13 @@ namespace APP_DOAN
             txtOTP.FocusedState.BorderColor = Color.FromArgb(94, 148, 255);
             txtOTP.Font = new Font("Segoe UI", 10.2F);
             txtOTP.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
-            txtOTP.Location = new Point(62, 171);
+            txtOTP.Location = new Point(64, 134);
             txtOTP.Margin = new Padding(3, 6, 3, 6);
             txtOTP.MaxLength = 6;
             txtOTP.Name = "txtOTP";
             txtOTP.PlaceholderText = "Nhập mã OTP 6 số";
             txtOTP.SelectedText = "";
-            txtOTP.ShadowDecoration.CustomizableEdges = customizableEdges6;
+            txtOTP.ShadowDecoration.CustomizableEdges = customizableEdges8;
             txtOTP.Size = new Size(260, 50);
             txtOTP.TabIndex = 1;
             txtOTP.TextAlign = HorizontalAlignment.Center;
@@ -134,6 +138,21 @@ namespace APP_DOAN
             guna2BorderlessForm1.ContainerControl = this;
             guna2BorderlessForm1.DockIndicatorTransparencyValue = 0.6D;
             guna2BorderlessForm1.TransparentWhileDrag = true;
+            // 
+            // btnCancel
+            // 
+            btnCancel.BorderRadius = 15;
+            btnCancel.CustomizableEdges = customizableEdges5;
+            btnCancel.FillColor = Color.FromArgb(231, 76, 60);
+            btnCancel.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            btnCancel.ForeColor = Color.White;
+            btnCancel.Location = new Point(64, 291);
+            btnCancel.Name = "btnCancel";
+            btnCancel.ShadowDecoration.CustomizableEdges = customizableEdges6;
+            btnCancel.Size = new Size(260, 46);
+            btnCancel.TabIndex = 5;
+            btnCancel.Text = "Hủy";
+            btnCancel.Click += btnCancel_Click;
             // 
             // frmXacMinhOTP
             // 
@@ -169,5 +188,6 @@ namespace APP_DOAN
         private Guna.UI2.WinForms.Guna2Button btnXacMinh;
         private Guna.UI2.WinForms.Guna2ControlBox guna2ControlBox1;
         private Guna.UI2.WinForms.Guna2BorderlessForm guna2BorderlessForm1;
+        private Guna.UI2.WinForms.Guna2Button btnCancel;
     }
 }

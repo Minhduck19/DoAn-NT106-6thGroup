@@ -237,7 +237,6 @@ namespace APP_DOAN
             guna2Panel1.Controls.Add(cboNganhHoc);
             guna2Panel1.Controls.Add(txtLop);
             guna2Panel1.CustomizableEdges = customizableEdges15;
-            guna2Panel1.Location = new Point(578, 48);
             guna2Panel1.Name = "guna2Panel1";
             guna2Panel1.ShadowDecoration.CustomizableEdges = customizableEdges16;
             guna2Panel1.Size = new Size(510, 574);
