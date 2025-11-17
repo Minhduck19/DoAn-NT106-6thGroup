@@ -317,7 +317,14 @@ namespace APP_DOAN
 
         }
 
-        
+        private void ddToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            DangKyMonHoc dangkymonhoc = new DangKyMonHoc();
+            dangkymonhoc.ShowDialog();
+            this.Show();
+
+        }
     }
 
 
