@@ -71,6 +71,7 @@ namespace APP_DOAN// <-- Nhớ đổi lại tên project của bạn
             // 
             // pnlRegisterCard
             // 
+            pnlRegisterCard.Anchor = AnchorStyles.None;
             pnlRegisterCard.BackColor = Color.Transparent;
             pnlRegisterCard.BorderColor = Color.DodgerBlue;
             pnlRegisterCard.BorderRadius = 25;

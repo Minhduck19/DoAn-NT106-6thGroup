@@ -19,20 +19,22 @@ namespace APP_DOAN
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges5 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges6 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges7 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges8 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges11 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges12 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges3 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges4 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges9 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges10 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges1 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges2 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges13 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges14 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges5 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges6 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges11 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges12 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges1 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges2 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges15 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges16 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges3 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges4 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             guna2BorderlessForm1 = new Guna.UI2.WinForms.Guna2BorderlessForm(components);
             guna2ShadowForm1 = new Guna.UI2.WinForms.Guna2ShadowForm(components);
             label1 = new Label();
@@ -45,6 +47,7 @@ namespace APP_DOAN
             label2 = new Label();
             label3 = new Label();
             guna2Panel1 = new Guna.UI2.WinForms.Guna2Panel();
+            guna2ControlBox1 = new Guna.UI2.WinForms.Guna2ControlBox();
             guna2Panel1.SuspendLayout();
             SuspendLayout();
             // 
@@ -75,7 +78,7 @@ namespace APP_DOAN
             txtHoTen.Animated = true;
             txtHoTen.BorderRadius = 8;
             txtHoTen.Cursor = Cursors.IBeam;
-            txtHoTen.CustomizableEdges = customizableEdges5;
+            txtHoTen.CustomizableEdges = customizableEdges7;
             txtHoTen.DefaultText = "";
             txtHoTen.DisabledState.BorderColor = Color.FromArgb(208, 208, 208);
             txtHoTen.DisabledState.FillColor = Color.FromArgb(226, 226, 226);
@@ -89,7 +92,7 @@ namespace APP_DOAN
             txtHoTen.Name = "txtHoTen";
             txtHoTen.PlaceholderText = "Họ và Tên";
             txtHoTen.SelectedText = "";
-            txtHoTen.ShadowDecoration.CustomizableEdges = customizableEdges6;
+            txtHoTen.ShadowDecoration.CustomizableEdges = customizableEdges8;
             txtHoTen.Size = new Size(328, 50);
             txtHoTen.TabIndex = 0;
             // 
@@ -98,7 +101,7 @@ namespace APP_DOAN
             txtMSSV.Animated = true;
             txtMSSV.BorderRadius = 8;
             txtMSSV.Cursor = Cursors.IBeam;
-            txtMSSV.CustomizableEdges = customizableEdges7;
+            txtMSSV.CustomizableEdges = customizableEdges9;
             txtMSSV.DefaultText = "";
             txtMSSV.DisabledState.BorderColor = Color.FromArgb(208, 208, 208);
             txtMSSV.DisabledState.FillColor = Color.FromArgb(226, 226, 226);
@@ -112,7 +115,7 @@ namespace APP_DOAN
             txtMSSV.Name = "txtMSSV";
             txtMSSV.PlaceholderText = "MSSV";
             txtMSSV.SelectedText = "";
-            txtMSSV.ShadowDecoration.CustomizableEdges = customizableEdges8;
+            txtMSSV.ShadowDecoration.CustomizableEdges = customizableEdges10;
             txtMSSV.Size = new Size(328, 50);
             txtMSSV.TabIndex = 1;
             // 
@@ -121,7 +124,7 @@ namespace APP_DOAN
             txtLop.Animated = true;
             txtLop.BorderRadius = 8;
             txtLop.Cursor = Cursors.IBeam;
-            txtLop.CustomizableEdges = customizableEdges11;
+            txtLop.CustomizableEdges = customizableEdges13;
             txtLop.DefaultText = "";
             txtLop.DisabledState.BorderColor = Color.FromArgb(208, 208, 208);
             txtLop.DisabledState.FillColor = Color.FromArgb(226, 226, 226);
@@ -135,7 +138,7 @@ namespace APP_DOAN
             txtLop.Name = "txtLop";
             txtLop.PlaceholderText = "Lớp";
             txtLop.SelectedText = "";
-            txtLop.ShadowDecoration.CustomizableEdges = customizableEdges12;
+            txtLop.ShadowDecoration.CustomizableEdges = customizableEdges14;
             txtLop.Size = new Size(328, 50);
             txtLop.TabIndex = 2;
             // 
@@ -144,7 +147,7 @@ namespace APP_DOAN
             dtpNgaySinh.Animated = true;
             dtpNgaySinh.BorderRadius = 8;
             dtpNgaySinh.Checked = true;
-            dtpNgaySinh.CustomizableEdges = customizableEdges3;
+            dtpNgaySinh.CustomizableEdges = customizableEdges5;
             dtpNgaySinh.FillColor = Color.White;
             dtpNgaySinh.Font = new Font("Segoe UI", 9F);
             dtpNgaySinh.Format = DateTimePickerFormat.Short;
@@ -153,7 +156,7 @@ namespace APP_DOAN
             dtpNgaySinh.MaxDate = new DateTime(9998, 12, 31, 0, 0, 0, 0);
             dtpNgaySinh.MinDate = new DateTime(1753, 1, 1, 0, 0, 0, 0);
             dtpNgaySinh.Name = "dtpNgaySinh";
-            dtpNgaySinh.ShadowDecoration.CustomizableEdges = customizableEdges4;
+            dtpNgaySinh.ShadowDecoration.CustomizableEdges = customizableEdges6;
             dtpNgaySinh.Size = new Size(229, 50);
             dtpNgaySinh.TabIndex = 3;
             dtpNgaySinh.Value = new DateTime(2025, 11, 17, 9, 30, 0, 0);
@@ -162,7 +165,7 @@ namespace APP_DOAN
             // 
             cboNganhHoc.BackColor = Color.Transparent;
             cboNganhHoc.BorderRadius = 8;
-            cboNganhHoc.CustomizableEdges = customizableEdges9;
+            cboNganhHoc.CustomizableEdges = customizableEdges11;
             cboNganhHoc.DrawMode = DrawMode.OwnerDrawFixed;
             cboNganhHoc.DropDownStyle = ComboBoxStyle.DropDownList;
             cboNganhHoc.FocusedColor = Color.FromArgb(94, 148, 255);
@@ -174,7 +177,7 @@ namespace APP_DOAN
             cboNganhHoc.Location = new Point(194, 402);
             cboNganhHoc.Margin = new Padding(3, 4, 3, 4);
             cboNganhHoc.Name = "cboNganhHoc";
-            cboNganhHoc.ShadowDecoration.CustomizableEdges = customizableEdges10;
+            cboNganhHoc.ShadowDecoration.CustomizableEdges = customizableEdges12;
             cboNganhHoc.Size = new Size(229, 36);
             cboNganhHoc.TabIndex = 4;
             cboNganhHoc.SelectedIndexChanged += cboNganhHoc_SelectedIndexChanged;
@@ -233,12 +236,24 @@ namespace APP_DOAN
             guna2Panel1.Controls.Add(txtMSSV);
             guna2Panel1.Controls.Add(cboNganhHoc);
             guna2Panel1.Controls.Add(txtLop);
-            guna2Panel1.CustomizableEdges = customizableEdges13;
+            guna2Panel1.CustomizableEdges = customizableEdges15;
             guna2Panel1.Location = new Point(578, 48);
             guna2Panel1.Name = "guna2Panel1";
-            guna2Panel1.ShadowDecoration.CustomizableEdges = customizableEdges14;
+            guna2Panel1.ShadowDecoration.CustomizableEdges = customizableEdges16;
             guna2Panel1.Size = new Size(510, 574);
             guna2Panel1.TabIndex = 8;
+            // 
+            // guna2ControlBox1
+            // 
+            guna2ControlBox1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            guna2ControlBox1.CustomizableEdges = customizableEdges3;
+            guna2ControlBox1.FillColor = Color.FromArgb(139, 152, 166);
+            guna2ControlBox1.IconColor = Color.White;
+            guna2ControlBox1.Location = new Point(1719, 2);
+            guna2ControlBox1.Name = "guna2ControlBox1";
+            guna2ControlBox1.ShadowDecoration.CustomizableEdges = customizableEdges4;
+            guna2ControlBox1.Size = new Size(37, 22);
+            guna2ControlBox1.TabIndex = 9;
             // 
             // frmDangKyThongTin
             // 
@@ -249,6 +264,7 @@ namespace APP_DOAN
             BackgroundImage = Properties.Resources.d552cbffdb75d65d2130679ea07d6ac2;
             BackgroundImageLayout = ImageLayout.Stretch;
             ClientSize = new Size(1758, 673);
+            Controls.Add(guna2ControlBox1);
             Controls.Add(guna2Panel1);
             FormBorderStyle = FormBorderStyle.None;
             Margin = new Padding(3, 4, 3, 4);
@@ -278,5 +294,6 @@ namespace APP_DOAN
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
         private Guna.UI2.WinForms.Guna2Panel guna2Panel1;
+        private Guna.UI2.WinForms.Guna2ControlBox guna2ControlBox1;
     }
 }

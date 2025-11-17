@@ -84,6 +84,8 @@ namespace APP_DOAN
                 MessageBox.Show("Hoàn tất đăng ký thông tin!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 this.DialogResult = DialogResult.OK; // Báo thành công
                 this.Close();
+                
+
             }
             catch (Exception ex)
             {

@@ -229,8 +229,7 @@ namespace APP_DOAN
         // (Hàm này giữ nguyên)
         private void linkLogin_Click(object sender, EventArgs e)
         {
-            LoginForm loginForm = new LoginForm();
-            loginForm.Show();
+            this.Close();
         }
     }
 }

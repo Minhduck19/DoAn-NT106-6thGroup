@@ -178,7 +178,8 @@ namespace APP_DOAN
             // 
             // LoginForm
             // 
-            BackColor = SystemColors.MenuHighlight;
+            BackColor = SystemColors.HighlightText;
+            BackgroundImage = Properties.Resources.d552cbffdb75d65d2130679ea07d6ac2;
             ClientSize = new Size(1758, 702);
             Controls.Add(pnlLoginCard);
             FormBorderStyle = FormBorderStyle.SizableToolWindow;
