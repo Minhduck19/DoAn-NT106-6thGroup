@@ -226,7 +226,6 @@ namespace APP_DOAN// <-- Nhớ đổi lại tên project của bạn
             Name = "RegisterForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Đăng Ký Tài Khoản Mới";
-            WindowState = FormWindowState.Maximized;
             Load += RegisterForm_Load;
             pnlRegisterCard.ResumeLayout(false);
             pnlRegisterCard.PerformLayout();

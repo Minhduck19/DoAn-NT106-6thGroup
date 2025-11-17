@@ -220,10 +220,5 @@ namespace APP_DOAN
             RegisterForm registerForm = new RegisterForm();
             registerForm.Show();
         }
-
-        private void LoginForm_Load_1(object sender, EventArgs e)
-        {
-
-        }
     }
 }
