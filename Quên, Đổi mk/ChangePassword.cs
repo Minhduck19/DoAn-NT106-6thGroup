@@ -50,10 +50,7 @@ namespace APP_DOAN
 
         // --- CÁC HÀM XỬ LÝ NÚT BẤM ---
 
-        private void btnCancel_Click(object sender, EventArgs e)
-        {
-            this.Close(); // Đóng form
-        }
+        
 
         private async void btnChange_Click(object sender, EventArgs e)
         {
@@ -165,6 +162,11 @@ namespace APP_DOAN
                 MessageBox.Show("Không thể cập nhật mật khẩu. Vui lòng đăng xuất và thử lại.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
+        }
+
+        private void btnCancel_Click_1(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }
