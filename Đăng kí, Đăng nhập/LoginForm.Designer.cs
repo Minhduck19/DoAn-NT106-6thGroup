@@ -39,7 +39,6 @@ namespace APP_DOAN
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges7 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges8 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             pnlLoginCard = new Guna2Panel();
-            llabelForgotPass = new LinkLabel();
             lblMainTitle = new Guna2HtmlLabel();
             txtPassword = new Guna2TextBox();
             txtEmail = new Guna2TextBox();
@@ -57,7 +56,6 @@ namespace APP_DOAN
             pnlLoginCard.BackColor = Color.Transparent;
             pnlLoginCard.BorderColor = Color.FromArgb(224, 247, 250);
             pnlLoginCard.BorderRadius = 25;
-            pnlLoginCard.Controls.Add(llabelForgotPass);
             pnlLoginCard.Controls.Add(lblMainTitle);
             pnlLoginCard.Controls.Add(txtPassword);
             pnlLoginCard.Controls.Add(txtEmail);
@@ -72,20 +70,6 @@ namespace APP_DOAN
             pnlLoginCard.ShadowDecoration.Enabled = true;
             pnlLoginCard.Size = new Size(354, 432);
             pnlLoginCard.TabIndex = 0;
-            // 
-            // llabelForgotPass
-            // 
-            llabelForgotPass.BackColor = Color.Transparent;
-            llabelForgotPass.Cursor = Cursors.Hand;
-            llabelForgotPass.Font = new Font("Segoe UI", 10F);
-            llabelForgotPass.ForeColor = Color.FromArgb(52, 152, 219);
-            llabelForgotPass.Location = new Point(176, 388);
-            llabelForgotPass.Name = "llabelForgotPass";
-            llabelForgotPass.Size = new Size(143, 30);
-            llabelForgotPass.TabIndex = 6;
-            llabelForgotPass.TabStop = true;
-            llabelForgotPass.Text = "Quên mật khẩu?";
-            llabelForgotPass.LinkClicked += llabelForgotPass_LinkClicked;
             // 
             // lblMainTitle
             // 
@@ -208,7 +192,5 @@ namespace APP_DOAN
         }
 
         #endregion
-
-        private LinkLabel llabelForgotPass;
     }
 }
