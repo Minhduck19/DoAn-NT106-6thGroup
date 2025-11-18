@@ -222,7 +222,14 @@ namespace APP_DOAN
             this.Show();
         }
 
-
-        
+        private void llabelForgotPass_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            this.Hide();
+            using (ForgotPasswordForm forgotPasswordForm = new ForgotPasswordForm())
+            {
+                forgotPasswordForm.ShowDialog();
+            }
+            this.Show();
+        }
     }
 }
