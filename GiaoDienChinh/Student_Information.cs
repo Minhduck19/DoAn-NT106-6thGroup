@@ -36,15 +36,5 @@ namespace APP_DOAN.GiaoDienChinh
             this.Close();
 
         }
-
-        private void grpPersonalInfo_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void panelLeft_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
     }
 }

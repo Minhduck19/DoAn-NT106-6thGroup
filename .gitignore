@@ -1,62 +1,19 @@
-#==================================================================
-# Tiêu chuẩn cho Visual Studio / C#
-#==================================================================
-
-## Thư mục build (chứa file .exe và .dll)
-[Bb]in/
-[Oo]bj/
-
-## Các file do Visual Studio tự động tạo ra
+# Visual Studio
+.vs/
 *.user
 *.suo
-*.sln.docstates
-*.vs/
-.vs/
-*.slnx
-*.cache
-*~
 
-## Các file cấu hình debug
-*.pdb
-*.log
-*.err
-*.xml
+# Build folders
+bin/
+obj/
 
-## Các thư mục và file của hệ thống
-[Tt]humbs.db
-*.DS_Store
-_ReSharper.*/
-*.[Ll]ock
-
-#==================================================================
-# Dành cho Project (WinForms, WPF, etc.)
-#==================================================================
-
-## Thư mục packages (dùng cho .NET Framework cũ)
-packages/
-
-## File tạo bởi Nuget (dùng cho .NET Core/5+ mới hơn)
-*.nupkg
-
-## Các file build của .NET
+# NuGet
 project.lock.json
+project.fragment.lock.json
 project.assets.json
-*.nuget.props
-*.nuget.targets
+*.nuget.cache
 
-#==================================================================
-# Dành cho file nhạy cảm (Quan trọng!)
-#==================================================================
-
-## Bỏ qua các file chứa API keys, connection strings, hoặc khóa bí mật
-# Ví dụ: file khóa dịch vụ của Firebase
-google-services.json
-serviceAccountKey.json
-
-# Ví dụ: file cấu hình chứa mật khẩu
-appsettings.Secrets.json
-App.secrets.config
-credentials.json
-
-# Bỏ qua các file môi trường
-.env
+# Other
+*.dbmdl
+*.cache
+*.log
