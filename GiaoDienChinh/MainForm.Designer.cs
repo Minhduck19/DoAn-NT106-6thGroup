@@ -21,7 +21,6 @@ namespace APP_DOAN
 
         private System.Windows.Forms.ContextMenuStrip cmsUserOptions;
         private System.Windows.Forms.ToolStripMenuItem profileToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem messagesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem scheduleToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem gradesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem changePasswordToolStripMenuItem;
@@ -34,23 +33,25 @@ namespace APP_DOAN
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges4 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges1 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges2 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges5 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges6 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges9 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges10 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges7 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges8 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges5 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges6 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges11 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges12 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges9 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges10 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             panelLeft = new Guna2Panel();
             btnLogout = new Guna2Button();
             lblWelcome = new Guna2HtmlLabel();
             panelTop = new Guna2Panel();
+            guna2Button1 = new Guna2Button();
             lblTitle = new Guna2HtmlLabel();
             panelMainContent = new Guna2Panel();
             grpJoinedCourses = new Guna2GroupBox();
             lvJoinedCourses = new ListView();
             cmsUserOptions = new ContextMenuStrip(components);
             profileToolStripMenuItem = new ToolStripMenuItem();
-            messagesToolStripMenuItem = new ToolStripMenuItem();
             scheduleToolStripMenuItem = new ToolStripMenuItem();
             gradesToolStripMenuItem = new ToolStripMenuItem();
             changePasswordToolStripMenuItem = new ToolStripMenuItem();
@@ -79,6 +80,7 @@ namespace APP_DOAN
             // 
             // btnLogout
             // 
+            btnLogout.Anchor = AnchorStyles.Bottom;
             btnLogout.BackColor = Color.Transparent;
             btnLogout.BorderRadius = 15;
             btnLogout.CustomizableEdges = customizableEdges1;
@@ -95,13 +97,14 @@ namespace APP_DOAN
             // 
             // lblWelcome
             // 
+            lblWelcome.AutoSize = false;
             lblWelcome.BackColor = Color.Transparent;
             lblWelcome.Cursor = Cursors.Hand;
             lblWelcome.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
             lblWelcome.ForeColor = Color.FromArgb(236, 240, 241);
             lblWelcome.Location = new Point(20, 30);
             lblWelcome.Name = "lblWelcome";
-            lblWelcome.Size = new Size(133, 33);
+            lblWelcome.Size = new Size(371, 100);
             lblWelcome.TabIndex = 1;
             lblWelcome.Text = "Chào, [User]";
             lblWelcome.Click += lblWelcome_Click;
@@ -109,14 +112,32 @@ namespace APP_DOAN
             // panelTop
             // 
             panelTop.BackColor = Color.White;
+            panelTop.Controls.Add(guna2Button1);
             panelTop.Controls.Add(lblTitle);
-            panelTop.CustomizableEdges = customizableEdges5;
+            panelTop.CustomizableEdges = customizableEdges7;
             panelTop.Dock = DockStyle.Top;
             panelTop.Location = new Point(410, 0);
             panelTop.Name = "panelTop";
-            panelTop.ShadowDecoration.CustomizableEdges = customizableEdges6;
-            panelTop.Size = new Size(1081, 79);
+            panelTop.ShadowDecoration.CustomizableEdges = customizableEdges8;
+            panelTop.Size = new Size(1364, 79);
             panelTop.TabIndex = 1;
+            // 
+            // guna2Button1
+            // 
+            guna2Button1.Anchor = AnchorStyles.Bottom;
+            guna2Button1.BackColor = Color.Transparent;
+            guna2Button1.BorderRadius = 15;
+            guna2Button1.CustomizableEdges = customizableEdges5;
+            guna2Button1.FillColor = Color.DeepSkyBlue;
+            guna2Button1.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            guna2Button1.ForeColor = Color.Black;
+            guna2Button1.Location = new Point(1152, 18);
+            guna2Button1.Name = "guna2Button1";
+            guna2Button1.ShadowDecoration.CustomizableEdges = customizableEdges6;
+            guna2Button1.Size = new Size(200, 45);
+            guna2Button1.TabIndex = 2;
+            guna2Button1.Text = "Chat";
+            guna2Button1.Click += guna2Button1_Click;
             // 
             // lblTitle
             // 
@@ -133,13 +154,13 @@ namespace APP_DOAN
             // 
             panelMainContent.BackColor = Color.FromArgb(236, 240, 241);
             panelMainContent.Controls.Add(grpJoinedCourses);
-            panelMainContent.CustomizableEdges = customizableEdges9;
+            panelMainContent.CustomizableEdges = customizableEdges11;
             panelMainContent.Dock = DockStyle.Fill;
             panelMainContent.Location = new Point(410, 79);
             panelMainContent.Name = "panelMainContent";
             panelMainContent.Padding = new Padding(15);
-            panelMainContent.ShadowDecoration.CustomizableEdges = customizableEdges10;
-            panelMainContent.Size = new Size(1081, 702);
+            panelMainContent.ShadowDecoration.CustomizableEdges = customizableEdges12;
+            panelMainContent.Size = new Size(1364, 702);
             panelMainContent.TabIndex = 0;
             // 
             // grpJoinedCourses
@@ -148,26 +169,26 @@ namespace APP_DOAN
             grpJoinedCourses.BorderRadius = 15;
             grpJoinedCourses.Controls.Add(lvJoinedCourses);
             grpJoinedCourses.CustomBorderColor = Color.FromArgb(52, 152, 219);
-            grpJoinedCourses.CustomizableEdges = customizableEdges7;
+            grpJoinedCourses.CustomizableEdges = customizableEdges9;
             grpJoinedCourses.Dock = DockStyle.Left;
             grpJoinedCourses.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             grpJoinedCourses.ForeColor = Color.FromArgb(52, 73, 94);
             grpJoinedCourses.Location = new Point(15, 15);
             grpJoinedCourses.Name = "grpJoinedCourses";
             grpJoinedCourses.Padding = new Padding(10);
-            grpJoinedCourses.ShadowDecoration.CustomizableEdges = customizableEdges8;
+            grpJoinedCourses.ShadowDecoration.CustomizableEdges = customizableEdges10;
             grpJoinedCourses.ShadowDecoration.Enabled = true;
-            grpJoinedCourses.Size = new Size(1053, 672);
+            grpJoinedCourses.Size = new Size(1349, 672);
             grpJoinedCourses.TabIndex = 0;
             grpJoinedCourses.Text = "Các khóa học đã tham gia";
             grpJoinedCourses.Click += grpJoinedCourses_Click_1;
             // 
             // lvJoinedCourses
             // 
-            lvJoinedCourses.Dock = DockStyle.Fill;
+            lvJoinedCourses.Anchor = AnchorStyles.None;
             lvJoinedCourses.FullRowSelect = true;
             lvJoinedCourses.GridLines = true;
-            lvJoinedCourses.Location = new Point(10, 50);
+            lvJoinedCourses.Location = new Point(158, 50);
             lvJoinedCourses.MultiSelect = false;
             lvJoinedCourses.Name = "lvJoinedCourses";
             lvJoinedCourses.Size = new Size(1033, 612);
@@ -179,9 +200,9 @@ namespace APP_DOAN
             // cmsUserOptions
             // 
             cmsUserOptions.ImageScalingSize = new Size(20, 20);
-            cmsUserOptions.Items.AddRange(new ToolStripItem[] { profileToolStripMenuItem, messagesToolStripMenuItem, scheduleToolStripMenuItem, gradesToolStripMenuItem, changePasswordToolStripMenuItem, đăngKýMônHọcToolStripMenuItem });
+            cmsUserOptions.Items.AddRange(new ToolStripItem[] { profileToolStripMenuItem, scheduleToolStripMenuItem, gradesToolStripMenuItem, changePasswordToolStripMenuItem, đăngKýMônHọcToolStripMenuItem });
             cmsUserOptions.Name = "cmsUserOptions";
-            cmsUserOptions.Size = new Size(195, 148);
+            cmsUserOptions.Size = new Size(195, 124);
             cmsUserOptions.Opening += cmsUserOptions_Opening_1;
             // 
             // profileToolStripMenuItem
@@ -191,23 +212,19 @@ namespace APP_DOAN
             profileToolStripMenuItem.Text = "Hồ sơ";
             profileToolStripMenuItem.Click += profileToolStripMenuItem_Click;
             // 
-            // messagesToolStripMenuItem
-            // 
-            messagesToolStripMenuItem.Name = "messagesToolStripMenuItem";
-            messagesToolStripMenuItem.Size = new Size(194, 24);
-            messagesToolStripMenuItem.Text = "Tin nhắn";
-            // 
             // scheduleToolStripMenuItem
             // 
             scheduleToolStripMenuItem.Name = "scheduleToolStripMenuItem";
             scheduleToolStripMenuItem.Size = new Size(194, 24);
             scheduleToolStripMenuItem.Text = "Lịch học";
+            scheduleToolStripMenuItem.Click += scheduleToolStripMenuItem_Click_1;
             // 
             // gradesToolStripMenuItem
             // 
             gradesToolStripMenuItem.Name = "gradesToolStripMenuItem";
             gradesToolStripMenuItem.Size = new Size(194, 24);
             gradesToolStripMenuItem.Text = "Điểm";
+            gradesToolStripMenuItem.Click += gradesToolStripMenuItem_Click_1;
             // 
             // changePasswordToolStripMenuItem
             // 
@@ -225,16 +242,16 @@ namespace APP_DOAN
             // 
             // MainForm
             // 
-            ClientSize = new Size(1491, 781);
+            ClientSize = new Size(1774, 781);
             Controls.Add(panelMainContent);
             Controls.Add(panelTop);
             Controls.Add(panelLeft);
             Name = "MainForm";
             Text = "Trang chủ";
+            WindowState = FormWindowState.Maximized;
             FormClosing += MainForm_FormClosing;
             Load += MainForm_Load;
             panelLeft.ResumeLayout(false);
-            panelLeft.PerformLayout();
             panelTop.ResumeLayout(false);
             panelTop.PerformLayout();
             panelMainContent.ResumeLayout(false);
@@ -247,5 +264,6 @@ namespace APP_DOAN
         #endregion
 
         private ToolStripMenuItem đăngKýMônHọcToolStripMenuItem;
+        private Guna2Button guna2Button1;
     }
 }

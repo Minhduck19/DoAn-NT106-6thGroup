@@ -67,6 +67,7 @@
             lblLastMessage.Size = new Size(121, 19);
             lblLastMessage.TabIndex = 2;
             lblLastMessage.Text = "Tin nhắn cuối cùng...";
+            lblLastMessage.Click += lblLastMessage_Click;
             // 
             // lblTimestamp
             // 
@@ -117,6 +118,7 @@
             Margin = new Padding(3, 4, 3, 4);
             Name = "UC_UserContactItem";
             Size = new Size(285, 88);
+            Load += UC_UserContactItem_Load;
             MouseEnter += UC_UserContactItem_MouseEnter;
             MouseLeave += UC_UserContactItem_MouseLeave;
             ((System.ComponentModel.ISupportInitialize)picAvatar).EndInit();

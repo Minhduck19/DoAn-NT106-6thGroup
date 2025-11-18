@@ -32,22 +32,25 @@ namespace APP_DOAN
 
             if (isSender)
             {
-                // --- NẾU LÀ BẠN (Người gửi) ---
-                // Màu sắc
-                panelBubble.FillColor = Color.FromArgb(0, 118, 221); // Màu xanh
+                panelBubble.FillColor = Color.FromArgb(0, 118, 221);
                 lblMessage.ForeColor = Color.White;
-                // Neo bong bóng sang PHẢI
                 panelBubble.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+                int xPosition = this.Width - panelBubble.Width - 10;
+                panelBubble.Location = new Point(xPosition, 5);
             }
             else
             {
-                // --- NẾU LÀ HỌ (Người nhận) ---
-                // Màu sắc
-                panelBubble.FillColor = Color.FromArgb(230, 230, 230); // Màu xám
+                panelBubble.FillColor = Color.FromArgb(230, 230, 230);
                 lblMessage.ForeColor = Color.Black;
-                // Neo bong bóng sang TRÁI
                 panelBubble.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+                panelBubble.Location = new Point(10, 5);
             }
+
+        }
+
+        private void panelBubble_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }

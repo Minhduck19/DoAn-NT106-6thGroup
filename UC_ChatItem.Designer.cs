@@ -47,7 +47,7 @@
             panelBubble.ShadowDecoration.CustomizableEdges = customizableEdges2;
             panelBubble.Size = new Size(200, 62);
             panelBubble.TabIndex = 0;
-            
+            panelBubble.Paint += panelBubble_Paint;
             // 
             // lblMessage
             // 
