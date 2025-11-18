@@ -4,15 +4,18 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using APP_DOAN.GiaoDienChinh;
+using Firebase.Database;
+using Firebase.Database.Query;
 
 namespace APP_DOAN
 {
     public partial class MainForm : Form
     {
-        private readonly string _currentUserUid; 
-        private readonly string _currentUserName; 
-        private readonly string _loggedInEmail; 
-        private readonly string _idToken;       
+        private readonly string _currentUserUid;
+        private readonly string _currentUserName;
+        private readonly string _loggedInEmail;
+        private readonly string _idToken;
+        private FirebaseClient _firebaseClient;
 
         private bool isLoggingOut = false;
         private List<Course> _allCourses = new();
@@ -24,24 +27,22 @@ namespace APP_DOAN
             _currentUserName = hoTen;
             _loggedInEmail = email;
             _idToken = token;
+
+            //Tạo FireBase client với token xác thực
+            _firebaseClient = new FirebaseClient(
+                "https://nt106-minhduc-default-rtdb.firebaseio.com/",
+                new FirebaseOptions
+                {
+                    AuthTokenAsyncFactory = () => Task.FromResult(token)
+                }
+            );
         }
 
-        private void MainForm_Load(object sender, EventArgs e)
+        private async void MainForm_Load(object sender, EventArgs e)
         {
             lblWelcome.Text = $"Chào mừng,\n{_currentUserName} (Sinh viên)";
-
-
-            try
-            {
-                if (dgvAvailableCourses.Columns.Contains("colJoin"))
-                {
-                    dgvAvailableCourses.Columns["colJoin"].Visible = true;
-                }
-            }
-            catch { /* ignore */ }
-
             SetupJoinedListViewColumns();
-            LoadClassData();
+            await LoadClassDataFromFirebase();
         }
 
 
@@ -52,21 +53,62 @@ namespace APP_DOAN
             lvJoinedCourses.Columns.Add("Giảng viên", 200);
         }
 
-        private void LoadClassData()
+        // Tải dữ liệu lớp học từ Firebase
+        private async Task LoadClassDataFromFirebase()
         {
-            _allCourses = new List<Course>
+            try
             {
-                new Course("CS101", "Nhập môn Lập trình", "Nguyễn Văn A", true),
-                new Course("DB202", "Cơ sở dữ liệu", "Trần Thị B", true),
-            };
-            PopulateJoinedCourses();
-            PopulateAvailableCourses();
+                var firebaseCourses = await _firebaseClient
+                    .Child("Courses")
+                    .OnceAsync<Course>();
+
+                _allCourses.Clear();
+
+                foreach (var c in firebaseCourses)
+                {
+                    bool isJoined = false;
+
+                    // 🔍 Kiểm tra user có tham gia lớp hay chưa
+                    if (c.Object != null && c.Object.Students != null)
+                    {
+                        if (c.Object.Students.Contains(_currentUserUid))
+                            isJoined = true;
+                    }
+
+                    _allCourses.Add(new Course(
+                        c.Key,
+                        c.Object.Name,
+                        c.Object.Instructor,
+                        isJoined
+                    ));
+                }
+
+                PopulateJoinedCourses();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Không thể tải dữ liệu từ Firebase!\n\n{ex.Message}",
+                    "Lỗi",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
         }
+
 
         private void PopulateJoinedCourses()
         {
             lvJoinedCourses.Items.Clear();
-            var joined = _allCourses.Where(c => c.IsJoined);
+
+            var joined = _allCourses.Where(c => c.IsJoined).ToList();
+
+            if (joined.Count == 0)
+            {
+                var item = new ListViewItem(" ");
+                item.SubItems.Add("-");
+                lvJoinedCourses.Items.Add(item);
+                return;
+            }
+
             foreach (var c in joined)
             {
                 var item = new ListViewItem(c.Name);
@@ -76,44 +118,6 @@ namespace APP_DOAN
             }
         }
 
-        private void PopulateAvailableCourses()
-        {
-            dgvAvailableCourses.Rows.Clear();
-            var available = _allCourses.Where(c => !c.IsJoined).ToList();
-            foreach (var c in available)
-            {
-                dgvAvailableCourses.Rows.Add(c.Id, c.Name, c.Instructor);
-            }
-        }
-
-        private void dgvAvailableCourses_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex < 0) return;
-            var grid = (DataGridView)sender;
-            var column = grid.Columns[e.ColumnIndex];
-            if (column.Name == "colJoin")
-            {
-                var idObj = grid.Rows[e.RowIndex].Cells["colCourseId"].Value;
-                if (idObj == null) return;
-                string courseId = idObj.ToString();
-                JoinCourse(courseId);
-            }
-        }
-
-        private void JoinCourse(string courseId)
-        {
-
-            var course = _allCourses.FirstOrDefault(c => c.Id == courseId);
-            if (course == null) return;
-
-            var confirm = MessageBox.Show($"Bạn có muốn tham gia \"{course.Name}\"?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            if (confirm != DialogResult.Yes) return;
-
-            course.IsJoined = true;
-            PopulateJoinedCourses();
-            PopulateAvailableCourses();
-            MessageBox.Show($"Bạn đã tham gia khóa học: {course.Name}", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
 
         private void lblWelcome_Click_1(object sender, EventArgs e)
         {
@@ -123,7 +127,7 @@ namespace APP_DOAN
         private void profileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.Hide();
-                        Student_Information profileForm = new Student_Information(this._loggedInEmail, "Student");
+            Student_Information profileForm = new Student_Information(this._loggedInEmail, "Student");
             profileForm.ShowDialog();
             this.Show();
         }
@@ -182,7 +186,7 @@ namespace APP_DOAN
 
         private void lvJoinedCourses_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (lvJoinedCourses.SelectedItems.Count == 0) return;
+            if (lvJoinedCourses.SelectedItems[0].Text == " ") return;
             var id = lvJoinedCourses.SelectedItems[0].Tag.ToString();
             var course = _allCourses.FirstOrDefault(c => c.Id == id);
             if (course == null) return;
@@ -193,6 +197,31 @@ namespace APP_DOAN
         private void cmsUserOptions_Opening(object sender, System.ComponentModel.CancelEventArgs e) { }
         private void grpJoinedCourses_Click(object sender, EventArgs e) { }
         private void panelLeft_Paint(object sender, PaintEventArgs e) { }
+
+        //Mở đăng ký môn học từ điều khiển
+        private void đăngKýMônHọcToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            DangKyMonHoc frm = new DangKyMonHoc(_currentUserUid, _idToken);
+            frm.ShowDialog();
+            this.Show();
+            _ = LoadClassDataFromFirebase();
+        }
+
+        private void lblWelcome_Click(object sender, EventArgs e)
+        {
+            cmsUserOptions.Show(lblWelcome, new Point(0, lblWelcome.Height));
+        }
+
+        private void cmsUserOptions_Opening_1(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+
+        }
+
+        private void grpJoinedCourses_Click_1(object sender, EventArgs e)
+        {
+
+        }
     }
 
     public class Course
@@ -201,6 +230,9 @@ namespace APP_DOAN
         public string Name { get; set; }
         public string Instructor { get; set; }
         public bool IsJoined { get; set; }
+        public List<string> Students { get; set; } = new List<string>();
+
+        public Course() { }
 
         public Course(string id, string name, string instructor, bool joined)
         {
