@@ -222,14 +222,15 @@ namespace APP_DOAN
             this.Show();
         }
 
-        private void llabelForgotPass_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private void guna2HtmlLabel1_Click(object sender, EventArgs e)
         {
             this.Hide();
-            using (ForgotPasswordForm forgotPasswordForm = new ForgotPasswordForm())
+            using (ForgotPasswordForm forgotpw = new ForgotPasswordForm())
             {
-                forgotPasswordForm.ShowDialog();
+                forgotpw.ShowDialog();
             }
             this.Show();
+
         }
     }
 }
