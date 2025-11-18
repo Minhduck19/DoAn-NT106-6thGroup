@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Diagnostics;
+using System.Drawing;
 using System.Net.Http;
-using System.Net.Mail;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -11,7 +10,6 @@ namespace APP_DOAN
 {
     public partial class ForgotPasswordForm : Form
     {
-        // Replace with your Firebase Web API key
         private readonly string webApiKey = "AIzaSyA7fh7FLwmHFHrwchTX1gcATk1ulr45QLs";
 
         public ForgotPasswordForm()
@@ -19,93 +17,115 @@ namespace APP_DOAN
             InitializeComponent();
         }
 
-        private async void BtnSend_Click(object sender, EventArgs e)
+
+
+        private void CenterPanel()
         {
-            string email = txtEmail.Text?.Trim() ?? string.Empty;
-            if (!IsValidEmail(email))
-            {
-                MessageBox.Show("Email không hợp lệ.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            btnSend.Enabled = false;
-            Cursor = Cursors.WaitCursor;
-
-            try
-            {
-                bool ok = await SendPasswordResetAsync(email);
-                if (ok)
-                {
-                    MessageBox.Show("Đã gửi email đặt lại mật khẩu. Vui lòng kiểm tra hộp thư.", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    Close();
-                }
-                else
-                {
-                    MessageBox.Show("Không thể gửi email đặt lại mật khẩu. Vui lòng thử lại sau.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            finally
-            {
-                btnSend.Enabled = true;
-                Cursor = Cursors.Default;
-            }
-        }
-
-        private void BtnCancel_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
-
-        private async Task<bool> SendPasswordResetAsync(string email)
-        {
-            using var http = new HttpClient();
-            var payload = new { requestType = "PASSWORD_RESET", email = email };
-            var json = JsonSerializer.Serialize(payload);
-
-            HttpResponseMessage response;
-            try
-            {
-                response = await http.PostAsync(
-                    $"https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key={webApiKey}",
-                    new StringContent(json, Encoding.UTF8, "application/json"));
-            }
-            catch (HttpRequestException httpEx)
-            {
-                Debug.WriteLine($"HTTP error sending password reset: {httpEx}");
-                return false;
-            }
-
-            string body = await response.Content.ReadAsStringAsync();
-            if (response.IsSuccessStatusCode) return true;
-
-            Debug.WriteLine($"Password reset error response: {body}");
-            try
-            {
-                using var doc = JsonDocument.Parse(body);
-                if (doc.RootElement.TryGetProperty("error", out var err) &&
-                    err.TryGetProperty("message", out var msg))
-                {
-                    MessageBox.Show(msg.GetString(), "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                }
-            }
-            catch (JsonException) { /* ignore parse errors */ }
-
-            return false;
-        }
-
-        private static bool IsValidEmail(string email)
-        {
-            try { _ = new MailAddress(email); return true; }
-            catch { return false; }
+            // Code căn giữa
+            panelMain.Location = new Point(
+                (this.ClientSize.Width - panelMain.Width) / 2,
+                (this.ClientSize.Height - panelMain.Height) / 2
+            );
         }
 
         private void ForgotPasswordForm_Load(object sender, EventArgs e)
         {
+            CenterPanel();
+            txtEmail.Focus();
+        }
 
+        private void ForgotPasswordForm_Resize(object sender, EventArgs e)
+        {
+            CenterPanel();
+        }
+
+        // --- CÁC HÀM XỬ LÝ NÚT BẤM ---
+
+        private async void btnSend_Click(object sender, EventArgs e)
+        {
+            string email = txtEmail.Text.Trim();
+            if (string.IsNullOrEmpty(email))
+            {
+                MessageBox.Show("Vui lòng nhập email của bạn.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            Cursor = Cursors.WaitCursor;
+            ToggleUi(false);
+
+            try
+            {
+                // Gọi hàm gửi link reset của Firebase
+                bool success = await SendPasswordResetEmailAsync(email);
+
+                if (success)
+                {
+                    MessageBox.Show("Một link đặt lại mật khẩu đã được gửi đến email của bạn. Vui lòng kiểm tra hộp thư (kể cả Spam).",
+                                    "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    this.Close(); // Đóng form sau khi thành công
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Đã xảy ra lỗi: " + ex.Message);
+            }
+            finally
+            {
+                Cursor = Cursors.Default;
+                ToggleUi(true);
+            }
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            this.Close(); // Đóng form
+        }
+
+        private void ToggleUi(bool enabled)
+        {
+            txtEmail.Enabled = enabled;
+            btnSend.Enabled = enabled;
+            btnCancel.Enabled = enabled;
+        }
+
+
+
+        private async Task<bool> SendPasswordResetEmailAsync(string email)
+        {
+            using var httpClient = new HttpClient();
+            var payload = new { requestType = "PASSWORD_RESET", email = email };
+            var json = JsonSerializer.Serialize(payload);
+
+            var response = await httpClient.PostAsync(
+                $"https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key={webApiKey}",
+                new StringContent(json, Encoding.UTF8, "application/json")
+            );
+
+            if (response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+            else
+            {
+                // Phân tích lỗi từ Firebase
+                string errorBody = await response.Content.ReadAsStringAsync();
+                string errorMessage = "Một lỗi không xác định đã xảy ra.";
+                try
+                {
+                    using var doc = JsonDocument.Parse(errorBody);
+                    if (doc.RootElement.TryGetProperty("error", out var err) && err.TryGetProperty("message", out var msg))
+                    {
+                        if (msg.GetString() == "EMAIL_NOT_FOUND")
+                            errorMessage = "Email này không tồn tại trong hệ thống.";
+                        else
+                            errorMessage = msg.GetString();
+                    }
+                }
+                catch { }
+
+                MessageBox.Show(errorMessage, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
         }
     }
 }
