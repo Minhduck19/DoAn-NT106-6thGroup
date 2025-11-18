@@ -146,6 +146,7 @@ namespace APP_DOAN
             }
         }
 
+<<<<<<< HEAD
         private void PopulateAvailableCourses()
         {
             dgvAvailableCourses.Rows.Clear();
@@ -157,6 +158,10 @@ namespace APP_DOAN
                 dgvAvailableCourses.Rows.Add(c.Id, c.Name, c.Instructor);
             }
         }
+=======
+
+
+>>>>>>> origin/develop
 
         private void dgvAvailableCourses_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -218,11 +223,14 @@ namespace APP_DOAN
             
         }
 
+<<<<<<< HEAD
         private void messagesToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
             MessageBox.Show("Tin nhắn (chức năng mẫu).", "Tin nhắn", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
+=======
+>>>>>>> origin/develop
         private void scheduleToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
             MessageBox.Show("Lịch học (chức năng mẫu).", "Lịch học", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -303,7 +311,30 @@ namespace APP_DOAN
             }
         }
 
+<<<<<<< HEAD
         private void lvJoinedCourses_SelectedIndexChanged_1(object sender, EventArgs e)
+=======
+        private void cmsUserOptions_Opening(object sender, System.ComponentModel.CancelEventArgs e) { }
+        private void grpJoinedCourses_Click(object sender, EventArgs e) { }
+        private void panelLeft_Paint(object sender, PaintEventArgs e) { }
+
+
+        private void đăngKýMônHọcToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            DangKyMonHoc frm = new DangKyMonHoc(_currentUserUid, _idToken);
+            frm.ShowDialog();
+            this.Show();
+            _ = LoadClassDataFromFirebase();
+        }
+
+        private void lblWelcome_Click(object sender, EventArgs e)
+        {
+            cmsUserOptions.Show(lblWelcome, new Point(0, lblWelcome.Height));
+        }
+
+        private void cmsUserOptions_Opening_1(object sender, System.ComponentModel.CancelEventArgs e)
+>>>>>>> origin/develop
         {
 
         }
@@ -317,6 +348,18 @@ namespace APP_DOAN
         {
 
         }
+
+        private void guna2Button1_Click(object sender, EventArgs e)
+        {
+            
+            frmMainChat chatLobby = new frmMainChat(
+         _currentUserUid,
+         _currentUserName,
+         this._idToken
+        );
+
+            chatLobby.Show();
+        }        
     }
 
 

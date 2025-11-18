@@ -213,6 +213,19 @@ namespace APP_DOAN
             this.Show();
         }
 
+<<<<<<< HEAD
         private void LoginForm_Load(object sender, EventArgs e) { }
+=======
+        private void guna2HtmlLabel1_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            using (ForgotPasswordForm forgotpw = new ForgotPasswordForm())
+            {
+                forgotpw.ShowDialog();
+            }
+            this.Show();
+
+        }
+>>>>>>> origin/develop
     }
 }

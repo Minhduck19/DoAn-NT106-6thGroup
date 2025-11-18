@@ -36,6 +36,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+<<<<<<< HEAD
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LoginForm));
             label1 = new Label();
             label2 = new Label();
@@ -44,10 +45,34 @@
             btnLogin = new Button();
             btnCancel = new Button();
             linkRegister = new LinkLabel();
+=======
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges9 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges10 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges1 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges2 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges3 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges4 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges5 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges6 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges7 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges8 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            pnlLoginCard = new Guna2Panel();
+            guna2HtmlLabel1 = new Guna2HtmlLabel();
+            lblMainTitle = new Guna2HtmlLabel();
+            txtPassword = new Guna2TextBox();
+            txtEmail = new Guna2TextBox();
+            btnLogin = new Guna2Button();
+            btnCancel = new Guna2Button();
+            linkRegister = new Guna2HtmlLabel();
+            label1 = new Guna2HtmlLabel();
+            label2 = new Guna2HtmlLabel();
+            pnlLoginCard.SuspendLayout();
+>>>>>>> origin/develop
             SuspendLayout();
             // 
             // label1
             // 
+<<<<<<< HEAD
             label1.AutoSize = true;
             label1.BackColor = Color.Transparent;
             label1.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
@@ -59,6 +84,42 @@
             label1.Text = "Email:";
             // 
             // label2
+=======
+            pnlLoginCard.Anchor = AnchorStyles.None;
+            pnlLoginCard.BackColor = Color.Transparent;
+            pnlLoginCard.BorderColor = Color.FromArgb(224, 247, 250);
+            pnlLoginCard.BorderRadius = 25;
+            pnlLoginCard.Controls.Add(guna2HtmlLabel1);
+            pnlLoginCard.Controls.Add(lblMainTitle);
+            pnlLoginCard.Controls.Add(txtPassword);
+            pnlLoginCard.Controls.Add(txtEmail);
+            pnlLoginCard.Controls.Add(btnLogin);
+            pnlLoginCard.Controls.Add(btnCancel);
+            pnlLoginCard.Controls.Add(linkRegister);
+            pnlLoginCard.CustomizableEdges = customizableEdges9;
+            pnlLoginCard.FillColor = Color.White;
+            pnlLoginCard.Location = new Point(703, 159);
+            pnlLoginCard.Name = "pnlLoginCard";
+            pnlLoginCard.ShadowDecoration.CustomizableEdges = customizableEdges10;
+            pnlLoginCard.ShadowDecoration.Enabled = true;
+            pnlLoginCard.Size = new Size(354, 431);
+            pnlLoginCard.TabIndex = 0;
+            // 
+            // guna2HtmlLabel1
+            // 
+            guna2HtmlLabel1.BackColor = Color.Transparent;
+            guna2HtmlLabel1.Cursor = Cursors.Hand;
+            guna2HtmlLabel1.Font = new Font("Segoe UI", 10F);
+            guna2HtmlLabel1.ForeColor = Color.FromArgb(52, 152, 219);
+            guna2HtmlLabel1.Location = new Point(60, 391);
+            guna2HtmlLabel1.Name = "guna2HtmlLabel1";
+            guna2HtmlLabel1.Size = new Size(130, 25);
+            guna2HtmlLabel1.TabIndex = 6;
+            guna2HtmlLabel1.Text = "<a href='#'>Quên mật khẩu?</a>";
+            guna2HtmlLabel1.Click += guna2HtmlLabel1_Click;
+            // 
+            // lblMainTitle
+>>>>>>> origin/develop
             // 
             label2.AutoSize = true;
             label2.BackColor = Color.Transparent;
@@ -142,5 +203,7 @@
         }
 
         #endregion
+
+        private Guna2HtmlLabel guna2HtmlLabel1;
     }
 }

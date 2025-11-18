@@ -1,4 +1,5 @@
-﻿using System;
+﻿using APP_DOAN.GiaoDienChinh;
+using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
@@ -147,6 +148,14 @@ namespace APP_DOAN
         private void lvMyCourses_SelectedIndexChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void lblWelcome_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            Teacher_Information profileForm = new Teacher_Information(loggedInEmail, idToken);
+            profileForm.ShowDialog();
+            this.Show();
         }
     }
 }
