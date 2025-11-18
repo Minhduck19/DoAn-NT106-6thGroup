@@ -139,6 +139,7 @@ namespace APP_DOAN.GiaoDienChinh
             // 
             // DangKyMonHoc
             // 
+            AutoSize = true;
             BackColor = Color.FromArgb(232, 241, 250);
             ClientSize = new Size(1164, 744);
             Controls.Add(btnThoat);
