@@ -225,6 +225,7 @@ namespace APP_DOAN
             // 
             // MainForm
             // 
+            AutoSize = true;
             ClientSize = new Size(1491, 781);
             Controls.Add(panelMainContent);
             Controls.Add(panelTop);
