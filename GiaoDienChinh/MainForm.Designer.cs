@@ -1,21 +1,23 @@
-﻿namespace APP_DOAN
+﻿using APP_DOAN.GiaoDienChinh;
+using Guna.UI2.WinForms;
+
+namespace APP_DOAN
 {
     partial class MainForm
     {
         private System.ComponentModel.IContainer components = null;
 
-        private System.Windows.Forms.Panel panelLeft;
-        private System.Windows.Forms.Panel panelTop;
-        private System.Windows.Forms.Panel panelMainContent;
-        private System.Windows.Forms.Label lblWelcome;
-        private System.Windows.Forms.Button btnLogout;
-        private System.Windows.Forms.Label lblTitle;
+        private Guna2Panel panelLeft;
+        private Guna2Panel panelTop;
+        private Guna2Panel panelMainContent;
+        private Guna2HtmlLabel lblWelcome;
+        private Guna2Button btnLogout;
+        private Guna2HtmlLabel lblTitle;
 
-        private System.Windows.Forms.GroupBox grpJoinedCourses;
-        private System.Windows.Forms.ListView lvJoinedCourses;
+        private Guna2GroupBox grpJoinedCourses;
 
-        private System.Windows.Forms.GroupBox grpAvailableCourses;
-        private System.Windows.Forms.DataGridView dgvAvailableCourses;
+        // Giữ lại ListView và DataGridView (chỉ đổi style)
+        private ListView lvJoinedCourses;
 
         private System.Windows.Forms.ContextMenuStrip cmsUserOptions;
         private System.Windows.Forms.ToolStripMenuItem profileToolStripMenuItem;
@@ -24,29 +26,27 @@
         private System.Windows.Forms.ToolStripMenuItem gradesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem changePasswordToolStripMenuItem;
 
-        private System.Windows.Forms.DataGridViewTextBoxColumn colCourseId;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colCourseName;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colInstructor;
-        private System.Windows.Forms.DataGridViewButtonColumn colJoin;
-
         #region Windows Form Designer generated code
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            panelLeft = new Panel();
-            btnLogout = new Button();
-            lblWelcome = new Label();
-            panelTop = new Panel();
-            lblTitle = new Label();
-            panelMainContent = new Panel();
-            grpAvailableCourses = new GroupBox();
-            dgvAvailableCourses = new DataGridView();
-            colCourseId = new DataGridViewTextBoxColumn();
-            colCourseName = new DataGridViewTextBoxColumn();
-            colInstructor = new DataGridViewTextBoxColumn();
-            colJoin = new DataGridViewButtonColumn();
-            grpJoinedCourses = new GroupBox();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges3 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges4 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges1 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges2 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges5 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges6 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges9 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges10 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges7 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges8 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            panelLeft = new Guna2Panel();
+            btnLogout = new Guna2Button();
+            lblWelcome = new Guna2HtmlLabel();
+            panelTop = new Guna2Panel();
+            lblTitle = new Guna2HtmlLabel();
+            panelMainContent = new Guna2Panel();
+            grpJoinedCourses = new Guna2GroupBox();
             lvJoinedCourses = new ListView();
             cmsUserOptions = new ContextMenuStrip(components);
             profileToolStripMenuItem = new ToolStripMenuItem();
@@ -54,219 +54,178 @@
             scheduleToolStripMenuItem = new ToolStripMenuItem();
             gradesToolStripMenuItem = new ToolStripMenuItem();
             changePasswordToolStripMenuItem = new ToolStripMenuItem();
+            đăngKýMônHọcToolStripMenuItem = new ToolStripMenuItem();
             panelLeft.SuspendLayout();
             panelTop.SuspendLayout();
             panelMainContent.SuspendLayout();
-            grpAvailableCourses.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dgvAvailableCourses).BeginInit();
             grpJoinedCourses.SuspendLayout();
             cmsUserOptions.SuspendLayout();
             SuspendLayout();
             // 
             // panelLeft
             // 
-            panelLeft.BackColor = SystemColors.ControlDark;
-            panelLeft.BackgroundImage = (Image)resources.GetObject("panelLeft.BackgroundImage");
-            panelLeft.BackgroundImageLayout = ImageLayout.Stretch;
+            panelLeft.BackColor = Color.FromArgb(52, 152, 219);
             panelLeft.Controls.Add(btnLogout);
             panelLeft.Controls.Add(lblWelcome);
+            panelLeft.CustomizableEdges = customizableEdges3;
             panelLeft.Dock = DockStyle.Left;
             panelLeft.Location = new Point(0, 0);
             panelLeft.Name = "panelLeft";
-            panelLeft.Size = new Size(200, 747);
+            panelLeft.ShadowDecoration.CustomizableEdges = customizableEdges4;
+            panelLeft.ShadowDecoration.Depth = 10;
+            panelLeft.ShadowDecoration.Enabled = true;
+            panelLeft.Size = new Size(410, 781);
             panelLeft.TabIndex = 2;
             // 
             // btnLogout
             // 
-            btnLogout.BackgroundImage = (Image)resources.GetObject("btnLogout.BackgroundImage");
-            btnLogout.BackgroundImageLayout = ImageLayout.Center;
-            btnLogout.Dock = DockStyle.Bottom;
-            btnLogout.Font = new Font("Segoe UI", 10.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnLogout.Location = new Point(0, 707);
+            btnLogout.BackColor = Color.Transparent;
+            btnLogout.BorderRadius = 15;
+            btnLogout.CustomizableEdges = customizableEdges1;
+            btnLogout.FillColor = Color.FromArgb(255, 255, 255);
+            btnLogout.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            btnLogout.ForeColor = Color.Black;
+            btnLogout.Location = new Point(83, 683);
             btnLogout.Name = "btnLogout";
-            btnLogout.Size = new Size(200, 40);
+            btnLogout.ShadowDecoration.CustomizableEdges = customizableEdges2;
+            btnLogout.Size = new Size(200, 45);
             btnLogout.TabIndex = 0;
             btnLogout.Text = "Đăng xuất";
-            btnLogout.UseVisualStyleBackColor = true;
             btnLogout.Click += btnLogout_Click;
             // 
             // lblWelcome
             // 
             lblWelcome.BackColor = Color.Transparent;
             lblWelcome.Cursor = Cursors.Hand;
-            lblWelcome.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblWelcome.ForeColor = Color.White;
-            lblWelcome.Location = new Point(12, 20);
+            lblWelcome.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
+            lblWelcome.ForeColor = Color.FromArgb(236, 240, 241);
+            lblWelcome.Location = new Point(20, 30);
             lblWelcome.Name = "lblWelcome";
-            lblWelcome.Size = new Size(176, 26);
+            lblWelcome.Size = new Size(133, 33);
             lblWelcome.TabIndex = 1;
             lblWelcome.Text = "Chào, [User]";
-            lblWelcome.Click += lblWelcome_Click_1;
+            lblWelcome.Click += lblWelcome_Click;
             // 
             // panelTop
             // 
-            panelTop.BackColor = SystemColors.ControlLightLight;
+            panelTop.BackColor = Color.White;
             panelTop.Controls.Add(lblTitle);
+            panelTop.CustomizableEdges = customizableEdges5;
             panelTop.Dock = DockStyle.Top;
-            panelTop.Location = new Point(200, 0);
+            panelTop.Location = new Point(410, 0);
             panelTop.Name = "panelTop";
-            panelTop.Size = new Size(1227, 60);
+            panelTop.ShadowDecoration.CustomizableEdges = customizableEdges6;
+            panelTop.Size = new Size(1081, 79);
             panelTop.TabIndex = 1;
             // 
             // lblTitle
             // 
-            lblTitle.AutoSize = true;
-            lblTitle.Font = new Font("Microsoft Sans Serif", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblTitle.Location = new Point(150, 15);
+            lblTitle.BackColor = Color.Transparent;
+            lblTitle.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
+            lblTitle.ForeColor = Color.FromArgb(52, 152, 219);
+            lblTitle.Location = new Point(30, 20);
             lblTitle.Name = "lblTitle";
-            lblTitle.Size = new Size(264, 31);
+            lblTitle.Size = new Size(293, 43);
             lblTitle.TabIndex = 0;
-            lblTitle.Text = "Danh sách Lớp học";
+            lblTitle.Text = "Dashboard | Lớp học";
             // 
             // panelMainContent
             // 
-            panelMainContent.Controls.Add(grpAvailableCourses);
+            panelMainContent.BackColor = Color.FromArgb(236, 240, 241);
             panelMainContent.Controls.Add(grpJoinedCourses);
+            panelMainContent.CustomizableEdges = customizableEdges9;
             panelMainContent.Dock = DockStyle.Fill;
-            panelMainContent.Location = new Point(200, 60);
+            panelMainContent.Location = new Point(410, 79);
             panelMainContent.Name = "panelMainContent";
-            panelMainContent.Padding = new Padding(10);
-            panelMainContent.Size = new Size(1227, 687);
+            panelMainContent.Padding = new Padding(15);
+            panelMainContent.ShadowDecoration.CustomizableEdges = customizableEdges10;
+            panelMainContent.Size = new Size(1081, 702);
             panelMainContent.TabIndex = 0;
-            // 
-            // grpAvailableCourses
-            // 
-            grpAvailableCourses.Controls.Add(dgvAvailableCourses);
-            grpAvailableCourses.Dock = DockStyle.Fill;
-            grpAvailableCourses.Location = new Point(610, 10);
-            grpAvailableCourses.Name = "grpAvailableCourses";
-            grpAvailableCourses.Padding = new Padding(10);
-            grpAvailableCourses.Size = new Size(607, 667);
-            grpAvailableCourses.TabIndex = 1;
-            grpAvailableCourses.TabStop = false;
-            grpAvailableCourses.Text = "Khóa học khả dụng (chưa tham gia)";
-            // 
-            // dgvAvailableCourses
-            // 
-            dgvAvailableCourses.AllowUserToAddRows = false;
-            dgvAvailableCourses.AllowUserToDeleteRows = false;
-            dgvAvailableCourses.AllowUserToResizeRows = false;
-            dgvAvailableCourses.BackgroundColor = SystemColors.Window;
-            dgvAvailableCourses.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvAvailableCourses.Columns.AddRange(new DataGridViewColumn[] { colCourseId, colCourseName, colInstructor, colJoin });
-            dgvAvailableCourses.Dock = DockStyle.Fill;
-            dgvAvailableCourses.Location = new Point(10, 30);
-            dgvAvailableCourses.MultiSelect = false;
-            dgvAvailableCourses.Name = "dgvAvailableCourses";
-            dgvAvailableCourses.RowHeadersVisible = false;
-            dgvAvailableCourses.RowHeadersWidth = 51;
-            dgvAvailableCourses.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvAvailableCourses.Size = new Size(587, 627);
-            dgvAvailableCourses.TabIndex = 0;
-            dgvAvailableCourses.CellContentClick += dgvAvailableCourses_CellContentClick;
-            // 
-            // colCourseId
-            // 
-            colCourseId.HeaderText = "Id";
-            colCourseId.MinimumWidth = 6;
-            colCourseId.Name = "colCourseId";
-            colCourseId.Visible = false;
-            colCourseId.Width = 50;
-            // 
-            // colCourseName
-            // 
-            colCourseName.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            colCourseName.HeaderText = "Tên môn";
-            colCourseName.MinimumWidth = 6;
-            colCourseName.Name = "colCourseName";
-            // 
-            // colInstructor
-            // 
-            colInstructor.HeaderText = "Giảng viên";
-            colInstructor.MinimumWidth = 6;
-            colInstructor.Name = "colInstructor";
-            colInstructor.Width = 200;
-            // 
-            // colJoin
-            // 
-            colJoin.HeaderText = "";
-            colJoin.MinimumWidth = 6;
-            colJoin.Name = "colJoin";
-            colJoin.Text = "Tham gia";
-            colJoin.UseColumnTextForButtonValue = true;
-            colJoin.Width = 90;
             // 
             // grpJoinedCourses
             // 
+            grpJoinedCourses.BackColor = Color.Transparent;
+            grpJoinedCourses.BorderRadius = 15;
             grpJoinedCourses.Controls.Add(lvJoinedCourses);
+            grpJoinedCourses.CustomBorderColor = Color.FromArgb(52, 152, 219);
+            grpJoinedCourses.CustomizableEdges = customizableEdges7;
             grpJoinedCourses.Dock = DockStyle.Left;
-            grpJoinedCourses.Location = new Point(10, 10);
+            grpJoinedCourses.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            grpJoinedCourses.ForeColor = Color.FromArgb(52, 73, 94);
+            grpJoinedCourses.Location = new Point(15, 15);
             grpJoinedCourses.Name = "grpJoinedCourses";
             grpJoinedCourses.Padding = new Padding(10);
-            grpJoinedCourses.Size = new Size(600, 667);
+            grpJoinedCourses.ShadowDecoration.CustomizableEdges = customizableEdges8;
+            grpJoinedCourses.ShadowDecoration.Enabled = true;
+            grpJoinedCourses.Size = new Size(1053, 672);
             grpJoinedCourses.TabIndex = 0;
-            grpJoinedCourses.TabStop = false;
             grpJoinedCourses.Text = "Các khóa học đã tham gia";
+            grpJoinedCourses.Click += grpJoinedCourses_Click_1;
             // 
             // lvJoinedCourses
             // 
             lvJoinedCourses.Dock = DockStyle.Fill;
             lvJoinedCourses.FullRowSelect = true;
             lvJoinedCourses.GridLines = true;
-            lvJoinedCourses.Location = new Point(10, 30);
+            lvJoinedCourses.Location = new Point(10, 50);
             lvJoinedCourses.MultiSelect = false;
             lvJoinedCourses.Name = "lvJoinedCourses";
-            lvJoinedCourses.Size = new Size(580, 627);
+            lvJoinedCourses.Size = new Size(1033, 612);
             lvJoinedCourses.TabIndex = 0;
             lvJoinedCourses.UseCompatibleStateImageBehavior = false;
             lvJoinedCourses.View = View.Details;
-            lvJoinedCourses.SelectedIndexChanged += lvJoinedCourses_SelectedIndexChanged_2;
+            lvJoinedCourses.SelectedIndexChanged += lvJoinedCourses_SelectedIndexChanged;
             // 
             // cmsUserOptions
             // 
             cmsUserOptions.ImageScalingSize = new Size(20, 20);
-            cmsUserOptions.Items.AddRange(new ToolStripItem[] { profileToolStripMenuItem, messagesToolStripMenuItem, scheduleToolStripMenuItem, gradesToolStripMenuItem, changePasswordToolStripMenuItem });
+            cmsUserOptions.Items.AddRange(new ToolStripItem[] { profileToolStripMenuItem, messagesToolStripMenuItem, scheduleToolStripMenuItem, gradesToolStripMenuItem, changePasswordToolStripMenuItem, đăngKýMônHọcToolStripMenuItem });
             cmsUserOptions.Name = "cmsUserOptions";
-            cmsUserOptions.Size = new Size(211, 152);
+            cmsUserOptions.Size = new Size(195, 148);
+            cmsUserOptions.Opening += cmsUserOptions_Opening_1;
             // 
             // profileToolStripMenuItem
             // 
             profileToolStripMenuItem.Name = "profileToolStripMenuItem";
-            profileToolStripMenuItem.Size = new Size(210, 24);
+            profileToolStripMenuItem.Size = new Size(194, 24);
             profileToolStripMenuItem.Text = "Hồ sơ";
-            profileToolStripMenuItem.Click += profileToolStripMenuItem_Click_1;
+            profileToolStripMenuItem.Click += profileToolStripMenuItem_Click;
             // 
             // messagesToolStripMenuItem
             // 
             messagesToolStripMenuItem.Name = "messagesToolStripMenuItem";
-            messagesToolStripMenuItem.Size = new Size(210, 24);
+            messagesToolStripMenuItem.Size = new Size(194, 24);
             messagesToolStripMenuItem.Text = "Tin nhắn";
-            messagesToolStripMenuItem.Click += messagesToolStripMenuItem_Click_1;
             // 
             // scheduleToolStripMenuItem
             // 
             scheduleToolStripMenuItem.Name = "scheduleToolStripMenuItem";
-            scheduleToolStripMenuItem.Size = new Size(210, 24);
+            scheduleToolStripMenuItem.Size = new Size(194, 24);
             scheduleToolStripMenuItem.Text = "Lịch học";
-            scheduleToolStripMenuItem.Click += scheduleToolStripMenuItem_Click_1;
             // 
             // gradesToolStripMenuItem
             // 
             gradesToolStripMenuItem.Name = "gradesToolStripMenuItem";
-            gradesToolStripMenuItem.Size = new Size(210, 24);
+            gradesToolStripMenuItem.Size = new Size(194, 24);
             gradesToolStripMenuItem.Text = "Điểm";
-            gradesToolStripMenuItem.Click += gradesToolStripMenuItem_Click_1;
             // 
             // changePasswordToolStripMenuItem
             // 
             changePasswordToolStripMenuItem.Name = "changePasswordToolStripMenuItem";
-            changePasswordToolStripMenuItem.Size = new Size(210, 24);
+            changePasswordToolStripMenuItem.Size = new Size(194, 24);
             changePasswordToolStripMenuItem.Text = "Đổi mật khẩu";
             changePasswordToolStripMenuItem.Click += changePasswordToolStripMenuItem_Click;
             // 
+            // đăngKýMônHọcToolStripMenuItem
+            // 
+            đăngKýMônHọcToolStripMenuItem.Name = "đăngKýMônHọcToolStripMenuItem";
+            đăngKýMônHọcToolStripMenuItem.Size = new Size(194, 24);
+            đăngKýMônHọcToolStripMenuItem.Text = "Đăng ký môn học";
+            đăngKýMônHọcToolStripMenuItem.Click += đăngKýMônHọcToolStripMenuItem_Click;
+            // 
             // MainForm
             // 
-            ClientSize = new Size(1427, 747);
+            ClientSize = new Size(1491, 781);
             Controls.Add(panelMainContent);
             Controls.Add(panelTop);
             Controls.Add(panelLeft);
@@ -275,15 +234,18 @@
             FormClosing += MainForm_FormClosing;
             Load += MainForm_Load;
             panelLeft.ResumeLayout(false);
+            panelLeft.PerformLayout();
             panelTop.ResumeLayout(false);
             panelTop.PerformLayout();
             panelMainContent.ResumeLayout(false);
-            grpAvailableCourses.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)dgvAvailableCourses).EndInit();
             grpJoinedCourses.ResumeLayout(false);
             cmsUserOptions.ResumeLayout(false);
             ResumeLayout(false);
         }
-        #endregion
-    }
+
+
+        #endregion
+
+        private ToolStripMenuItem đăngKýMônHọcToolStripMenuItem;
+    }
 }
