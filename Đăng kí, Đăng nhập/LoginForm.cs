@@ -222,7 +222,15 @@ namespace APP_DOAN
             this.Show();
         }
 
+        private void guna2HtmlLabel1_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            using (ForgotPasswordForm forgotpw = new ForgotPasswordForm())
+            {
+                forgotpw.ShowDialog();
+            }
+            this.Show();
 
-        
+        }
     }
 }

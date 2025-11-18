@@ -119,10 +119,7 @@ namespace APP_DOAN
         }
 
 
-        private void lblWelcome_Click_1(object sender, EventArgs e)
-        {
-            cmsUserOptions.Show(lblWelcome, new Point(0, lblWelcome.Height));
-        }
+
 
         private void profileToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -132,22 +129,12 @@ namespace APP_DOAN
             this.Show();
         }
 
-        private void messagesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            frmMainChat chatLobby = new frmMainChat(
-        _currentUserUid,
-        _currentUserName,
-        this._idToken // (Lấy 'idToken' mà LoginForm đã truyền cho bạn)
-    );
-            chatLobby.Show();
-        }
-
-        private void scheduleToolStripMenuItem_Click(object sender, EventArgs e)
+        private void scheduleToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
             MessageBox.Show("Lịch học (chức năng mẫu).", "Lịch học", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private void gradesToolStripMenuItem_Click(object sender, EventArgs e)
+        private void gradesToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
             MessageBox.Show("Điểm (chức năng mẫu).", "Điểm", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
@@ -198,7 +185,7 @@ namespace APP_DOAN
         private void grpJoinedCourses_Click(object sender, EventArgs e) { }
         private void panelLeft_Paint(object sender, PaintEventArgs e) { }
 
-        //Mở đăng ký môn học từ điều khiển
+
         private void đăngKýMônHọcToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.Hide();
@@ -222,6 +209,18 @@ namespace APP_DOAN
         {
 
         }
+
+        private void guna2Button1_Click(object sender, EventArgs e)
+        {
+            
+            frmMainChat chatLobby = new frmMainChat(
+         _currentUserUid,
+         _currentUserName,
+         this._idToken
+        );
+
+            chatLobby.Show();
+        }        
     }
 
     public class Course
