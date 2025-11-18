@@ -187,6 +187,7 @@
             btnCancel.Size = new Size(120, 56);
             btnCancel.TabIndex = 6;
             btnCancel.Text = "Hủy";
+            btnCancel.Click += btnCancel_Click_1;
             // 
             // btnChange
             // 
