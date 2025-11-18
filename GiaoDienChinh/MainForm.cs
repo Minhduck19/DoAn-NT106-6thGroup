@@ -43,8 +43,62 @@ namespace APP_DOAN
             lblWelcome.Text = $"Chào mừng,\n{_currentUserName} (Sinh viên)";
             SetupJoinedListViewColumns();
             await LoadClassDataFromFirebase();
+            LoadMockClassData();
         }
 
+        private void LoadMockClassData()
+        {
+            _allCourses.Clear(); // Đảm bảo danh sách trống trước khi thêm
+
+            // Dữ liệu lớp học cố định (MOCK DATA)
+            var testCourses = new List<Course>
+    {
+        // Lớp 1: Đã tham gia (IsJoined = true)
+        new Course("MOCK001", "Lập Trình Web Nâng Cao (TEST)", "TS. Nguyễn Văn Test", true)
+        {
+            // Quan trọng: Thêm UID hiện tại vào danh sách Students để giả lập đã tham gia
+            Students = new List<string> { _currentUserUid }
+        },
+        // Lớp 2: Đã tham gia (IsJoined = true)
+        new Course("MOCK002", "Phân Tích Thiết Kế Hệ Thống", "GS. Lê Thị Giả Lập", true)
+        {
+            Students = new List<string> { _currentUserUid }
+        },
+        // Lớp 3: CHƯA tham gia (IsJoined = false)
+        new Course("MOCK003", "Kinh Tế Vi Mô", "ThS. Phạm Mock Data", false)
+    };
+
+            _allCourses.AddRange(testCourses);
+
+            // Điền dữ liệu các lớp ĐÃ tham gia vào ListView
+            Test();
+        }
+
+        private void Test()
+        {
+            if (lvJoinedCourses == null) return;
+
+            lvJoinedCourses.Items.Clear();
+
+            // Lọc ra các lớp có IsJoined = true
+            var joined = _allCourses.Where(c => c.IsJoined).ToList();
+
+            if (joined.Count == 0)
+            {
+                var item = new ListViewItem("Không có lớp nào."); // Thay đổi nội dung hiển thị
+                item.SubItems.Add("-");
+                lvJoinedCourses.Items.Add(item);
+                return;
+            }
+
+            foreach (var c in joined)
+            {
+                var item = new ListViewItem(c.Name);
+                item.SubItems.Add(c.Instructor);
+                item.Tag = c.Id;
+                lvJoinedCourses.Items.Add(item);
+            }
+        }
 
         private void SetupJoinedListViewColumns()
         {
@@ -171,12 +225,30 @@ namespace APP_DOAN
             }
         }
 
+        
+
         private void lvJoinedCourses_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (lvJoinedCourses.SelectedItems[0].Text == " ") return;
-            var id = lvJoinedCourses.SelectedItems[0].Tag.ToString();
+            if (lvJoinedCourses.SelectedItems.Count == 0)
+            {
+                return;
+            }
+
+            ListViewItem selectedItem = lvJoinedCourses.SelectedItems[0];
+
+            // 1. Kiểm tra dòng placeholder trống
+            if (selectedItem.Text == " ") return;
+
+            // 2. Lấy ID và tìm Course
+            // Đảm bảo Tag không phải là null trước khi gọi ToString()
+            if (selectedItem.Tag == null) return;
+
+            var id = selectedItem.Tag.ToString();
             var course = _allCourses.FirstOrDefault(c => c.Id == id);
+
             if (course == null) return;
+
+            // 3. Mở Form chi tiết
             ChiTietLopHoc form = new ChiTietLopHoc(course);
             form.ShowDialog();
         }
@@ -212,7 +284,7 @@ namespace APP_DOAN
 
         private void guna2Button1_Click(object sender, EventArgs e)
         {
-            
+
             frmMainChat chatLobby = new frmMainChat(
          _currentUserUid,
          _currentUserName,
@@ -220,7 +292,20 @@ namespace APP_DOAN
         );
 
             chatLobby.Show();
-        }        
+        }
+
+        private void lvJoinedCourses_ItemActivate(object sender, MouseEventArgs e)
+        {
+            if (lvJoinedCourses.SelectedItems.Count > 0)
+            {
+                ListViewItem selectedItem = lvJoinedCourses.SelectedItems[0];
+                string tenLop = selectedItem.Text; // Lấy tên lớp
+
+                // Mở Form nộp bài, truyền tên lớp vào
+                Submit_Agsignment submitForm = new Submit_Agsignment(tenLop);
+                submitForm.ShowDialog();
+            }
+        }
     }
 
     public class Course

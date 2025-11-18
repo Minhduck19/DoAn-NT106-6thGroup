@@ -196,6 +196,7 @@ namespace APP_DOAN
             lvJoinedCourses.UseCompatibleStateImageBehavior = false;
             lvJoinedCourses.View = View.Details;
             lvJoinedCourses.SelectedIndexChanged += lvJoinedCourses_SelectedIndexChanged;
+            lvJoinedCourses.MouseDoubleClick += lvJoinedCourses_ItemActivate;
             // 
             // cmsUserOptions
             // 
