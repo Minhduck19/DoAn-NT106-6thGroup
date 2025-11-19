@@ -28,8 +28,10 @@ namespace APP_DOAN.GiaoDienChinh
             this.Text = "Nộp Bài Tập: " + TenLopHoc;
         }
 
-        // Xử lý Chọn Tệp
-        private void BtnBrowse_Click(object sender, EventArgs e)
+
+        
+
+        private void btnBrowse_Click_1(object sender, EventArgs e)
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
@@ -42,10 +44,10 @@ namespace APP_DOAN.GiaoDienChinh
                     txtFilePath.Text = openFileDialog.FileName;
                 }
             }
+
         }
 
-        // Xử lý Nộp Bài
-        private void BtnSubmit_Click(object sender, EventArgs e)
+        private void btnSubmit_Click_1(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(txtFilePath.Text) || txtFilePath.Text.Contains("chưa chọn tệp"))
             {

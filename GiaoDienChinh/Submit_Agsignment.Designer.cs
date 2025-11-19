@@ -56,6 +56,7 @@ namespace APP_DOAN.GiaoDienChinh
             btnBrowse = new Guna.UI2.WinForms.Guna2Button();
             btnSubmit = new Guna.UI2.WinForms.Guna2Button();
             guna2DragControl1 = new Guna.UI2.WinForms.Guna2DragControl(components);
+            SuspendLayout();
             // 
             // lblAssignmentName
             // 
@@ -100,6 +101,7 @@ namespace APP_DOAN.GiaoDienChinh
             btnBrowse.Size = new Size(120, 40);
             btnBrowse.TabIndex = 1;
             btnBrowse.Text = "CHỌN TỆP";
+            btnBrowse.Click += btnBrowse_Click_1;
             // 
             // btnSubmit
             // 
@@ -116,6 +118,7 @@ namespace APP_DOAN.GiaoDienChinh
             btnSubmit.Size = new Size(250, 50);
             btnSubmit.TabIndex = 0;
             btnSubmit.Text = "HOÀN TẤT VÀ NỘP BÀI";
+            btnSubmit.Click += btnSubmit_Click_1;
             // 
             // guna2DragControl1
             // 
@@ -126,26 +129,20 @@ namespace APP_DOAN.GiaoDienChinh
             // 
             // Submit_Agsignment
             // 
-            // ... (Các đoạn code khai báo control và thiết lập CustomizableEdges)
-
-            // KẾT THÚC CỦA guna2DragControl1
-            // 
-            // Submit_Agsignment
-            // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F); // THÊM "this."
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;  // THÊM "this."
-            this.BackColor = System.Drawing.Color.White;                   // THÊM "this."
-            this.ClientSize = new System.Drawing.Size(600, 350);           // THÊM "this."
-            this.Controls.Add(this.btnSubmit);                             // THÊM "this."
-            this.Controls.Add(this.btnBrowse);                             // THÊM "this."
-            this.Controls.Add(this.txtFilePath);                           // THÊM "this."
-            this.Controls.Add(this.lblAssignmentName);                     // THÊM "this."
-            this.MaximizeBox = false;                                      // THÊM "this."
-            this.MinimizeBox = false;                                      // THÊM "this."
-            this.Name = "Submit_Agsignment";                               // THÊM "this."
-            this.StartPosition = FormStartPosition.CenterScreen;                         // THÊM "this."
-            this.ResumeLayout(false);                                     // THÊM "this."
-            this.PerformLayout();                                          // THÊM "this."
+            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleMode = AutoScaleMode.Font;
+            BackColor = Color.White;
+            ClientSize = new Size(600, 350);
+            Controls.Add(btnSubmit);
+            Controls.Add(btnBrowse);
+            Controls.Add(txtFilePath);
+            Controls.Add(lblAssignmentName);
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Name = "Submit_Agsignment";
+            StartPosition = FormStartPosition.CenterScreen;
+            ResumeLayout(false);
+            PerformLayout();
 
             // ... (Các đoạn code khác)
         }
