@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Firebase.Auth.Requests;
 using Firebase.Database;
 using Firebase.Database.Query;
 
@@ -14,22 +15,18 @@ namespace APP_DOAN
     public partial class LoginForm : Form
     {
         private readonly string webApiKey = "AIzaSyA7fh7FLwmHFHrwchTX1gcATk1ulr45QLs";
-        private readonly string firebaseDatabaseUrl = "https://nt106-minhduc-default-rtdb.firebaseio.com/"; // URL thật của bạn
-
-        // Không cần các thuộc tính public IdToken, UserEmail, UserRole nữa
-        // vì form này sẽ tự xử lý điều hướng.
+        private readonly string firebaseDatabaseUrl = "https://nt106-minhduc-default-rtdb.firebaseio.com/";
 
         public LoginForm()
         {
             InitializeComponent();
-
             if (string.IsNullOrWhiteSpace(webApiKey) || webApiKey.Contains("YOUR_KEY"))
             {
-                MessageBox.Show("Lỗi: webApiKey chưa được cấu hình trong LoginForm.cs.", "Lỗi Cấu Hình", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Lỗi: webApiKey chưa được cấu hình.", "Lỗi Cấu Hình", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 this.Load += (s, e) => this.Close();
-                return;
             }
         }
+
 
         private async void btnLogin_Click_1(object sender, EventArgs e)
         {
@@ -47,72 +44,57 @@ namespace APP_DOAN
 
             try
             {
-                // 1. Đăng nhập để lấy Token và UID
+                // 1. Đăng nhập (Auth)
                 var loginResult = await SignInWithEmailPasswordAsync(email, password);
-
                 if (!loginResult.Success)
                 {
                     HandleFirebaseError(loginResult.ErrorMessage);
-                    return; // Dừng lại, finally sẽ kích hoạt UI
+                    return;
                 }
-
                 string idToken = loginResult.IdToken;
                 string uid = loginResult.LocalId;
 
-                // 2. Dùng Token để xác thực và lấy Role từ Realtime Database
-                var authClient = new FirebaseClient(
-                    firebaseDatabaseUrl,
-                    new FirebaseOptions
-                    {
-                        AuthTokenAsyncFactory = () => Task.FromResult(idToken)
-                    });
-
-                var userRole = await authClient
-                    .Child("Users")
-                    .Child(uid)
-                    .Child("Role")
-                    .OnceSingleAsync<string>();
-
-                if (userRole == null)
+                User userProfile = await GetUserProfileAsync(uid, idToken);
+                if (userProfile == null)
                 {
-                    MessageBox.Show("Đăng nhập thành công nhưng không thể tìm thấy vai trò (Role) trong cơ sở dữ liệu.", "Lỗi Dữ Liệu", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return; // Dừng lại, finally sẽ kích hoạt UI
+                    MessageBox.Show("Đăng nhập thành công nhưng không tìm thấy hồ sơ (Database).", "Lỗi Dữ Liệu", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
                 }
 
-                // 3. Logic điều hướng (ĐÃ CHUYỂN TỪ GIAODIENGOC VÀO ĐÂY)
 
-                // Ẩn form đăng nhập
+                string hoTen = userProfile.HoTen;
+                string userRole = userProfile.Role;
+
+
                 this.Hide();
-
                 if (userRole == "GiangVien")
                 {
-                    using (MainForm_GiangVien mainFormGV = new MainForm_GiangVien(email, idToken))
+
+                    using (MainForm_GiangVien mainFormGV = new MainForm_GiangVien(uid, hoTen))
                     {
                         mainFormGV.ShowDialog();
                     }
                 }
                 else if (userRole == "SinhVien")
                 {
-                    using (MainForm mainFormSV = new MainForm(email, idToken))
+
+                    using (MainForm mainFormSV = new MainForm(uid, hoTen, email, idToken))
                     {
                         mainFormSV.ShowDialog();
                     }
                 }
                 else
                 {
-                    MessageBox.Show("Vai trò không xác định. Vui lòng liên hệ quản trị viên.", "Lỗi Vai Trò", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    // Hiển thị lại form đăng nhập nếu vai trò lỗi
+                    MessageBox.Show("Vai trò không xác định.", "Lỗi Vai Trò", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     this.Show();
-                    return; // Không đóng ứng dụng
+                    return;
                 }
 
-                // Sau khi MainForm (GV hoặc SV) bị đóng, ShowDialog() kết thúc
-                // Ta tiến hành đóng Form đăng nhập (cũng là form chính) để kết thúc ứng dụng.
-                this.Close();
+                this.Show();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi không xác định khi đăng nhập: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Lỗi không xác định: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
@@ -120,6 +102,35 @@ namespace APP_DOAN
                 Cursor = Cursors.Default;
             }
         }
+
+
+        private async Task<User> GetUserProfileAsync(string uid, string idToken)
+        {
+            try
+            {
+
+                var authClient = new FirebaseClient(
+                    firebaseDatabaseUrl,
+                    new FirebaseOptions
+                    {
+                        AuthTokenAsyncFactory = () => Task.FromResult(idToken)
+                    });
+
+
+                var user = await authClient
+                    .Child("Users")
+                    .Child(uid)
+                    .OnceSingleAsync<User>();
+
+                return user;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Lỗi khi lấy profile: {ex.Message}");
+                return null;
+            }
+        }
+
 
         private async Task<(bool Success, string IdToken, string LocalId, string ErrorMessage)> SignInWithEmailPasswordAsync(string email, string password)
         {
@@ -198,13 +209,11 @@ namespace APP_DOAN
 
         private void btnCancel_Click_1(object sender, EventArgs e)
         {
-            // Vì đây là form chính, nhấn Cancel (hoặc nút X) sẽ đóng ứng dụng
             this.Close();
         }
 
-        private void linkRegister_LinkClicked_1(object sender, LinkLabelLinkClickedEventArgs e)
+        private void linkRegister_Click_1(object sender, EventArgs e)
         {
-            // Logic này giữ nguyên, dùng để mở form đăng ký
             this.Hide();
             using (RegisterForm registerForm = new RegisterForm())
             {
@@ -213,9 +222,6 @@ namespace APP_DOAN
             this.Show();
         }
 
-<<<<<<< HEAD
-        private void LoginForm_Load(object sender, EventArgs e) { }
-=======
         private void guna2HtmlLabel1_Click(object sender, EventArgs e)
         {
             this.Hide();
@@ -226,6 +232,5 @@ namespace APP_DOAN
             this.Show();
 
         }
->>>>>>> origin/develop
     }
 }
