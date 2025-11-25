@@ -28,12 +28,57 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Text = "ChiTietLopHoc";
+            lblCourseName = new Label();
+            lblInstructor = new Label();
+            lblCourseId = new Label();
+            SuspendLayout();
+            // 
+            // lblCourseName
+            // 
+            lblCourseName.AutoSize = true;
+            lblCourseName.Location = new Point(90, 102);
+            lblCourseName.Name = "lblCourseName";
+            lblCourseName.Size = new Size(94, 20);
+            lblCourseName.TabIndex = 0;
+            lblCourseName.Text = "CourseName";
+            // 
+            // lblInstructor
+            // 
+            lblInstructor.AutoSize = true;
+            lblInstructor.Location = new Point(90, 201);
+            lblInstructor.Name = "lblInstructor";
+            lblInstructor.Size = new Size(71, 20);
+            lblInstructor.TabIndex = 1;
+            lblInstructor.Text = "Instructor";
+            // 
+            // lblCourseId
+            // 
+            lblCourseId.AutoSize = true;
+            lblCourseId.Location = new Point(90, 305);
+            lblCourseId.Name = "lblCourseId";
+            lblCourseId.Size = new Size(67, 20);
+            lblCourseId.TabIndex = 2;
+            lblCourseId.Text = "CourseId";
+            // 
+            // ChiTietLopHoc
+            // 
+            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(800, 450);
+            Controls.Add(lblCourseId);
+            Controls.Add(lblInstructor);
+            Controls.Add(lblCourseName);
+            Name = "ChiTietLopHoc";
+            Text = "ChiTietLopHoc";
+            Load += ChiTietLopHoc_Load;
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
+
+        private Label lblCourseName;
+        private Label lblInstructor;
+        private Label lblCourseId;
     }
 }
