@@ -76,11 +76,7 @@
             lblWelcome.ForeColor = Color.White;
             lblWelcome.Location = new Point(12, 25);
             lblWelcome.Name = "lblWelcome";
-<<<<<<< HEAD
-            lblWelcome.Size = new Size(176, 75);
-=======
             lblWelcome.Size = new Size(217, 111);
->>>>>>> origin/develop
             lblWelcome.TabIndex = 2;
             lblWelcome.Text = "Chào mừng,\n[Giảng viên]";
             lblWelcome.Click += lblWelcome_Click;
