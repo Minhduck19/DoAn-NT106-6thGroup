@@ -45,14 +45,14 @@
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges6 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges17 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges18 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges7 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges8 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges9 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges10 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges11 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges12 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges13 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges14 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges7 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges8 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges15 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges16 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             panelLeft = new Guna.UI2.WinForms.Guna2Panel();
@@ -61,6 +61,7 @@
             panelTop = new Guna.UI2.WinForms.Guna2Panel();
             lblTitle = new Guna.UI2.WinForms.Guna2HtmlLabel();
             panelMainContent = new Guna.UI2.WinForms.Guna2Panel();
+            txtFind = new Guna.UI2.WinForms.Guna2TextBox();
             lvMyCourses = new ListView();
             colCourseID = new ColumnHeader();
             colName = new ColumnHeader();
@@ -70,7 +71,6 @@
             btnCreateCourse = new Guna.UI2.WinForms.Guna2Button();
             btnEditCourse = new Guna.UI2.WinForms.Guna2Button();
             btnDeleteCourse = new Guna.UI2.WinForms.Guna2Button();
-            txtFind = new Guna.UI2.WinForms.Guna2TextBox();
             btnFindCourse = new Guna.UI2.WinForms.Guna2Button();
             panelLeft.SuspendLayout();
             panelTop.SuspendLayout();
@@ -162,6 +162,26 @@
             panelMainContent.Size = new Size(742, 621);
             panelMainContent.TabIndex = 2;
             // 
+            // txtFind
+            // 
+            txtFind.CustomizableEdges = customizableEdges7;
+            txtFind.DefaultText = "";
+            txtFind.DisabledState.BorderColor = Color.FromArgb(208, 208, 208);
+            txtFind.DisabledState.FillColor = Color.FromArgb(226, 226, 226);
+            txtFind.DisabledState.ForeColor = Color.FromArgb(138, 138, 138);
+            txtFind.DisabledState.PlaceholderForeColor = Color.FromArgb(138, 138, 138);
+            txtFind.FocusedState.BorderColor = Color.FromArgb(94, 148, 255);
+            txtFind.Font = new Font("Segoe UI", 9F);
+            txtFind.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
+            txtFind.Location = new Point(18, 84);
+            txtFind.Margin = new Padding(3, 4, 3, 4);
+            txtFind.Name = "txtFind";
+            txtFind.PlaceholderText = "";
+            txtFind.SelectedText = "";
+            txtFind.ShadowDecoration.CustomizableEdges = customizableEdges8;
+            txtFind.Size = new Size(712, 36);
+            txtFind.TabIndex = 2;
+            // 
             // lvMyCourses
             // 
             lvMyCourses.Columns.AddRange(new ColumnHeader[] { colCourseID, colName, colStudentCount, colStatus });
@@ -234,7 +254,7 @@
             btnEditCourse.Size = new Size(150, 50);
             btnEditCourse.TabIndex = 1;
             btnEditCourse.Text = "✏️ Sửa Lớp";
-            btnEditCourse.Click += btnEditCourse_Click_1;
+            btnEditCourse.Click += btnEditCourse_Click;
             // 
             // btnDeleteCourse
             // 
@@ -250,26 +270,6 @@
             btnDeleteCourse.TabIndex = 2;
             btnDeleteCourse.Text = "🗑️ Xóa Lớp";
             btnDeleteCourse.Click += btnDeleteCourse_Click_1;
-            // 
-            // txtFind
-            // 
-            txtFind.CustomizableEdges = customizableEdges7;
-            txtFind.DefaultText = "";
-            txtFind.DisabledState.BorderColor = Color.FromArgb(208, 208, 208);
-            txtFind.DisabledState.FillColor = Color.FromArgb(226, 226, 226);
-            txtFind.DisabledState.ForeColor = Color.FromArgb(138, 138, 138);
-            txtFind.DisabledState.PlaceholderForeColor = Color.FromArgb(138, 138, 138);
-            txtFind.FocusedState.BorderColor = Color.FromArgb(94, 148, 255);
-            txtFind.Font = new Font("Segoe UI", 9F);
-            txtFind.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
-            txtFind.Location = new Point(18, 84);
-            txtFind.Margin = new Padding(3, 4, 3, 4);
-            txtFind.Name = "txtFind";
-            txtFind.PlaceholderText = "";
-            txtFind.SelectedText = "";
-            txtFind.ShadowDecoration.CustomizableEdges = customizableEdges8;
-            txtFind.Size = new Size(712, 36);
-            txtFind.TabIndex = 2;
             // 
             // btnFindCourse
             // 

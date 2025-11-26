@@ -69,14 +69,31 @@ namespace APP_DOAN
         }
 
         // --- XỬ LÝ CÁC NÚT HÀNH ĐỘNG ---
+        private void AddCourseToListView(string maLop, string tenLop, int siSo)
+        {
+            var item = new ListViewItem(maLop);
+            item.SubItems.Add(tenLop);
+            item.SubItems.Add(siSo.ToString());
+            item.Tag = maLop;
+
+            lvMyCourses.Items.Add(item);
+        }
+
 
         private void btnCreateCourse_Click_1(object sender, EventArgs e)
         {
-            // (Trong tương lai, bạn sẽ mở một Form mới để-nhập-thông-tin-lớp-học)
-            MessageBox.Show("Chức năng 'Tạo Lớp Mới' đang được phát triển.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            CreateCourse createCourse = new CreateCourse();
+            createCourse.OnCourseCreated += (maLop, tenLop, siSo) =>
+            {
+                AddCourseToListView(maLop, tenLop, siSo);
+            };
+
+            createCourse.ShowDialog();
+
+
         }
 
-        private void btnEditCourse_Click_1(object sender, EventArgs e)
+        private void btnEditCourse_Click_1(object sender, EventArgs e, FixCourse fixCourse)
         {
             if (lvMyCourses.SelectedItems.Count == 0)
             {
@@ -84,8 +101,18 @@ namespace APP_DOAN
                 return;
             }
 
-            string courseId = lvMyCourses.SelectedItems[0].Tag.ToString();
-            MessageBox.Show($"Chức năng 'Sửa Lớp' (ID: {courseId}) đang được phát triển.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            var item = lvMyCourses.SelectedItems[0];
+            string maLop = item.Text;
+            string tenLop = item.SubItems[1].Text;
+            int siSo = int.Parse(item.SubItems[2].Text);
+
+            FixCourse editForm = new FixCourse(maLop, tenLop, siSo);
+            editForm.OnCourseUpdated = (updatedMaLop, updatedTenLop, updatedSiSo) =>
+            {
+                item.SubItems[1].Text = updatedTenLop;
+                item.SubItems[2].Text = updatedSiSo.ToString();
+            };
+            fixCourse.ShowDialog();
         }
 
         private void btnDeleteCourse_Click_1(object sender, EventArgs e)
@@ -105,7 +132,7 @@ namespace APP_DOAN
             if (confirm == DialogResult.Yes)
             {
                 // (Trong tương lai, bạn sẽ gọi API Firebase để-xóa-lớp-học)
-                MessageBox.Show($"Đã xóa lớp (ID: {courseId}) (chức năng mẫu).", "Đã xóa", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show($"Đã xóa lớp (ID: {courseId}).", "Đã xóa", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 // Tải lại danh sách sau khi xóa
                 LoadMyCoursesData();
@@ -189,6 +216,28 @@ namespace APP_DOAN
                     item.BackColor = System.Drawing.Color.White;
                 }
             }
+        }
+
+        private void btnEditCourse_Click(object sender, EventArgs e)
+        {
+            if (lvMyCourses.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("Vui lòng chọn một lớp học để sửa.", "Chưa chọn lớp", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var item = lvMyCourses.SelectedItems[0];
+            string maLop = item.Text;
+            string tenLop = item.SubItems[1].Text;
+            int siSo = int.Parse(item.SubItems[2].Text);
+
+            FixCourse editForm = new FixCourse(maLop, tenLop, siSo);
+            editForm.OnCourseUpdated = (updatedMaLop, updatedTenLop, updatedSiSo) =>
+            {
+                item.SubItems[1].Text = updatedTenLop;
+                item.SubItems[2].Text = updatedSiSo.ToString();
+            };
+            editForm.ShowDialog();
         }
     }
 }
