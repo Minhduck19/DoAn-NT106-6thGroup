@@ -157,5 +157,38 @@ namespace APP_DOAN
             profileForm.ShowDialog();
             this.Show();
         }
+
+        private void btnFindCourse_Click(object sender, EventArgs e)
+        {
+            string searchText = txtFind.Text.Trim().ToLower();
+
+            // Nếu TextBox trống, tải lại toàn bộ danh sách lớp học
+            if (string.IsNullOrEmpty(searchText))
+            {
+                LoadMyCoursesData();
+                return;
+            }
+
+            foreach (ListViewItem item in lvMyCourses.Items)
+            {
+
+                string courseCode = item.Text.ToLower(); // Lấy Mã Lớp
+                string courseName = item.SubItems[1].Text.ToLower(); // Lấy Tên Lớp
+
+                if (courseCode.Contains(searchText) || courseName.Contains(searchText))
+                {
+                    // Nếu khớp, TÔ SÁNG và đảm bảo mục đó hiển thị
+                    item.Selected = true;
+                    item.BackColor = System.Drawing.Color.LightYellow;
+                    item.EnsureVisible();
+                }
+                else
+                {
+                    // Nếu không khớp, bỏ chọn và đặt lại màu nền mặc định
+                    item.Selected = false;
+                    item.BackColor = System.Drawing.Color.White;
+                }
+            }
+        }
     }
 }
