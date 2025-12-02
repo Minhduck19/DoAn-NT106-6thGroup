@@ -157,5 +157,20 @@ namespace APP_DOAN
             profileForm.ShowDialog();
             this.Show();
         }
+
+        private void lvMyCourses_DoubleClick_1(object sender, EventArgs e)
+        {
+            if (lvMyCourses.SelectedItems.Count == 0)
+                return;
+
+            string courseId = lvMyCourses.SelectedItems[0].Tag.ToString();
+            string courseName = lvMyCourses.SelectedItems[0].SubItems[1].Text;
+
+            var form = new CourseDetailForm(courseId, courseName, idToken, loggedInEmail);
+            form.ShowDialog();
+
+            // Reload lại danh sách lớp
+            LoadMyCoursesData();
+        }
     }
 }
