@@ -116,7 +116,7 @@
             lvStudents.GridLines = true;
             lvStudents.Location = new Point(20, 20);
             lvStudents.Name = "lvStudents";
-            lvStudents.Size = new Size(400, 450);
+            lvStudents.Size = new Size(409, 450);
             lvStudents.TabIndex = 0;
             lvStudents.UseCompatibleStateImageBehavior = false;
             lvStudents.View = View.Details;

@@ -1,6 +1,8 @@
 ﻿using APP_DOAN.GiaoDienChinh;
+using Firebase.Database;
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using System.Windows.Forms;
 
 
@@ -12,22 +14,25 @@ namespace APP_DOAN
         private string loggedInEmail;
         private string idToken;
         private bool isLoggingOut = false;
+        private string currentUid;
+        private string currentDisplayName;
 
 
         // (Trong tương lai, bạn sẽ dùng 'idToken' hoặc 'loggedInEmail'
         //  để-truy-vấn-Firebase-lấy-các-lớp-của-giảng-viên-này)
 
-        public MainForm_GiangVien(string email, string token)
+        public MainForm_GiangVien(string uid, string displayName, string token)
         {
             InitializeComponent();
-            this.loggedInEmail = email;
             this.idToken = token;
+            this.currentUid = uid;                    // UID thật
+            this.currentDisplayName = displayName;    // Họ tên giảng viên
         }
 
         private void MainForm_GiangVien_Load(object sender, EventArgs e)
         {
             // Hiển thị thông tin Giảng viên
-            string username = loggedInEmail.Split('@')[0];
+            string username = currentDisplayName;
             lblWelcome.Text = $"Chào mừng,\nGV. {username}";
 
             // Cài đặt cột cho ListView
@@ -72,8 +77,21 @@ namespace APP_DOAN
 
         private void btnCreateCourse_Click_1(object sender, EventArgs e)
         {
-            // (Trong tương lai, bạn sẽ mở một Form mới để-nhập-thông-tin-lớp-học)
-            MessageBox.Show("Chức năng 'Tạo Lớp Mới' đang được phát triển.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            var firebaseClient = new FirebaseClient(
+                "https://nt106-minhduc-default-rtdb.firebaseio.com/",
+                new FirebaseOptions
+                {
+                    AuthTokenAsyncFactory = () => Task.FromResult(idToken) // DÙNG TOKEN THẬT TỪ LOGIN
+                });
+
+            var createForm = new CreateCourseForm(firebaseClient, currentUid, currentDisplayName);
+
+            if (createForm.ShowDialog() == DialogResult.OK)
+            {
+                MessageBox.Show("Tạo lớp thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                // Load lại danh sách lớp nếu cần
+                // LoadMyCoursesData();
+            }
         }
 
         private void btnEditCourse_Click_1(object sender, EventArgs e)

@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Firebase.Auth;
+using Firebase.Database;
+using Firebase.Database.Query;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Firebase.Database;
-using Firebase.Database.Query;
 
 namespace APP_DOAN.GiaoDienChinh
 {
@@ -56,19 +57,23 @@ namespace APP_DOAN.GiaoDienChinh
         private async Task LoadStudents()
         {
             lvStudents.Items.Clear();
-
             try
             {
                 var students = await firebaseClient
-                    .Child("Courses")
+                    .Child("CourseStudents")           // SỬA TỪ "Courses" → "CourseStudents"
                     .Child(_courseId)
-                    .Child("Students")
-                    .OnceAsync<bool>();
+                    .OnceAsync<bool>();                        // bool hoặc object đều được
 
                 foreach (var student in students)
                 {
+                    // Lấy tên thật của sinh viên từ node Users
+                    var userInfo = await firebaseClient
+                        .Child("Users")
+                        .Child(student.Key)
+                        .OnceSingleAsync<UserInfo>(); // bạn cần tạo class UserInfo có displayName
+
                     var item = new ListViewItem(student.Key);
-                    item.SubItems.Add("Tên SV chưa hỗ trợ");
+                    item.SubItems.Add(userInfo?.displayName ?? "Không rõ");
                     item.Tag = student.Key;
                     lvStudents.Items.Add(item);
                 }
@@ -107,21 +112,18 @@ namespace APP_DOAN.GiaoDienChinh
 
         private async void btnApprove_Click(object sender, EventArgs e)
         {
-            if (lvRequests.SelectedItems.Count == 0)
-            {
-                MessageBox.Show("Chọn yêu cầu cần duyệt!");
-                return;
-            }
+            if (lvRequests.SelectedItems.Count == 0) return;
 
             string studentUid = lvRequests.SelectedItems[0].Tag.ToString();
 
+            // SỬA: Thêm vào CourseStudents, không phải Courses/.../Students
             await firebaseClient
-                .Child("Courses")
+                .Child("CourseStudents")
                 .Child(_courseId)
-                .Child("Students")
                 .Child(studentUid)
                 .PutAsync(true);
 
+            // Cập nhật trạng thái yêu cầu
             await firebaseClient
                 .Child("JoinRequests")
                 .Child(_courseId)
@@ -130,8 +132,7 @@ namespace APP_DOAN.GiaoDienChinh
                 .PutAsync("approved");
 
             MessageBox.Show("Đã duyệt sinh viên!");
-            await LoadStudents();
-            await LoadJoinRequests();
+            await Task.WhenAll(LoadStudents(), LoadJoinRequests());
         }
 
         private async void btnReject_Click(object sender, EventArgs e)
@@ -157,23 +158,24 @@ namespace APP_DOAN.GiaoDienChinh
 
         private async void btnRemoveStudent_Click(object sender, EventArgs e)
         {
-            if (lvStudents.SelectedItems.Count == 0)
-            {
-                MessageBox.Show("Chọn sinh viên cần xóa!");
-                return;
-            }
+            if (lvStudents.SelectedItems.Count == 0) return;
 
             string studentUid = lvStudents.SelectedItems[0].Tag.ToString();
 
             await firebaseClient
-                .Child("Courses")
+                .Child("CourseStudents")  // SỬA ĐÚNG NODE
                 .Child(_courseId)
-                .Child("Students")
                 .Child(studentUid)
                 .DeleteAsync();
 
             MessageBox.Show("Đã xóa sinh viên khỏi lớp!");
             await LoadStudents();
+        }
+
+        public class UserInfo
+        {
+            public string displayName { get; set; }
+            public string Role { get; set; }
         }
 
         private void btnRefresh_Click(object sender, EventArgs e)
