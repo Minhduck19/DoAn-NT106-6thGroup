@@ -10,7 +10,6 @@
         public string NganhHoc { get; set; }
         public string NgaySinh { get; set; }
 
-        // Các trường của GV (có thể là null nếu là SV)
         public string MaGiangVien { get; set; }
         public string Khoa { get; set; }
         public string ChucVu { get; set; }

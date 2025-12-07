@@ -122,7 +122,6 @@ namespace APP_DOAN.GiaoDienChinh
             panelLeft.ShadowDecoration.CustomizableEdges = customizableEdges6;
             panelLeft.Size = new Size(200, 500);
             panelLeft.TabIndex = 2;
-            panelLeft.Paint += panelLeft_Paint;
             // 
             // lblWelcome
             // 
@@ -206,7 +205,6 @@ namespace APP_DOAN.GiaoDienChinh
             grpPersonalInfo.ShadowDecoration.Enabled = true;
             grpPersonalInfo.Size = new Size(560, 160);
             grpPersonalInfo.TabIndex = 0;
-            grpPersonalInfo.Paint += grpPersonalInfo_Paint;
             // 
             // guna2HtmlLabel3
             // 

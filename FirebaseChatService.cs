@@ -3,9 +3,9 @@ using Firebase.Database.Query;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Reactive.Linq; 
+using System.Reactive.Linq;
 
-namespace APP_DOAN 
+namespace APP_DOAN
 {
     public class FirebaseChatService
     {
