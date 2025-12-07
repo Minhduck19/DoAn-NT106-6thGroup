@@ -17,6 +17,31 @@
 
         private void InitializeComponent()
         {
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges3 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges4 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges1 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges2 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges5 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges6 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges17 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges18 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges7 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges8 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges9 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges10 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges11 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges12 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges13 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges14 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges15 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges16 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            panelLeft = new Guna.UI2.WinForms.Guna2Panel();
+            btnLogout = new Guna.UI2.WinForms.Guna2Button();
+            lblWelcome = new Guna.UI2.WinForms.Guna2HtmlLabel();
+            panelTop = new Guna.UI2.WinForms.Guna2Panel();
+            lblTitle = new Guna.UI2.WinForms.Guna2HtmlLabel();
+            panelMainContent = new Guna.UI2.WinForms.Guna2Panel();
+            txtFind = new Guna.UI2.WinForms.Guna2TextBox();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm_GiangVien));
             panelLeft = new Panel();
             btnLogout = new Button();
@@ -26,6 +51,10 @@
             panelMainContent = new Panel();
             lvMyCourses = new ListView();
             flpActions = new FlowLayoutPanel();
+            btnCreateCourse = new Guna.UI2.WinForms.Guna2Button();
+            btnEditCourse = new Guna.UI2.WinForms.Guna2Button();
+            btnDeleteCourse = new Guna.UI2.WinForms.Guna2Button();
+            btnFindCourse = new Guna.UI2.WinForms.Guna2Button();
             btnCreateCourse = new Button();
             btnEditCourse = new Button();
             btnDeleteCourse = new Button();
@@ -105,6 +134,11 @@
             // 
             // panelMainContent
             // 
+            panelMainContent.BackColor = Color.White;
+            panelMainContent.Controls.Add(txtFind);
+            panelMainContent.Controls.Add(lvMyCourses);
+            panelMainContent.Controls.Add(flpActions);
+            panelMainContent.CustomizableEdges = customizableEdges17;
             panelMainContent.BackColor = SystemColors.Control;
             panelMainContent.Controls.Add(lvMyCourses);
             panelMainContent.Controls.Add(flpActions);
@@ -112,12 +146,41 @@
             panelMainContent.Location = new Point(200, 75);
             panelMainContent.Margin = new Padding(3, 4, 3, 4);
             panelMainContent.Name = "panelMainContent";
+            panelMainContent.Padding = new Padding(15);
+            panelMainContent.ShadowDecoration.CustomizableEdges = customizableEdges18;
+            panelMainContent.Size = new Size(742, 621);
             panelMainContent.Padding = new Padding(10, 12, 10, 12);
             panelMainContent.Size = new Size(782, 616);
             panelMainContent.TabIndex = 2;
             // 
+            // txtFind
+            // 
+            txtFind.CustomizableEdges = customizableEdges7;
+            txtFind.DefaultText = "";
+            txtFind.DisabledState.BorderColor = Color.FromArgb(208, 208, 208);
+            txtFind.DisabledState.FillColor = Color.FromArgb(226, 226, 226);
+            txtFind.DisabledState.ForeColor = Color.FromArgb(138, 138, 138);
+            txtFind.DisabledState.PlaceholderForeColor = Color.FromArgb(138, 138, 138);
+            txtFind.FocusedState.BorderColor = Color.FromArgb(94, 148, 255);
+            txtFind.Font = new Font("Segoe UI", 9F);
+            txtFind.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
+            txtFind.Location = new Point(18, 84);
+            txtFind.Margin = new Padding(3, 4, 3, 4);
+            txtFind.Name = "txtFind";
+            txtFind.PlaceholderText = "";
+            txtFind.SelectedText = "";
+            txtFind.ShadowDecoration.CustomizableEdges = customizableEdges8;
+            txtFind.Size = new Size(712, 36);
+            txtFind.TabIndex = 2;
+            // 
             // lvMyCourses
             // 
+            lvMyCourses.Columns.AddRange(new ColumnHeader[] { colCourseID, colName, colStudentCount, colStatus });
+            lvMyCourses.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lvMyCourses.FullRowSelect = true;
+            lvMyCourses.Location = new Point(15, 127);
+            lvMyCourses.Name = "lvMyCourses";
+            lvMyCourses.Size = new Size(715, 479);
             lvMyCourses.Dock = DockStyle.Fill;
             lvMyCourses.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lvMyCourses.FullRowSelect = true;
@@ -130,12 +193,17 @@
             lvMyCourses.UseCompatibleStateImageBehavior = false;
             lvMyCourses.View = View.Details;
             lvMyCourses.SelectedIndexChanged += lvMyCourses_SelectedIndexChanged;
+            lvMyCourses.DoubleClick += lvMyCourses_DoubleClick_1;
             // 
             // flpActions
             // 
             flpActions.Controls.Add(btnCreateCourse);
             flpActions.Controls.Add(btnEditCourse);
             flpActions.Controls.Add(btnDeleteCourse);
+            flpActions.Controls.Add(btnFindCourse);
+            flpActions.Location = new Point(15, 15);
+            flpActions.Name = "flpActions";
+            flpActions.Size = new Size(715, 62);
             flpActions.Dock = DockStyle.Top;
             flpActions.Location = new Point(10, 12);
             flpActions.Margin = new Padding(3, 4, 3, 4);
@@ -145,6 +213,10 @@
             // 
             // btnCreateCourse
             // 
+            btnCreateCourse.BorderRadius = 10;
+            btnCreateCourse.CustomizableEdges = customizableEdges9;
+            btnCreateCourse.FillColor = Color.FromArgb(46, 204, 113);
+            btnCreateCourse.Font = new Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnCreateCourse.BackColor = Color.FromArgb(40, 167, 69);
             btnCreateCourse.FlatAppearance.BorderSize = 0;
             btnCreateCourse.FlatStyle = FlatStyle.Flat;
@@ -153,6 +225,8 @@
             btnCreateCourse.Location = new Point(3, 4);
             btnCreateCourse.Margin = new Padding(3, 4, 3, 4);
             btnCreateCourse.Name = "btnCreateCourse";
+            btnCreateCourse.ShadowDecoration.CustomizableEdges = customizableEdges10;
+            btnCreateCourse.Size = new Size(150, 50);
             btnCreateCourse.Size = new Size(120, 50);
             btnCreateCourse.TabIndex = 0;
             btnCreateCourse.Text = "Tạo Lớp Mới";
@@ -161,6 +235,25 @@
             // 
             // btnEditCourse
             // 
+            btnEditCourse.BorderRadius = 10;
+            btnEditCourse.CustomizableEdges = customizableEdges11;
+            btnEditCourse.FillColor = Color.FromArgb(241, 196, 15);
+            btnEditCourse.Font = new Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnEditCourse.ForeColor = Color.FromArgb(44, 62, 80);
+            btnEditCourse.Location = new Point(159, 3);
+            btnEditCourse.Name = "btnEditCourse";
+            btnEditCourse.ShadowDecoration.CustomizableEdges = customizableEdges12;
+            btnEditCourse.Size = new Size(150, 50);
+            btnEditCourse.TabIndex = 1;
+            btnEditCourse.Text = "✏️ Sửa Lớp";
+            btnEditCourse.Click += btnEditCourse_Click;
+            // 
+            // btnDeleteCourse
+            // 
+            btnDeleteCourse.BorderRadius = 10;
+            btnDeleteCourse.CustomizableEdges = customizableEdges13;
+            btnDeleteCourse.FillColor = Color.FromArgb(231, 76, 60);
+            btnDeleteCourse.Font = new Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnEditCourse.BackColor = Color.FromArgb(255, 193, 7);
             btnEditCourse.FlatAppearance.BorderSize = 0;
             btnEditCourse.FlatStyle = FlatStyle.Flat;
@@ -185,11 +278,28 @@
             btnDeleteCourse.Location = new Point(255, 4);
             btnDeleteCourse.Margin = new Padding(3, 4, 3, 4);
             btnDeleteCourse.Name = "btnDeleteCourse";
+            btnDeleteCourse.ShadowDecoration.CustomizableEdges = customizableEdges14;
+            btnDeleteCourse.Size = new Size(150, 50);
             btnDeleteCourse.Size = new Size(120, 50);
             btnDeleteCourse.TabIndex = 2;
             btnDeleteCourse.Text = "Xóa Lớp";
             btnDeleteCourse.UseVisualStyleBackColor = false;
             btnDeleteCourse.Click += btnDeleteCourse_Click_1;
+            // 
+            // btnFindCourse
+            // 
+            btnFindCourse.BorderRadius = 10;
+            btnFindCourse.CustomizableEdges = customizableEdges15;
+            btnFindCourse.FillColor = Color.DodgerBlue;
+            btnFindCourse.Font = new Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnFindCourse.ForeColor = Color.White;
+            btnFindCourse.Location = new Point(471, 3);
+            btnFindCourse.Name = "btnFindCourse";
+            btnFindCourse.ShadowDecoration.CustomizableEdges = customizableEdges16;
+            btnFindCourse.Size = new Size(150, 50);
+            btnFindCourse.TabIndex = 3;
+            btnFindCourse.Text = "🔍 Tìm Lớp";
+            btnFindCourse.Click += btnFindCourse_Click;
             // 
             // MainForm_GiangVien
             // 
@@ -212,6 +322,8 @@
             ResumeLayout(false);
 
         }
+        private Guna.UI2.WinForms.Guna2TextBox txtFind;
+        private Guna.UI2.WinForms.Guna2Button btnFindCourse;
 
         #endregion
 

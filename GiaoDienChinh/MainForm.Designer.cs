@@ -188,7 +188,7 @@ namespace APP_DOAN
             lvJoinedCourses.Anchor = AnchorStyles.None;
             lvJoinedCourses.FullRowSelect = true;
             lvJoinedCourses.GridLines = true;
-            lvJoinedCourses.Location = new Point(158, 50);
+            lvJoinedCourses.Location = new Point(0, 36);
             lvJoinedCourses.MultiSelect = false;
             lvJoinedCourses.Name = "lvJoinedCourses";
             lvJoinedCourses.Size = new Size(1033, 612);
@@ -196,6 +196,7 @@ namespace APP_DOAN
             lvJoinedCourses.UseCompatibleStateImageBehavior = false;
             lvJoinedCourses.View = View.Details;
             lvJoinedCourses.SelectedIndexChanged += lvJoinedCourses_SelectedIndexChanged;
+            lvJoinedCourses.MouseDoubleClick += lvJoinedCourses_ItemActivate;
             // 
             // cmsUserOptions
             // 
