@@ -194,6 +194,7 @@
             lvMyCourses.UseCompatibleStateImageBehavior = false;
             lvMyCourses.View = View.Details;
             lvMyCourses.SelectedIndexChanged += lvMyCourses_SelectedIndexChanged;
+            lvMyCourses.DoubleClick += lvMyCourses_DoubleClick_1;
             // 
             // colCourseID
             // 

@@ -122,7 +122,7 @@ namespace APP_DOAN
                 {
                     bool isJoined = false;
 
-                    // 🔍 Kiểm tra user có tham gia lớp hay chưa
+                    //  Kiểm tra user có tham gia lớp hay chưa
                     if (c.Object != null && c.Object.Students != null)
                     {
                         if (c.Object.Students.Contains(_currentUserUid))
