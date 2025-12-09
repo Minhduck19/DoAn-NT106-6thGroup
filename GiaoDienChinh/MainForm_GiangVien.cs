@@ -16,6 +16,7 @@ namespace APP_DOAN
         private bool isLoggingOut = false;
         private string currentUid;
         private string currentDisplayName;
+        private TextBox txtFind; // Add this field to your MainForm_GiangVien class
 
 
         // (Trong tương lai, bạn sẽ dùng 'idToken' hoặc 'loggedInEmail'
@@ -27,6 +28,15 @@ namespace APP_DOAN
             this.idToken = token;
             this.currentUid = uid;                    // UID thật
             this.currentDisplayName = displayName;    // Họ tên giảng viên
+
+            // In your constructor (after InitializeComponent()), add this initialization:
+            this.txtFind = new TextBox
+            {
+                Name = "txtFind",
+                Width = 200,
+                Location = new System.Drawing.Point(20, 60) // Adjust location as needed
+            };
+            this.Controls.Add(txtFind);
         }
 
         private void MainForm_GiangVien_Load(object sender, EventArgs e)
@@ -163,17 +173,6 @@ namespace APP_DOAN
         // --- LOGIC ĐĂNG XUẤT VÀ ĐÓNG FORM ---
         // (Giữ nguyên logic giống MainForm của Sinh viên)
 
-        private void btnLogout_Click_1(object sender, EventArgs e)
-        {
-            var result = MessageBox.Show("Bạn có chắc chắn muốn đăng xuất?", "Xác nhận Đăng xuất",
-                                        MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-            if (result == DialogResult.Yes)
-            {
-                isLoggingOut = true; // Đánh dấu là đang chủ động đăng xuất
-                this.Close(); // Đóng Form chính để-quay-về GiaoDienGoc
-            }
-        }
 
         private void MainForm_GiangVien_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -258,6 +257,7 @@ namespace APP_DOAN
                 item.SubItems[2].Text = updatedSiSo.ToString();
             };
             editForm.ShowDialog();
+        }
         private void lvMyCourses_DoubleClick_1(object sender, EventArgs e)
         {
             if (lvMyCourses.SelectedItems.Count == 0)
@@ -271,6 +271,18 @@ namespace APP_DOAN
 
             // Reload lại danh sách lớp
             LoadMyCoursesData();
+        }
+
+        private void btnLogout_Click(object sender, EventArgs e)
+        {
+            var result = MessageBox.Show("Bạn có chắc chắn muốn đăng xuất?", "Xác nhận Đăng xuất",
+                                        MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
+            {
+                isLoggingOut = true; // Đánh dấu là đang chủ động đăng xuất
+                this.Close(); // Đóng Form chính để-quay-về GiaoDienGoc
+            }
         }
     }
 }
