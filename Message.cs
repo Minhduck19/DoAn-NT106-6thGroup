@@ -2,9 +2,9 @@
 {
     public class Message
     {
-        public string SenderUid { get; set; }    // UID của người gửi
-        public string SenderName { get; set; }   // Tên của người gửi
-        public string Text { get; set; }         // Nội dung tin nhắn
-        public long Timestamp { get; set; }      // Dấu thời gian (Unix)
+        public string SenderUid { get; set; }
+        public string SenderName { get; set; }
+        public string Text { get; set; }
+        public long Timestamp { get; set; } // Unix time
     }
 }

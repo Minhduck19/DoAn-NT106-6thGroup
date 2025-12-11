@@ -127,6 +127,7 @@ namespace APP_DOAN
             txtEmail.ShadowDecoration.CustomizableEdges = customizableEdges4;
             txtEmail.Size = new Size(250, 40);
             txtEmail.TabIndex = 1;
+            txtEmail.TextChanged += txtEmail_TextChanged;
             // 
             // btnLogin
             // 
