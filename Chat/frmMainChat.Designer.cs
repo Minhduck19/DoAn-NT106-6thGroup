@@ -285,7 +285,6 @@ namespace APP_DOAN
             btnSend.ShadowDecoration.CustomizableEdges = customizableEdges9;
             btnSend.Size = new Size(100, 55);
             btnSend.TabIndex = 1;
-            btnSend.Click += btnSend_Click;
             // 
             // frmMainChat
             // 

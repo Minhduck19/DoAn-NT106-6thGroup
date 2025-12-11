@@ -13,5 +13,7 @@
         public string MaGiangVien { get; set; }
         public string Khoa { get; set; }
         public string ChucVu { get; set; }
+
+        public bool IsOnline { get; set; } // Thêm trạng thái online
     }
 }

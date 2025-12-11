@@ -232,5 +232,10 @@ namespace APP_DOAN
             this.Show();
 
         }
+
+        private void txtEmail_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

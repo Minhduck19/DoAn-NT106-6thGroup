@@ -1,9 +1,10 @@
 ﻿using Firebase.Database;
 using Firebase.Database.Query;
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 
 namespace APP_DOAN
 {
@@ -11,7 +12,6 @@ namespace APP_DOAN
     {
         private readonly FirebaseClient _client;
         private readonly string _firebaseDatabaseUrl;
-
 
         public FirebaseChatService(string dbUrl, string idToken)
         {
@@ -24,28 +24,22 @@ namespace APP_DOAN
                 });
         }
 
-        // Hàm tạo ID phòng chat
+        // Tạo chatId
         public string GenerateChatId(string uid1, string uid2)
         {
-            if (string.Compare(uid1, uid2) > 0)
-                return $"{uid2}_{uid1}";
-            return $"{uid1}_{uid2}";
+            return string.Compare(uid1, uid2) > 0 ? $"{uid2}_{uid1}" : $"{uid1}_{uid2}";
         }
 
-        // Hàm Gửi tin nhắn
+        // Gửi tin nhắn
         public async Task SendMessageAsync(string chatId, Message message)
         {
-            await _client
-                .Child("Chats")
-                .Child(chatId)
-                .Child("Messages")
-                .PostAsync(message);
+            await _client.Child("Chats").Child(chatId).Child("Messages").PostAsync(message);
         }
 
-        // Hàm Lắng nghe (Real-time)
+        // Lắng nghe tin nhắn realtime
         public IDisposable ListenForMessages(string chatId, Action<Message> onMessageReceived)
         {
-            var subscription = _client
+            return _client
                 .Child("Chats")
                 .Child(chatId)
                 .Child("Messages")
@@ -54,26 +48,38 @@ namespace APP_DOAN
                 .Subscribe(firebaseEvent =>
                 {
                     if (firebaseEvent.Object != null)
-                    {
                         onMessageReceived?.Invoke(firebaseEvent.Object);
-                    }
                 });
-
-            return subscription;
         }
-        /// <summary>
-        /// Tải tất cả người dùng từ Firebase
-        /// </summary>
-        /// <returns>Một Dictionary<string, User> 
-        ///          trong đó Key là UID, Value là thông tin User
-        /// </returns>
+
+        // Lấy tất cả user
         public async Task<Dictionary<string, User>> GetAllUsersAsync()
         {
-            var users = await _client
-                .Child("Users")
-                .OnceAsync<User>();
-
+            var users = await _client.Child("Users").OnceAsync<User>();
             return users.ToDictionary(item => item.Key, item => item.Object);
+        }
+
+        // Cập nhật trạng thái online/offline
+        public async Task UpdateUserOnlineStatus(string uid, bool isOnline)
+        {
+            await _client.Child("Users").Child(uid).Child("IsOnline").PutAsync(isOnline);
+        }
+
+        // Lắng nghe trạng thái online/offline realtime
+        public IDisposable ListenForUserStatus(Action<string, bool> onStatusChanged)
+        {
+            return _client.Child("Users").AsObservable<User>()
+                .Subscribe(userEvent =>
+                {
+                    if (userEvent.Object != null && userEvent.Key != null)
+                    {
+                        bool isOnline = false;
+                        var prop = userEvent.Object.GetType().GetProperty("IsOnline");
+                        if (prop != null)
+                            isOnline = Convert.ToBoolean(prop.GetValue(userEvent.Object));
+                        onStatusChanged?.Invoke(userEvent.Key, isOnline);
+                    }
+                });
         }
     }
 }
