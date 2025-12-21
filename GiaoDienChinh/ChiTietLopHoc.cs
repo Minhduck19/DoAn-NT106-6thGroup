@@ -59,8 +59,14 @@ namespace APP_DOAN.GiaoDienChinh
 
         private async void btnAgree_Click(object sender, EventArgs e)
         {
+            if (string.IsNullOrEmpty(_course.Id))
+            {
+                MessageBox.Show("Lỗi: Mã định danh lớp học không hợp lệ!");
+                return;
+            }
             try
             {
+                
                 btnAgree.Enabled = false; // Chặn bấm liên tiếp
                 btnAgree.Text = "Đang xử lý...";
 
@@ -112,7 +118,8 @@ namespace APP_DOAN.GiaoDienChinh
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Lỗi hệ thống: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Hiển thị StackTrace để biết chính xác dòng nào bị lỗi
+                MessageBox.Show($"Lỗi chi tiết: {ex.Message}\n\nTại: {ex.StackTrace}", "Lỗi hệ thống");
                 btnAgree.Enabled = true;
                 btnAgree.Text = "Đồng ý";
             }
