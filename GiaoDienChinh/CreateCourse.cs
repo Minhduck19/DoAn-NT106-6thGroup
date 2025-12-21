@@ -66,13 +66,17 @@ namespace APP_DOAN.GiaoDienChinh
                 // 4. Nếu không trùng, tiến hành tạo mới
                 var newCourse = new CourseInfo
                 {
-                    MaLop = maLop,
-                    TenLop = tenLop,
-                    SiSo = siSo,
-                    GiangVienUid = FirebaseApi.CurrentUid,
-                    // Khởi tạo danh sách học sinh trống để tránh lỗi null sau này
-                    Students = new List<string>()
+                    MaLop = txtMaLop.Text.Trim(),
+                    TenLop = txtTenLop.Text.Trim(),
+                    SiSo = int.Parse(txtSiSo.Text.Trim()),
+
+                    // QUAN TRỌNG: Gán UID của giảng viên đang tạo lớp
+                    // Bạn có thể lấy từ FirebaseApi.CurrentUid hoặc truyền từ MainForm sang
+                    GiangVienUid = FirebaseApi.CurrentUid
                 };
+
+                // Lưu lên Firebase
+                await FirebaseApi.Put($"Courses/{newCourse.MaLop}", newCourse);
 
                 bool success = await FirebaseApi.Put($"Courses/{newCourse.MaLop}", newCourse);
 

@@ -10,6 +10,6 @@
         public List<string> Students { get; set; } = new List<string>(); 
         public int SoLuongHienTai => Students?.Count ?? 0;
 
-        public string GiangVienUid { get; internal set; }
+        public string GiangVienUid { get; set; }
     }
 }

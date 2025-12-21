@@ -23,10 +23,7 @@ namespace APP_DOAN.GiaoDienChinh
             FirebaseApi.IdToken = _idToken;
         }
 
-        private async void Teacher_Information_Load(object sender, EventArgs e)
-        {
-            await LoadDataAsync();
-        }
+
 
         private async Task LoadDataAsync()
         {
@@ -42,7 +39,7 @@ namespace APP_DOAN.GiaoDienChinh
                 {
 
                     txtFullName.Text = user.HoTen;
-                    txtStudentID.Text = user.MaGiangVien;
+                    txtTeacherID.Text = user.MaGiangVien;
                     txtBirthday.Text = user.NgaySinh;
                     txtSex.Text = user.Sex;
                     txtFaculty.Text = user.Khoa;
@@ -75,10 +72,10 @@ namespace APP_DOAN.GiaoDienChinh
                 var updatedUser = new User
                 {
                     Email = _email,
-                    Role = "SinhVien",
+                    Role = "GiangVien",
                     HoTen = txtFullName.Text.Trim(),
                     Sex = txtSex.Text.Trim(),
-                    MaGiangVien = txtStudentID.Text.Trim(),
+                    MaGiangVien = txtTeacherID.Text.Trim(),
                     NgaySinh = txtBirthday.Text.Trim(),
                     Khoa = txtFaculty.Text.Trim(),
                     ChucVu = txtClass.Text.Trim(),
@@ -105,6 +102,18 @@ namespace APP_DOAN.GiaoDienChinh
             }
         }
 
-        private void btnLogout_Click(object sender, EventArgs e) => this.Close();
+        private void btnLogout_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            base.OnFormClosing(e);
+        }
+
+        private async void Student_Information_Load(object sender, EventArgs e)
+        {
+            await LoadDataAsync();
+        }
     }
 }
