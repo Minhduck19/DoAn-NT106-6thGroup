@@ -8,6 +8,7 @@ namespace APP_DOAN.Services
 {
     public static class FirebaseApi
     {
+        public static string CurrentUid { get; set; }
         // 1. Cấu hình cơ bản
         // Thay địa chỉ Database của bạn vào đây (đảm bảo kết thúc bằng dấu /)
         public static string BaseUrl = "https://nt106-minhduc-default-rtdb.firebaseio.com/";

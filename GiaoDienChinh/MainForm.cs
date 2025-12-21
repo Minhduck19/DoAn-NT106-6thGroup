@@ -43,8 +43,8 @@ namespace APP_DOAN
         {
             lblWelcome.Text = $"Chào mừng,\n{_currentUserName} (Sinh viên)";
             SetupJoinedListViewColumns();
+            // Chỉ gọi hàm tải từ Firebase, xóa LoadMockClassData();
             await LoadClassDataFromFirebase();
-            LoadMockClassData();
         }
 
         private void LoadMockClassData()
@@ -104,8 +104,9 @@ namespace APP_DOAN
         private void SetupJoinedListViewColumns()
         {
             lvJoinedCourses.Columns.Clear();
-            lvJoinedCourses.Columns.Add("Tên môn", 380);
-            lvJoinedCourses.Columns.Add("Giảng viên", 200);
+            lvJoinedCourses.Columns.Add("Tên môn học", 400);
+            lvJoinedCourses.Columns.Add("Giảng viên", 300);
+            lvJoinedCourses.Columns.Add("Trạng thái", 250); 
         }
 
         // Tải dữ liệu lớp học từ Firebase
@@ -121,58 +122,57 @@ namespace APP_DOAN
 
                 foreach (var c in firebaseCourses)
                 {
+                    var courseData = c.Object;
                     bool isJoined = false;
 
-                    //  Kiểm tra user có tham gia lớp hay chưa
-                    if (c.Object != null && c.Object.Students != null)
+                    if (courseData.Students != null && courseData.Students.Contains(_currentUserUid))
                     {
-                        if (c.Object.Students.Contains(_currentUserUid))
-                            isJoined = true;
+                        isJoined = true;
                     }
 
-                    _allCourses.Add(new Course(
-                        c.Key,
-                        c.Object.Name,
-                        c.Object.Instructor,
-                        isJoined
-                    ));
+                    _allCourses.Add(new Course(c.Key, courseData.Name, courseData.Instructor, isJoined)
+                    {
+                        Students = courseData.Students ?? new List<string>(),
+                        MaLop = courseData.MaLop,
+                        SiSo = courseData.SiSo
+                    });
                 }
 
-                PopulateJoinedCourses();
+                // Đổi tên gọi tại đây cho đúng với tên hàm bên dưới
+                PopulateAllCourses();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Không thể tải dữ liệu từ Firebase!\n\n{ex.Message}",
-                    "Lỗi",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                MessageBox.Show($"Lỗi tải dữ liệu: {ex.Message}");
             }
         }
 
-
-        private void PopulateJoinedCourses()
+        private void PopulateAllCourses()
         {
+            if (lvJoinedCourses == null) return;
             lvJoinedCourses.Items.Clear();
 
-            var joined = _allCourses.Where(c => c.IsJoined).ToList();
-
-            if (joined.Count == 0)
+            foreach (var c in _allCourses)
             {
-                var item = new ListViewItem(" ");
-                item.SubItems.Add("-");
-                lvJoinedCourses.Items.Add(item);
-                return;
-            }
+                // Sử dụng c.TenLop thay vì c.Name
+                var item = new ListViewItem(c.TenLop ?? "Không có tên");
+                item.SubItems.Add(c.Instructor ?? "Chưa rõ");
 
-            foreach (var c in joined)
-            {
-                var item = new ListViewItem(c.Name);
-                item.SubItems.Add(c.Instructor);
+                if (c.IsJoined)
+                {
+                    item.SubItems.Add("✅ Đã tham gia");
+                    item.ForeColor = Color.Green;
+                }
+                else
+                {
+                    item.SubItems.Add("❌ Chưa tham gia");
+                    item.ForeColor = Color.Black;
+                }
+
                 item.Tag = c.Id;
                 lvJoinedCourses.Items.Add(item);
             }
         }
-
 
 
 
@@ -226,32 +226,28 @@ namespace APP_DOAN
             }
         }
 
-        
+
 
         private void lvJoinedCourses_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (lvJoinedCourses.SelectedItems.Count == 0)
-            {
-                return;
-            }
+            if (lvJoinedCourses.SelectedItems.Count == 0) return;
 
             ListViewItem selectedItem = lvJoinedCourses.SelectedItems[0];
-
-            // 1. Kiểm tra dòng placeholder trống
-            if (selectedItem.Text == " ") return;
-
-            // 2. Lấy ID và tìm Course
-            // Đảm bảo Tag không phải là null trước khi gọi ToString()
             if (selectedItem.Tag == null) return;
 
             var id = selectedItem.Tag.ToString();
             var course = _allCourses.FirstOrDefault(c => c.Id == id);
 
-            if (course == null) return;
-
-            // 3. Mở Form chi tiết
-            ChiTietLopHoc form = new ChiTietLopHoc(course);
-            form.ShowDialog();
+            if (course != null)
+            {
+                // Truyền thêm _currentUserUid và _idToken vào Form Chi Tiết
+                ChiTietLopHoc form = new ChiTietLopHoc(course, _currentUserUid, _idToken);
+                if (form.ShowDialog() == DialogResult.OK)
+                {
+                    // Nếu đăng ký thành công (DialogResult.OK), tải lại danh sách
+                    _ = LoadClassDataFromFirebase();
+                }
+            }
         }
 
         private void cmsUserOptions_Opening(object sender, System.ComponentModel.CancelEventArgs e) { }
@@ -307,22 +303,45 @@ namespace APP_DOAN
                 submitForm.ShowDialog();
             }
         }
+
+        private void Find_Click(object sender, EventArgs e)
+        {
+            string searchText = txtNameClass.Text.ToLower().Trim();
+            lvJoinedCourses.Items.Clear();
+
+            var filtered = _allCourses.Where(c => c.Name.ToLower().Contains(searchText)).ToList();
+
+            foreach (var c in filtered)
+            {
+                var item = new ListViewItem(c.Name);
+                item.SubItems.Add(c.Instructor);
+                item.SubItems.Add(c.IsJoined ? "✅ Đã tham gia" : "❌ Chưa tham gia");
+                item.Tag = c.Id;
+                lvJoinedCourses.Items.Add(item);
+            }
+        }
     }
 
     public class Course
     {
-        public string Id { get; init; }
-        public string Name { get; set; }
+        public string Id { get; set; }
+        public string MaLop { get; set; }
+        public string TenLop { get; set; } // Đổi từ Name thành TenLop cho khớp Firebase
         public string Instructor { get; set; }
         public bool IsJoined { get; set; }
         public List<string> Students { get; set; } = new List<string>();
 
-        public Course() { }
+        // Thuộc tính phụ để không phải sửa code ở các hàm khác đang gọi .Name
+        public string Name => TenLop;
 
-        public Course(string id, string name, string instructor, bool joined)
+        public int SiSo { get; internal set; }
+
+        public Course() { } // Cần thiết để Firebase đổ dữ liệu vào
+
+        public Course(string id, string tenLop, string instructor, bool joined)
         {
             Id = id;
-            Name = name;
+            TenLop = tenLop;
             Instructor = instructor;
             IsJoined = joined;
         }
