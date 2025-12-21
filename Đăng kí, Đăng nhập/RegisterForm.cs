@@ -21,13 +21,13 @@ namespace APP_DOAN
         private readonly string webApiKey = "AIzaSyA7fh7FLwmHFHrwchTX1gcATk1ulr45QLs";
         private readonly string firebaseDatabaseUrl = "https://nt106-minhduc-default-rtdb.firebaseio.com/"; // URL thật của bạn
 
-        
+
 
         public RegisterForm()
         {
             InitializeComponent();
 
-            
+
             if (string.IsNullOrWhiteSpace(webApiKey) || webApiKey == "YOUR_FIREBASE_WEB_API_KEY")
             {
                 MessageBox.Show("Bạn chưa thiết lập Firebase Web API Key!", "Lỗi Cấu Hình", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -56,12 +56,12 @@ namespace APP_DOAN
 
             try
             {
-               
+
                 var registerResult = await RegisterWithEmailPasswordAsync(email, password);
 
                 if (!registerResult.Success)
                 {
-                    
+
                     string thongBaoLoi = registerResult.ErrorMessage switch
                     {
                         "EMAIL_EXISTS" => "Email này đã tồn tại. Vui lòng sử dụng một email khác.",
@@ -117,7 +117,7 @@ namespace APP_DOAN
                 }
 
                 this.Close(); // Đóng form đăng ký sau khi form thông tin đã đóng
-                
+
             }
             catch (Exception ex)
             {
@@ -159,7 +159,7 @@ namespace APP_DOAN
                     if (doc.RootElement.TryGetProperty("error", out var err) && err.TryGetProperty("message", out var msg))
                     {
                         return (false, null, null, msg.GetString());
-                        
+
                     }
                 }
                 catch (JsonException) { /* ignore parsing errors */ }
@@ -180,7 +180,7 @@ namespace APP_DOAN
             }
         }
 
-        
+
         private async Task SendVerificationEmailAsync(string idToken)
         {
             using var httpClient = new HttpClient();
@@ -193,17 +193,17 @@ namespace APP_DOAN
             if (!response.IsSuccessStatusCode)
             {
                 Debug.WriteLine("Không thể gửi email xác minh.");
-              
+
             }
         }
 
-        
+
         private static bool IsValidEmail(string email)
         {
             try { _ = new MailAddress(email); return true; } catch { return false; }
         }
 
-       
+
         private void ToggleUiEnabled(bool enabled)
         {
             txtNewEmail.Enabled = enabled;
@@ -216,5 +216,10 @@ namespace APP_DOAN
 
         private void RegisterForm_Load(object sender, EventArgs e) { }
         private void txtNewPassword_TextChanged(object sender, EventArgs e) { }
+
+        private void btnBack_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }
