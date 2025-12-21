@@ -1,11 +1,12 @@
-﻿using System;
+﻿using APP_DOAN.GiaoDienChinh;
+using Firebase.Database;
+using Firebase.Database.Query;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using APP_DOAN.GiaoDienChinh;
-using Firebase.Database;
-using Firebase.Database.Query;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 
 namespace APP_DOAN
 {
@@ -178,8 +179,8 @@ namespace APP_DOAN
         private void profileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.Hide();
-            Student_Information profileForm = new Student_Information(this._loggedInEmail, "Student");
-            profileForm.ShowDialog();
+            Student_Information frmInfo = new Student_Information(_currentUserUid, _idToken, _loggedInEmail);
+            frmInfo.ShowDialog();
             this.Show();
         }
 

@@ -237,5 +237,10 @@ namespace APP_DOAN
         {
 
         }
+
+        private void pnlLoginCard_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 }

@@ -20,7 +20,6 @@ namespace APP_DOAN.GiaoDienChinh
         private Guna2HtmlLabel lblStudentID;
         private Guna2HtmlLabel lblFullName;
         private Guna2HtmlLabel lblDOB;
-        private Guna2TextBox txtStudentID;
         private Guna2TextBox txtFullName;
         private Guna2TextBox txtHDT;
 
@@ -43,6 +42,8 @@ namespace APP_DOAN.GiaoDienChinh
         {
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges5 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges6 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges1 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges2 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges3 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges4 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges7 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
@@ -69,20 +70,19 @@ namespace APP_DOAN.GiaoDienChinh
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges24 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges25 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges26 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges1 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges2 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             panelLeft = new Guna2Panel();
+            btnSave = new Guna2Button();
             lblWelcome = new Guna2HtmlLabel();
             btnLogout = new Guna2Button();
             panelTop = new Guna2Panel();
             lblTitle = new Guna2HtmlLabel();
             panelMainContent = new Guna2Panel();
             grpPersonalInfo = new Guna2Panel();
+            txtStudentID = new Guna2TextBox();
             guna2HtmlLabel3 = new Guna2HtmlLabel();
             guna2HtmlLabel2 = new Guna2HtmlLabel();
             guna2HtmlLabel1 = new Guna2HtmlLabel();
             lblStudentID = new Guna2HtmlLabel();
-            txtStudentID = new Guna2TextBox();
             lblFullName = new Guna2HtmlLabel();
             txtFullName = new Guna2TextBox();
             lblDOB = new Guna2HtmlLabel();
@@ -101,7 +101,6 @@ namespace APP_DOAN.GiaoDienChinh
             lblMajor = new Guna2HtmlLabel();
             txtSex = new Guna2TextBox();
             lblEmail = new Guna2HtmlLabel();
-            btnSave = new Guna2Button();
             panelLeft.SuspendLayout();
             panelTop.SuspendLayout();
             panelMainContent.SuspendLayout();
@@ -122,6 +121,21 @@ namespace APP_DOAN.GiaoDienChinh
             panelLeft.ShadowDecoration.CustomizableEdges = customizableEdges6;
             panelLeft.Size = new Size(200, 500);
             panelLeft.TabIndex = 2;
+            // 
+            // btnSave
+            // 
+            btnSave.BorderRadius = 10;
+            btnSave.CustomizableEdges = customizableEdges1;
+            btnSave.FillColor = Color.FromArgb(231, 76, 60);
+            btnSave.Font = new Font("Segoe UI", 9F);
+            btnSave.ForeColor = Color.White;
+            btnSave.Location = new Point(10, 393);
+            btnSave.Name = "btnSave";
+            btnSave.ShadowDecoration.CustomizableEdges = customizableEdges2;
+            btnSave.Size = new Size(180, 40);
+            btnSave.TabIndex = 2;
+            btnSave.Text = "Lưu";
+            btnSave.Click += btnSave_Click;
             // 
             // lblWelcome
             // 
@@ -188,11 +202,11 @@ namespace APP_DOAN.GiaoDienChinh
             // 
             grpPersonalInfo.BackColor = Color.Transparent;
             grpPersonalInfo.BorderRadius = 10;
+            grpPersonalInfo.Controls.Add(txtStudentID);
             grpPersonalInfo.Controls.Add(guna2HtmlLabel3);
             grpPersonalInfo.Controls.Add(guna2HtmlLabel2);
             grpPersonalInfo.Controls.Add(guna2HtmlLabel1);
             grpPersonalInfo.Controls.Add(lblStudentID);
-            grpPersonalInfo.Controls.Add(txtStudentID);
             grpPersonalInfo.Controls.Add(lblFullName);
             grpPersonalInfo.Controls.Add(txtFullName);
             grpPersonalInfo.Controls.Add(lblDOB);
@@ -205,6 +219,20 @@ namespace APP_DOAN.GiaoDienChinh
             grpPersonalInfo.ShadowDecoration.Enabled = true;
             grpPersonalInfo.Size = new Size(560, 160);
             grpPersonalInfo.TabIndex = 0;
+            // 
+            // txtStudentID
+            // 
+            txtStudentID.CustomizableEdges = customizableEdges9;
+            txtStudentID.DefaultText = "";
+            txtStudentID.Font = new Font("Segoe UI", 9F);
+            txtStudentID.Location = new Point(253, 4);
+            txtStudentID.Margin = new Padding(3, 4, 3, 4);
+            txtStudentID.Name = "txtStudentID";
+            txtStudentID.PlaceholderText = "";
+            txtStudentID.SelectedText = "";
+            txtStudentID.ShadowDecoration.CustomizableEdges = customizableEdges10;
+            txtStudentID.Size = new Size(239, 33);
+            txtStudentID.TabIndex = 9;
             // 
             // guna2HtmlLabel3
             // 
@@ -248,24 +276,6 @@ namespace APP_DOAN.GiaoDienChinh
             lblStudentID.Size = new Size(3, 2);
             lblStudentID.TabIndex = 0;
             lblStudentID.Text = null;
-            // 
-            // txtStudentID
-            // 
-            txtStudentID.BorderRadius = 5;
-            txtStudentID.CustomizableEdges = customizableEdges9;
-            txtStudentID.DefaultText = "";
-            txtStudentID.FillColor = Color.FromArgb(236, 240, 241);
-            txtStudentID.Font = new Font("Segoe UI", 9F);
-            txtStudentID.ForeColor = Color.Black;
-            txtStudentID.Location = new Point(253, 4);
-            txtStudentID.Margin = new Padding(3, 4, 3, 4);
-            txtStudentID.Name = "txtStudentID";
-            txtStudentID.PlaceholderText = "";
-            txtStudentID.ReadOnly = true;
-            txtStudentID.SelectedText = "";
-            txtStudentID.ShadowDecoration.CustomizableEdges = customizableEdges10;
-            txtStudentID.Size = new Size(251, 30);
-            txtStudentID.TabIndex = 1;
             // 
             // lblFullName
             // 
@@ -443,6 +453,7 @@ namespace APP_DOAN.GiaoDienChinh
             // 
             // txtBirthday
             // 
+            txtBirthday.AcceptsTab = true;
             txtBirthday.CustomizableEdges = customizableEdges23;
             txtBirthday.DefaultText = "";
             txtBirthday.Font = new Font("Segoe UI", 9F);
@@ -496,20 +507,6 @@ namespace APP_DOAN.GiaoDienChinh
             lblEmail.TabIndex = 4;
             lblEmail.Text = null;
             // 
-            // btnSave
-            // 
-            btnSave.BorderRadius = 10;
-            btnSave.CustomizableEdges = customizableEdges1;
-            btnSave.FillColor = Color.FromArgb(231, 76, 60);
-            btnSave.Font = new Font("Segoe UI", 9F);
-            btnSave.ForeColor = Color.White;
-            btnSave.Location = new Point(10, 393);
-            btnSave.Name = "btnSave";
-            btnSave.ShadowDecoration.CustomizableEdges = customizableEdges2;
-            btnSave.Size = new Size(180, 40);
-            btnSave.TabIndex = 2;
-            btnSave.Text = "Lưu";
-            // 
             // Student_Information
             // 
             BackgroundImageLayout = ImageLayout.Stretch;
@@ -520,6 +517,7 @@ namespace APP_DOAN.GiaoDienChinh
             Name = "Student_Information";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Thông tin sinh viên";
+            Load += Teacher_Information_Load;
             panelLeft.ResumeLayout(false);
             panelLeft.PerformLayout();
             panelTop.ResumeLayout(false);
@@ -549,5 +547,6 @@ namespace APP_DOAN.GiaoDienChinh
         private Guna2TextBox txtFaculty;
         private Guna2TextBox txtBirthday;
         private Guna2Button btnSave;
+        private Guna2TextBox txtStudentID;
     }
 }

@@ -58,5 +58,10 @@ namespace APP_DOAN
             _userStatusSubscription?.Dispose();
             await _chatService.UpdateUserOnlineStatus(_currentUserUid, false);
         }
+
+        private void flowUserListPanel_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 }
