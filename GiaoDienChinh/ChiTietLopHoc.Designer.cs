@@ -28,57 +28,78 @@
         /// </summary>
         private void InitializeComponent()
         {
-            lblCourseName = new Label();
-            lblInstructor = new Label();
-            lblCourseId = new Label();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges1 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges2 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges3 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges4 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            label1 = new Label();
+            btnAgree = new Guna.UI2.WinForms.Guna2Button();
+            btnCancel = new Guna.UI2.WinForms.Guna2Button();
             SuspendLayout();
             // 
-            // lblCourseName
+            // label1
             // 
-            lblCourseName.AutoSize = true;
-            lblCourseName.Location = new Point(90, 102);
-            lblCourseName.Name = "lblCourseName";
-            lblCourseName.Size = new Size(94, 20);
-            lblCourseName.TabIndex = 0;
-            lblCourseName.Text = "CourseName";
+            label1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            label1.Font = new Font("Segoe UI", 16.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label1.Location = new Point(54, 36);
+            label1.Name = "label1";
+            label1.Size = new Size(510, 69);
+            label1.TabIndex = 0;
+            label1.Text = "Bạn chắc chắn đăng ký lớp học này!";
+            label1.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // lblInstructor
+            // btnAgree
             // 
-            lblInstructor.AutoSize = true;
-            lblInstructor.Location = new Point(90, 201);
-            lblInstructor.Name = "lblInstructor";
-            lblInstructor.Size = new Size(71, 20);
-            lblInstructor.TabIndex = 1;
-            lblInstructor.Text = "Instructor";
+            btnAgree.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnAgree.BackColor = Color.Transparent;
+            btnAgree.BorderRadius = 15;
+            btnAgree.CustomizableEdges = customizableEdges1;
+            btnAgree.FillColor = Color.DeepSkyBlue;
+            btnAgree.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            btnAgree.ForeColor = Color.Black;
+            btnAgree.Location = new Point(79, 108);
+            btnAgree.Name = "btnAgree";
+            btnAgree.ShadowDecoration.CustomizableEdges = customizableEdges2;
+            btnAgree.Size = new Size(200, 45);
+            btnAgree.TabIndex = 3;
+            btnAgree.Text = "Đăng ký";
+            btnAgree.Click += btnAgree_Click;
             // 
-            // lblCourseId
+            // btnCancel
             // 
-            lblCourseId.AutoSize = true;
-            lblCourseId.Location = new Point(90, 305);
-            lblCourseId.Name = "lblCourseId";
-            lblCourseId.Size = new Size(67, 20);
-            lblCourseId.TabIndex = 2;
-            lblCourseId.Text = "CourseId";
+            btnCancel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            btnCancel.BackColor = Color.Transparent;
+            btnCancel.BorderRadius = 15;
+            btnCancel.CustomizableEdges = customizableEdges3;
+            btnCancel.FillColor = Color.FromArgb(255, 128, 0);
+            btnCancel.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            btnCancel.ForeColor = Color.Black;
+            btnCancel.Location = new Point(333, 108);
+            btnCancel.Name = "btnCancel";
+            btnCancel.ShadowDecoration.CustomizableEdges = customizableEdges4;
+            btnCancel.Size = new Size(200, 45);
+            btnCancel.TabIndex = 4;
+            btnCancel.Text = "Hủy";
+            btnCancel.Click += btnCancel_Click;
             // 
             // ChiTietLopHoc
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
-            Controls.Add(lblCourseId);
-            Controls.Add(lblInstructor);
-            Controls.Add(lblCourseName);
+            BackColor = Color.White;
+            ClientSize = new Size(613, 193);
+            Controls.Add(btnCancel);
+            Controls.Add(btnAgree);
+            Controls.Add(label1);
             Name = "ChiTietLopHoc";
-            Text = "ChiTietLopHoc";
-            Load += ChiTietLopHoc_Load;
+            Text = "Đăng ký lớp học";
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
 
-        private Label lblCourseName;
-        private Label lblInstructor;
-        private Label lblCourseId;
+        private Label label1;
+        private Guna.UI2.WinForms.Guna2Button btnAgree;
+        private Guna.UI2.WinForms.Guna2Button btnCancel;
     }
 }

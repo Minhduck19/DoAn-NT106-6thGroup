@@ -1,4 +1,5 @@
 ﻿using APP_DOAN.GiaoDienChinh;
+using APP_DOAN.Services;
 using Firebase.Database;
 using System;
 using System.Collections.Generic;
@@ -53,21 +54,52 @@ namespace APP_DOAN
             lvMyCourses.Columns.Add("Sĩ số", 100);
         }
 
-        private void LoadMyCoursesData()
+        // Thay đổi cách load dữ liệu từ Firebase
+        private async void LoadMyCoursesData()
         {
             lvMyCourses.Items.Clear();
+            try
+            {
+                // Lấy danh sách từ node "Courses"
+                var data = await FirebaseApi.Get<Dictionary<string, CourseInfo>>("Courses");
 
-            var item1 = new ListViewItem("DB202");
-            item1.SubItems.Add("Cơ sở dữ liệu");
-            item1.SubItems.Add("40");
-            item1.Tag = "DB202";
-            lvMyCourses.Items.Add(item1);
+                if (data != null)
+                {
+                    foreach (var entry in data)
+                    {
+                        var course = entry.Value;
+                        // Chỉ hiển thị nếu lớp này thuộc về GV đang đăng nhập
+                        if (course.GiangVienUid == currentUid)
+                        {
+                            AddCourseToListView(course.MaLop, course.TenLop, course.SiSo);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Không thể tải danh sách lớp: " + ex.Message);
+            }
+        }
 
-            var item2 = new ListViewItem("NET301");
-            item2.SubItems.Add("Lập trình .NET");
-            item2.SubItems.Add("35");
-            item2.Tag = "NET301";
-            lvMyCourses.Items.Add(item2);
+        // Sửa nút Xóa để xóa trên Firebase
+        private async void BtnDeleteCourse_Click_1(object sender, EventArgs e)
+        {
+            if (lvMyCourses.SelectedItems.Count == 0) return;
+
+            var item = lvMyCourses.SelectedItems[0];
+            string maLop = item.Text; // Mã lớp làm Key
+
+            if (MessageBox.Show($"Xóa lớp {maLop}?", "Xác nhận", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                // Gửi lệnh xóa lên Firebase (truyền null vào Put hoặc dùng Delete nếu API hỗ trợ)
+                bool success = await FirebaseApi.Put<object>($"Courses/{maLop}", null);
+                if (success)
+                {
+                    lvMyCourses.Items.Remove(item);
+                    MessageBox.Show("Đã xóa thành công!");
+                }
+            }
         }
 
         private void AddCourseToListView(string maLop, string tenLop, int siSo)
@@ -83,6 +115,7 @@ namespace APP_DOAN
 
         private async void btnCreateCourse_Click_1(object sender, EventArgs e)
         {
+            FirebaseApi.IdToken = this.idToken;
             CreateCourse createCourse = new CreateCourse();
             createCourse.OnCourseCreated += (maLop, tenLop, siSo) =>
             {
@@ -90,21 +123,6 @@ namespace APP_DOAN
             };
 
             createCourse.ShowDialog();
-
-
-            var firebaseClient = new FirebaseClient(
-                "https://nt106-minhduc-default-rtdb.firebaseio.com/",
-                new FirebaseOptions
-                {
-                    AuthTokenAsyncFactory = () => Task.FromResult(idToken)
-                });
-
-            var createForm = new CreateCourseForm(firebaseClient, currentUid, currentDisplayName);
-
-            if (createForm.ShowDialog() == DialogResult.OK)
-            {
-                MessageBox.Show("Tạo lớp thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
         }
 
         private void btnEditCourse_Click_1(object sender, EventArgs e, FixCourse fixCourse)
@@ -129,25 +147,45 @@ namespace APP_DOAN
             fixCourse.ShowDialog();
         }
 
-        private void btnDeleteCourse_Click_1(object sender, EventArgs e)
+        private async void btnDeleteCourse_Click_1(object sender, EventArgs e)
         {
+            // 1. Kiểm tra xem người dùng đã chọn dòng nào chưa
             if (lvMyCourses.SelectedItems.Count == 0)
             {
-                MessageBox.Show("Vui lòng chọn một lớp học để xóa.", "Chưa chọn lớp", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Vui lòng chọn lớp cần xóa.", "Thông báo");
                 return;
             }
 
-            string courseId = lvMyCourses.SelectedItems[0].Tag.ToString();
-            string courseName = lvMyCourses.SelectedItems[0].SubItems[1].Text;
+            var selectedItem = lvMyCourses.SelectedItems[0];
+            string maLop = selectedItem.Text; // Lấy mã lớp từ cột đầu tiên
+            string tenLop = selectedItem.SubItems[1].Text;
 
-            var confirm = MessageBox.Show($"Bạn có chắc chắn muốn xóa lớp '{courseName}' (ID: {courseId}) không? Hành động này không thể hoàn tác.",
-                                        "Xác nhận Xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            // 2. Hỏi xác nhận trước khi xóa
+            var confirm = MessageBox.Show($"Bạn có chắc chắn muốn xóa lớp [{tenLop}] không?\nDữ liệu sẽ bị xóa vĩnh viễn trên Firebase.",
+                                          "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
             if (confirm == DialogResult.Yes)
             {
-                MessageBox.Show($"Đã xóa lớp (ID: {courseId}).", "Đã xóa", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                try
+                {
+                    // 3. Thực hiện xóa trên Firebase bằng cách Put null
+                    bool success = await FirebaseApi.Put<object>($"Courses/{maLop}", null);
 
-                LoadMyCoursesData();
+                    if (success)
+                    {
+                        // 4. Xóa dòng đó khỏi giao diện ListView
+                        lvMyCourses.Items.Remove(selectedItem);
+                        MessageBox.Show("Đã xóa lớp học thành công!");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Không thể xóa dữ liệu trên Firebase. Vui lòng kiểm tra kết nối.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Lỗi khi xóa: {ex.Message}");
+                }
             }
         }
 
