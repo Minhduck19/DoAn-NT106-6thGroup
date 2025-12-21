@@ -3,6 +3,7 @@ using Firebase.Database;
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 
@@ -10,45 +11,37 @@ namespace APP_DOAN
 {
     public partial class MainForm_GiangVien : Form
     {
-        // Biến lưu thông tin đăng nhập
         private string loggedInEmail;
         private string idToken;
         private bool isLoggingOut = false;
         private string currentUid;
         private string currentDisplayName;
-        private TextBox txtFind; // Add this field to your MainForm_GiangVien class
+        private TextBox txtFind;
 
-
-        // (Trong tương lai, bạn sẽ dùng 'idToken' hoặc 'loggedInEmail'
-        //  để-truy-vấn-Firebase-lấy-các-lớp-của-giảng-viên-này)
 
         public MainForm_GiangVien(string uid, string displayName, string token)
         {
             InitializeComponent();
             this.idToken = token;
-            this.currentUid = uid;                    // UID thật
-            this.currentDisplayName = displayName;    // Họ tên giảng viên
+            this.currentUid = uid;
+            this.currentDisplayName = displayName;
 
-            // In your constructor (after InitializeComponent()), add this initialization:
             this.txtFind = new TextBox
             {
                 Name = "txtFind",
                 Width = 200,
-                Location = new System.Drawing.Point(20, 60) // Adjust location as needed
+                Location = new System.Drawing.Point(20, 60)
             };
             this.Controls.Add(txtFind);
         }
 
         private void MainForm_GiangVien_Load(object sender, EventArgs e)
         {
-            // Hiển thị thông tin Giảng viên
             string username = currentDisplayName;
             lblWelcome.Text = $"Chào mừng,\nGV. {username}";
 
-            // Cài đặt cột cho ListView
             SetupListViewColumns();
 
-            // Tải dữ liệu các lớp của Giảng viên (Dữ liệu giả lập)
             LoadMyCoursesData();
         }
 
@@ -58,22 +51,16 @@ namespace APP_DOAN
             lvMyCourses.Columns.Add("Mã Lớp", 100);
             lvMyCourses.Columns.Add("Tên Lớp Học", 350);
             lvMyCourses.Columns.Add("Sĩ số", 100);
-            // (Bạn có thể thêm các cột khác như "Học kỳ", "Trạng thái")
         }
 
         private void LoadMyCoursesData()
         {
-            // Dữ liệu giả lập - Trong tương lai, bạn sẽ:
-            // 1. Dùng idToken/email để-lấy-UID-của-GV
-            // 2. Truy vấn Firebase: `firebaseClient.Child("Courses").OrderBy("InstructorUID").EqualTo(uid)...`
-
             lvMyCourses.Items.Clear();
 
-            // Giả sử giảng viên này dạy 2 lớp
             var item1 = new ListViewItem("DB202");
             item1.SubItems.Add("Cơ sở dữ liệu");
-            item1.SubItems.Add("40"); // Sĩ số
-            item1.Tag = "DB202"; // Lưu ID để-sử-dụng
+            item1.SubItems.Add("40");
+            item1.Tag = "DB202";
             lvMyCourses.Items.Add(item1);
 
             var item2 = new ListViewItem("NET301");
@@ -83,7 +70,6 @@ namespace APP_DOAN
             lvMyCourses.Items.Add(item2);
         }
 
-        // --- XỬ LÝ CÁC NÚT HÀNH ĐỘNG ---
         private void AddCourseToListView(string maLop, string tenLop, int siSo)
         {
             var item = new ListViewItem(maLop);
@@ -95,7 +81,7 @@ namespace APP_DOAN
         }
 
 
-        private void btnCreateCourse_Click_1(object sender, EventArgs e)
+        private async void btnCreateCourse_Click_1(object sender, EventArgs e)
         {
             CreateCourse createCourse = new CreateCourse();
             createCourse.OnCourseCreated += (maLop, tenLop, siSo) =>
@@ -110,7 +96,7 @@ namespace APP_DOAN
                 "https://nt106-minhduc-default-rtdb.firebaseio.com/",
                 new FirebaseOptions
                 {
-                    AuthTokenAsyncFactory = () => Task.FromResult(idToken) // DÙNG TOKEN THẬT TỪ LOGIN
+                    AuthTokenAsyncFactory = () => Task.FromResult(idToken)
                 });
 
             var createForm = new CreateCourseForm(firebaseClient, currentUid, currentDisplayName);
@@ -118,8 +104,6 @@ namespace APP_DOAN
             if (createForm.ShowDialog() == DialogResult.OK)
             {
                 MessageBox.Show("Tạo lớp thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                // Load lại danh sách lớp nếu cần
-                // LoadMyCoursesData();
             }
         }
 
@@ -154,29 +138,21 @@ namespace APP_DOAN
             }
 
             string courseId = lvMyCourses.SelectedItems[0].Tag.ToString();
-            string courseName = lvMyCourses.SelectedItems[0].SubItems[1].Text; // Lấy tên lớp
+            string courseName = lvMyCourses.SelectedItems[0].SubItems[1].Text;
 
             var confirm = MessageBox.Show($"Bạn có chắc chắn muốn xóa lớp '{courseName}' (ID: {courseId}) không? Hành động này không thể hoàn tác.",
                                         "Xác nhận Xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
             if (confirm == DialogResult.Yes)
             {
-                // (Trong tương lai, bạn sẽ gọi API Firebase để-xóa-lớp-học)
                 MessageBox.Show($"Đã xóa lớp (ID: {courseId}).", "Đã xóa", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                // Tải lại danh sách sau khi xóa
                 LoadMyCoursesData();
             }
         }
 
-
-        // --- LOGIC ĐĂNG XUẤT VÀ ĐÓNG FORM ---
-        // (Giữ nguyên logic giống MainForm của Sinh viên)
-
-
         private void MainForm_GiangVien_FormClosing(object sender, FormClosingEventArgs e)
         {
-            // Xử lý khi người dùng nhấn nút X (đóng cửa sổ)
             if (!isLoggingOut)
             {
                 var result = MessageBox.Show("Bạn có muốn thoát hoàn toàn ứng dụng?", "Xác nhận Thoát",
@@ -184,11 +160,9 @@ namespace APP_DOAN
 
                 if (result == DialogResult.No)
                 {
-                    e.Cancel = true; // Hủy việc đóng Form
+                    e.Cancel = true;
                 }
             }
-            // Nếu isLoggingOut là true, Form sẽ tự động đóng
-            // và quay về GiaoDienGoc (sau đó GiaoDienGoc.Close() sẽ-kết-thúc-ứng-dụng)
         }
 
         private void lvMyCourses_SelectedIndexChanged(object sender, EventArgs e)
@@ -199,7 +173,7 @@ namespace APP_DOAN
         private void lblWelcome_Click(object sender, EventArgs e)
         {
             this.Hide();
-            Teacher_Information profileForm = new Teacher_Information(loggedInEmail, idToken);
+            Teacher_Information profileForm = new Teacher_Information(currentUid, idToken, loggedInEmail);
             profileForm.ShowDialog();
             this.Show();
         }
@@ -208,7 +182,6 @@ namespace APP_DOAN
         {
             string searchText = txtFind.Text.Trim().ToLower();
 
-            // Nếu TextBox trống, tải lại toàn bộ danh sách lớp học
             if (string.IsNullOrEmpty(searchText))
             {
                 LoadMyCoursesData();
@@ -218,19 +191,17 @@ namespace APP_DOAN
             foreach (ListViewItem item in lvMyCourses.Items)
             {
 
-                string courseCode = item.Text.ToLower(); // Lấy Mã Lớp
-                string courseName = item.SubItems[1].Text.ToLower(); // Lấy Tên Lớp
+                string courseCode = item.Text.ToLower();
+                string courseName = item.SubItems[1].Text.ToLower();
 
                 if (courseCode.Contains(searchText) || courseName.Contains(searchText))
                 {
-                    // Nếu khớp, TÔ SÁNG và đảm bảo mục đó hiển thị
                     item.Selected = true;
                     item.BackColor = System.Drawing.Color.LightYellow;
                     item.EnsureVisible();
                 }
                 else
                 {
-                    // Nếu không khớp, bỏ chọn và đặt lại màu nền mặc định
                     item.Selected = false;
                     item.BackColor = System.Drawing.Color.White;
                 }
@@ -269,7 +240,6 @@ namespace APP_DOAN
             var form = new CourseDetailForm(courseId, courseName, idToken, loggedInEmail);
             form.ShowDialog();
 
-            // Reload lại danh sách lớp
             LoadMyCoursesData();
         }
 
@@ -280,9 +250,14 @@ namespace APP_DOAN
 
             if (result == DialogResult.Yes)
             {
-                isLoggingOut = true; // Đánh dấu là đang chủ động đăng xuất
-                this.Close(); // Đóng Form chính để-quay-về GiaoDienGoc
+                isLoggingOut = true;
+                this.Close();
             }
+        }
+
+        private void panelLeft_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }

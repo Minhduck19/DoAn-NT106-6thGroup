@@ -13,21 +13,16 @@ namespace APP_DOAN
 
         private readonly string _idToken;
         private readonly string _localId;
-        private readonly string _email;
-        private readonly string _role;
-        private readonly string _firebaseDatabaseUrl;
+        private readonly string _firebaseDatabaseUrl = "https://nt106-minhduc-default-rtdb.firebaseio.com/";
 
         public GiangVienData NewGiangVienInfo { get; private set; }
 
 
-        public frmDangKyThongTinGV(string idToken, string localId, string email, string role, string dbUrl)
+        public frmDangKyThongTinGV(string localId, string idToken)
         {
             InitializeComponent();
             _idToken = idToken;
             _localId = localId;
-            _email = email;
-            _role = role;
-            _firebaseDatabaseUrl = dbUrl;
         }
 
         private void frmDangKyThongTinGV_Load(object sender, EventArgs e)
@@ -62,15 +57,12 @@ namespace APP_DOAN
                 // 3. Tạo đối tượng Giảng viên để lưu
                 var giangVienProfile = new
                 {
-                    Email = _email,
-                    Role = _role,
                     HoTen = hoTen,
                     MaGiangVien = maGV,
                     NgaySinh = ngaySinh,
                     Khoa = khoa,
                     ChucVu = chucVu,
                     Bang = bang,
-                    CreatedDate = DateTime.UtcNow
                 };
 
                 // 4. Kết nối Firebase với quyền xác thực (idToken)
@@ -81,11 +73,11 @@ namespace APP_DOAN
                         AuthTokenAsyncFactory = () => Task.FromResult(_idToken)
                     });
 
-                // 5. Lưu vào Realtime Database dùng UID (localId)
+                // 5. Cập nhật vào Realtime Database dùng UID (localId)
                 await authClient
                     .Child("Users")
                     .Child(_localId) // Dùng UID làm key
-                    .PutAsync(giangVienProfile);
+                    .PatchAsync(giangVienProfile); // Use PatchAsync to update instead of replace
 
                 NewGiangVienInfo = new GiangVienData
                 {
@@ -95,7 +87,7 @@ namespace APP_DOAN
                     Khoa = khoa,
                     MonHoc = chucVu,
                     Bang = bang,
-                    Email = _email,
+                    // Email is not available here, handle as needed
                 };
 
 
@@ -108,6 +100,9 @@ namespace APP_DOAN
             catch (Exception ex)
             {
                 MessageBox.Show("Lỗi khi lưu thông tin: " + ex.Message, "Lỗi Firebase", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
                 ToggleUi(true);
                 Cursor = Cursors.Default;
             }

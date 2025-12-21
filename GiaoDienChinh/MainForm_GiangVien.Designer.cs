@@ -20,6 +20,7 @@
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges1 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges2 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             panelLeft = new Panel();
+            btnLogout = new Guna.UI2.WinForms.Guna2Button();
             lblWelcome = new Label();
             panelTop = new Panel();
             lblTitle = new Label();
@@ -33,7 +34,6 @@
             btnCreateCourse = new Button();
             btnEditCourse = new Button();
             btnDeleteCourse = new Button();
-            btnLogout = new Guna.UI2.WinForms.Guna2Button();
             panelLeft.SuspendLayout();
             panelTop.SuspendLayout();
             panelMainContent.SuspendLayout();
@@ -52,6 +52,24 @@
             panelLeft.Name = "panelLeft";
             panelLeft.Size = new Size(200, 691);
             panelLeft.TabIndex = 0;
+            panelLeft.Paint += panelLeft_Paint;
+            // 
+            // btnLogout
+            // 
+            btnLogout.Anchor = AnchorStyles.Bottom;
+            btnLogout.BackColor = Color.Transparent;
+            btnLogout.BorderRadius = 15;
+            btnLogout.CustomizableEdges = customizableEdges1;
+            btnLogout.FillColor = Color.FromArgb(255, 255, 255);
+            btnLogout.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            btnLogout.ForeColor = Color.Black;
+            btnLogout.Location = new Point(0, 631);
+            btnLogout.Name = "btnLogout";
+            btnLogout.ShadowDecoration.CustomizableEdges = customizableEdges2;
+            btnLogout.Size = new Size(200, 45);
+            btnLogout.TabIndex = 3;
+            btnLogout.Text = "Đăng xuất";
+            btnLogout.Click += btnLogout_Click;
             // 
             // lblWelcome
             // 
@@ -196,23 +214,6 @@
             btnDeleteCourse.Text = "Xóa Lớp";
             btnDeleteCourse.UseVisualStyleBackColor = false;
             btnDeleteCourse.Click += btnDeleteCourse_Click_1;
-            // 
-            // btnLogout
-            // 
-            btnLogout.Anchor = AnchorStyles.Bottom;
-            btnLogout.BackColor = Color.Transparent;
-            btnLogout.BorderRadius = 15;
-            btnLogout.CustomizableEdges = customizableEdges1;
-            btnLogout.FillColor = Color.FromArgb(255, 255, 255);
-            btnLogout.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
-            btnLogout.ForeColor = Color.Black;
-            btnLogout.Location = new Point(0, 631);
-            btnLogout.Name = "btnLogout";
-            btnLogout.ShadowDecoration.CustomizableEdges = customizableEdges2;
-            btnLogout.Size = new Size(200, 45);
-            btnLogout.TabIndex = 3;
-            btnLogout.Text = "Đăng xuất";
-            btnLogout.Click += btnLogout_Click;
             // 
             // MainForm_GiangVien
             // 

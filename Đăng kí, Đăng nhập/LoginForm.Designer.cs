@@ -72,6 +72,7 @@ namespace APP_DOAN
             pnlLoginCard.ShadowDecoration.Enabled = true;
             pnlLoginCard.Size = new Size(354, 431);
             pnlLoginCard.TabIndex = 0;
+            pnlLoginCard.Paint += pnlLoginCard_Paint;
             // 
             // guna2HtmlLabel1
             // 

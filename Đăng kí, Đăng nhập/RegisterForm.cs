@@ -3,6 +3,7 @@ using Firebase.Database;
 using Firebase.Database.Query;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Data;
 using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Mail;
@@ -11,6 +12,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 
 namespace APP_DOAN
 {
@@ -94,8 +96,28 @@ namespace APP_DOAN
 
                 // --- BƯỚC 4: HOÀN TẤT ---
                 await SendVerificationEmailAsync(idToken);
-                MessageBox.Show("Đăng ký thành công! Vui lòng kiểm tra email xác minh.", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                this.Close(); // Đóng form
+                MessageBox.Show("Đăng ký thành công! Vui lòng nhập thông tin chi tiết.", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                // Mở form thông tin chi tiết dựa trên vai trò
+                this.Hide();
+                if (role == "SinhVien")
+                {
+                    using (frmDangKyThongTin formThongTinSV = new frmDangKyThongTin(idToken, localId, email, role, firebaseDatabaseUrl))
+                    {
+                        formThongTinSV.ShowDialog();
+                    }
+                }
+                else if (role == "GiangVien")
+                {
+                    // Sửa dòng này: thêm 'email' vào constructor
+                    using (frmDangKyThongTinGV formThongTinGV = new frmDangKyThongTinGV(localId, idToken))
+                    {
+                        formThongTinGV.ShowDialog();
+                    }
+                }
+
+                this.Close(); // Đóng form đăng ký sau khi form thông tin đã đóng
+                
             }
             catch (Exception ex)
             {

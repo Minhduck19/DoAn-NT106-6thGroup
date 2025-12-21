@@ -68,7 +68,7 @@ namespace APP_DOAN
             else if (_role == "GiangVien")
             {
                 // Mở form Giảng Viên
-                using (var infoFormGV = new frmDangKyThongTinGV(_idToken, _localId, _email, _role, _firebaseDatabaseUrl))
+                using (var infoFormGV = new frmDangKyThongTinGV(_localId, _idToken))
                 {
                     infoResult = infoFormGV.ShowDialog();
                 }

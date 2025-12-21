@@ -91,6 +91,7 @@ namespace APP_DOAN
             flowUserListPanel.Size = new Size(280, 688);
             flowUserListPanel.TabIndex = 1;
             flowUserListPanel.WrapContents = false;
+            flowUserListPanel.Paint += flowUserListPanel_Paint;
             // 
             // label1
             // 
