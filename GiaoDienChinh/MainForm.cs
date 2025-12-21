@@ -130,7 +130,7 @@ namespace APP_DOAN
                         isJoined = true;
                     }
 
-                    _allCourses.Add(new Course(c.Key, courseData.Name, courseData.Instructor, isJoined)
+                    _allCourses.Add(new Course(c.Key, courseData.TenLop, courseData.Instructor, isJoined)
                     {
                         Students = courseData.Students ?? new List<string>(),
                         MaLop = courseData.MaLop,
@@ -258,7 +258,7 @@ namespace APP_DOAN
         private void đăngKýMônHọcToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.Hide();
-            DangKyMonHoc frm = new DangKyMonHoc(_currentUserUid, _idToken);
+            MonHocDaDangKy frm = new MonHocDaDangKy(_currentUserUid, _idToken);
             frm.ShowDialog();
             this.Show();
             _ = LoadClassDataFromFirebase();
@@ -309,7 +309,9 @@ namespace APP_DOAN
             string searchText = txtNameClass.Text.ToLower().Trim();
             lvJoinedCourses.Items.Clear();
 
-            var filtered = _allCourses.Where(c => c.Name.ToLower().Contains(searchText)).ToList();
+var filtered = _allCourses
+    .Where(c => c.Name?.ToLower().Contains(searchText) == true)
+    .ToList();
 
             foreach (var c in filtered)
             {
