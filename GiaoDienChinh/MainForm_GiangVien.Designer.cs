@@ -52,7 +52,6 @@
             panelLeft.Name = "panelLeft";
             panelLeft.Size = new Size(200, 691);
             panelLeft.TabIndex = 0;
-            panelLeft.Paint += panelLeft_Paint;
             // 
             // btnLogout
             // 
@@ -132,7 +131,6 @@
             lvMyCourses.TabIndex = 1;
             lvMyCourses.UseCompatibleStateImageBehavior = false;
             lvMyCourses.View = View.Details;
-            lvMyCourses.SelectedIndexChanged += lvMyCourses_SelectedIndexChanged;
             lvMyCourses.DoubleClick += lvMyCourses_DoubleClick_1;
             // 
             // colCourseID
@@ -213,7 +211,6 @@
             btnDeleteCourse.TabIndex = 2;
             btnDeleteCourse.Text = "Xóa Lớp";
             btnDeleteCourse.UseVisualStyleBackColor = false;
-            btnDeleteCourse.Click += btnDeleteCourse_Click_1;
             // 
             // MainForm_GiangVien
             // 

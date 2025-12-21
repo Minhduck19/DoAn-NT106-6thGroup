@@ -107,6 +107,13 @@ namespace APP_DOAN.GiaoDienChinh
             }
         }
 
-        private void btnLogout_Click(object sender, EventArgs e) => this.Close();
+        private void btnLogout_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            base.OnFormClosing(e);
+        }
     }
 }
