@@ -44,6 +44,8 @@ namespace APP_DOAN
             // [NÂNG CẤP 4] Sự kiện Tìm kiếm
             if (guna2TextBox1_TextChanged != null)
                 guna2TextBox1.TextChanged += guna2TextBox1_TextChanged;
+            
+            SetupAutoScroll();
         }
 
         private async void frmMainChat_Load(object sender, EventArgs e)
@@ -197,7 +199,8 @@ namespace APP_DOAN
                 bubble.Width = flowChatPanel.ClientSize.Width - 25;
                 bool isMe = (msg.SenderUid == _currentUserUid);
                 string trangThai = msg.Status ?? "sent";
-                bubble.SetMessage(msg.Text, isMe, trangThai);
+                string type = msg.Type ?? "text"; // Lấy type từ Message
+                bubble.SetMessage(msg.Text, isMe, trangThai, type);
                 flowChatPanel.Controls.Add(bubble);
                 flowChatPanel.ScrollControlIntoView(bubble);
             }
@@ -228,5 +231,86 @@ namespace APP_DOAN
         {
 
         }
+
+        private void txtMessage_TextChanged(object sender, EventArgs e)
+        {
+            _chatService.SetTypingStatus(_currentChatId, _currentUserUid, true);
+
+            _typingTimer.Stop();
+            _typingTimer.Start();
+        }
+        private void typingTimer_Tick(object sender, EventArgs e)
+        {
+            _chatService.SetTypingStatus(_currentChatId, _currentUserUid, false);
+            _typingTimer.Stop();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            txtMessage.Focus();
+            SendKeys.Send("^{.}");
+        }
+        private void SetupAutoScroll()
+        {
+            flowChatPanel.ControlAdded += (s, ev) =>
+            {
+                flowChatPanel.ScrollControlIntoView(ev.Control);
+            };
+        }
+
+        private void btnSend_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+
+        private async void btnUpload_Click_1(object sender, EventArgs e)
+        {
+            OpenFileDialog open = new OpenFileDialog();
+            open.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.gif;*.bmp";
+
+            if (open.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    panelInput.Enabled = false;
+                    Cursor = Cursors.WaitCursor;
+
+                    // 1. Upload ảnh qua CloudinaryHelper
+                    string imageUrl = CloudinaryHelper.UploadImage(open.FileName);
+
+                    if (string.IsNullOrEmpty(imageUrl))
+                    {
+                        MessageBox.Show("Không thể upload ảnh. Vui lòng thử lại.", "Lỗi Upload", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
+                    // 2. Gửi tin nhắn với Type = "image"
+                    var msg = new Message
+                    {
+                        SenderUid = _currentUserUid,
+                        SenderName = _currentUserName,
+                        Text = imageUrl, // Nội dung tin nhắn chính là Link ảnh
+                        Type = "image", // Đánh dấu đây là ảnh
+                        Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                        Status = "sent"
+                    };
+
+                    await _chatService.SendMessageAsync(_currentChatId, msg);
+                    MessageBox.Show("Gửi ảnh thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi khi gửi ảnh: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                finally
+                {
+                    panelInput.Enabled = true;
+                    Cursor = Cursors.Default;
+                }
+            }
+        }
+
+       
     }
 }

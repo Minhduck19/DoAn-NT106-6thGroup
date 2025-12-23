@@ -43,19 +43,32 @@ namespace APP_DOAN
             picAvatar.Click += OnClick;
         }
 
-        public void SetData(string uid, string hoTen, string email, string role, string lastMessage, string timestamp, int unreadCount = 0)
+        // Đảm bảo tên biến trong ngoặc (uid, hoTen, email...) phải Y CHANG bên kia gọi
+        public void SetData(string uid, string hoTen, string email, string role, string lastMessage, string timestamp, int unreadCount)
         {
-            this.UserId = uid;
+            // Gán dữ liệu vào biến nội bộ (để dùng cho Search)
+            this.UserId = uid;     // Nếu bên kia gọi uid, bên này phải đón bằng uid
             this.HoTen = hoTen;
             this.Email = email;
             this.Role = role;
 
+            // Gán lên giao diện
             lblHoTen.Text = hoTen;
             lblLastMessage.Text = lastMessage;
+
+            // Xử lý timestamp (nếu rỗng thì ẩn)
             lblTimestamp.Text = timestamp;
 
-            btnNotification.Text = unreadCount.ToString();
-            btnNotification.Visible = (unreadCount > 0);
+            // Xử lý số tin nhắn chưa đọc
+            if (unreadCount > 0)
+            {
+                btnNotification.Text = unreadCount.ToString();
+                btnNotification.Visible = true;
+            }
+            else
+            {
+                btnNotification.Visible = false;
+            }
         }
 
         public void SetOnlineStatus(bool isOnline)
