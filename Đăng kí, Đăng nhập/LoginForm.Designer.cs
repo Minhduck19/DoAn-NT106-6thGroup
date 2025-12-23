@@ -72,6 +72,7 @@ namespace APP_DOAN
             pnlLoginCard.ShadowDecoration.Enabled = true;
             pnlLoginCard.Size = new Size(354, 431);
             pnlLoginCard.TabIndex = 0;
+            pnlLoginCard.Paint += pnlLoginCard_Paint;
             // 
             // guna2HtmlLabel1
             // 
@@ -127,6 +128,7 @@ namespace APP_DOAN
             txtEmail.ShadowDecoration.CustomizableEdges = customizableEdges4;
             txtEmail.Size = new Size(250, 40);
             txtEmail.TabIndex = 1;
+            txtEmail.TextChanged += txtEmail_TextChanged;
             // 
             // btnLogin
             // 

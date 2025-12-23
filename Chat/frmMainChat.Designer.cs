@@ -116,6 +116,7 @@ namespace APP_DOAN
             flowUserListPanel.Size = new Size(280, 651);
             flowUserListPanel.TabIndex = 1;
             flowUserListPanel.WrapContents = false;
+            flowUserListPanel.Paint += flowUserListPanel_Paint;
             // 
             // label1
             // 
@@ -311,7 +312,6 @@ namespace APP_DOAN
             btnSend.ShadowDecoration.CustomizableEdges = customizableEdges11;
             btnSend.Size = new Size(100, 55);
             btnSend.TabIndex = 1;
-            btnSend.Click += btnSend_Click;
             // 
             // frmMainChat
             // 

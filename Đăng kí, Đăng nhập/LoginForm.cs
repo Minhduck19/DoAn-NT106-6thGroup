@@ -1,4 +1,8 @@
-﻿using System;
+﻿using APP_DOAN.Services;
+using Firebase.Auth.Requests;
+using Firebase.Database;
+using Firebase.Database.Query;
+using System;
 using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Mail;
@@ -6,9 +10,6 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Firebase.Auth.Requests;
-using Firebase.Database;
-using Firebase.Database.Query;
 
 namespace APP_DOAN
 {
@@ -51,9 +52,17 @@ namespace APP_DOAN
                     HandleFirebaseError(loginResult.ErrorMessage);
                     return;
                 }
+
+                // --- BẮT ĐẦU THÊM VÀO ĐÂY ---
+                // Gán vào static class để toàn bộ ứng dụng (bao gồm CreateCourse) có thể lấy được
+                FirebaseApi.IdToken = loginResult.IdToken;
+                FirebaseApi.CurrentUid = loginResult.LocalId;
+                // --- KẾT THÚC THÊM ---
+
                 string idToken = loginResult.IdToken;
                 string uid = loginResult.LocalId;
 
+                // 2. Lấy hồ sơ người dùng
                 User userProfile = await GetUserProfileAsync(uid, idToken);
                 if (userProfile == null)
                 {
@@ -61,23 +70,19 @@ namespace APP_DOAN
                     return;
                 }
 
-
                 string hoTen = userProfile.HoTen;
                 string userRole = userProfile.Role;
-
 
                 this.Hide();
                 if (userRole == "GiangVien")
                 {
-
-                    using (MainForm_GiangVien mainFormGV = new MainForm_GiangVien(uid, hoTen))
+                    using (MainForm_GiangVien mainFormGV = new MainForm_GiangVien(uid, hoTen, idToken))
                     {
                         mainFormGV.ShowDialog();
                     }
                 }
                 else if (userRole == "SinhVien")
                 {
-
                     using (MainForm mainFormSV = new MainForm(uid, hoTen, email, idToken))
                     {
                         mainFormSV.ShowDialog();
@@ -102,7 +107,6 @@ namespace APP_DOAN
                 Cursor = Cursors.Default;
             }
         }
-
 
         private async Task<User> GetUserProfileAsync(string uid, string idToken)
         {
@@ -230,6 +234,16 @@ namespace APP_DOAN
                 forgotpw.ShowDialog();
             }
             this.Show();
+
+        }
+
+        private void txtEmail_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pnlLoginCard_Paint(object sender, PaintEventArgs e)
+        {
 
         }
     }

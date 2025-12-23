@@ -4,6 +4,8 @@ using System.Drawing; // Cần thêm cái này để dùng Point
 using System.Windows.Forms;
 using Firebase.Database;
 using System.Threading.Tasks;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace APP_DOAN
 {
@@ -11,22 +13,20 @@ namespace APP_DOAN
     {
         private FirebaseChatService _chatService;
         private const string FIREBASE_URL = "https://nt106-minhduc-default-rtdb.firebaseio.com/";
-
         private readonly string _currentUserUid;
         private readonly string _currentUserName;
         private readonly string _idToken;
-
-        private string _currentPartnerUid = null;
-        private string _currentChatId = null;
+        private IDisposable _userStatusSubscription;
 
         private IDisposable _messageSubscription;
         private System.Windows.Forms.Timer _typingTimer; // Timer để tắt trạng thái typing
         private IDisposable _typingSubscription; // Để hủy lắng nghe typing
-        public frmMainChat(string uid, string hoTen, string idToken)
+        public frmMainChat(string currentUserUid, string currentUserName, string idToken)
         {
             InitializeComponent();
-            _currentUserUid = uid;
-            _currentUserName = hoTen;
+
+            _currentUserUid = currentUserUid;
+            _currentUserName = currentUserName;
             _idToken = idToken;
 
             _chatService = new FirebaseChatService(FIREBASE_URL, _idToken);
@@ -107,86 +107,40 @@ namespace APP_DOAN
         }
         private async void frmMainChat_Load(object sender, EventArgs e)
         {
-            try
+            // Load tất cả user
+            var users = await _chatService.GetAllUsersAsync();
+            foreach (var kv in users)
             {
-                this.Cursor = Cursors.WaitCursor; // Hiệu ứng chờ
+                if (kv.Key == _currentUserUid) continue; // bỏ qua bản thân
 
-                var allUsers = await _chatService.GetAllUsersAsync();
-
-                // [NÂNG CẤP 1] Tối ưu hiệu năng vẽ UI
-                flowUserListPanel.SuspendLayout();
-                flowUserListPanel.Controls.Clear();
-
-                foreach (var entry in allUsers)
-                {
-                    string uid = entry.Key;
-                    User user = entry.Value;
-
-                    if (uid == _currentUserUid) continue;
-
-                    UC_UserContactItem contactItem = new UC_UserContactItem();
-                    // Trừ hao thanh cuộn để đỡ bị thanh ngang xấu
-                    contactItem.Width = flowUserListPanel.ClientSize.Width - (flowUserListPanel.VerticalScroll.Visible ? 25 : 5);
-
-                    contactItem.SetData(
-                        uid: uid,
-                        hoTen: user.HoTen,
-                        email: user.Email,
-                        role: user.Role,
-                        lastMessage: "Nhấn để chat...",
-                        timestamp: "",
-                        unreadCount: 0
-                    );
-
-                    contactItem.UserClicked += ContactItem_Clicked;
-                    flowUserListPanel.Controls.Add(contactItem);
-                }
-
-                // Vẽ lại 1 lần -> Mượt
-                flowUserListPanel.ResumeLayout();
+                UC_UserContactItem item = new UC_UserContactItem();
+                item.SetData(kv.Key, kv.Value.HoTen, kv.Value.Email, kv.Value.Role, "", "", 0);
+                flowUserListPanel.Controls.Add(item);
             }
-            catch (Exception ex)
+
+            // Lắng nghe trạng thái online/offline
+            _userStatusSubscription = _chatService.ListenForUserStatus((uid, isOnline) =>
             {
-                MessageBox.Show("Lỗi khi tải danh sách người dùng: " + ex.Message);
-            }
-            finally
-            {
-                this.Cursor = Cursors.Default;
-            }
+                var userControl = flowUserListPanel.Controls
+                    .OfType<UC_UserContactItem>()
+                    .FirstOrDefault(u => u.UserId == uid);
+
+                if (userControl != null)
+                    userControl.SetOnlineStatus(isOnline);
+            });
+
+            // Đặt bản thân online
+            await _chatService.UpdateUserOnlineStatus(_currentUserUid, true);
         }
 
-        private void ContactItem_Clicked(object sender, EventArgs e)
+        private async void frmMainChat_FormClosing(object sender, FormClosingEventArgs e)
         {
-            UC_UserContactItem clickedItem = (UC_UserContactItem)sender;
+            _userStatusSubscription?.Dispose();
+            await _chatService.UpdateUserOnlineStatus(_currentUserUid, false);
+        }
 
-            // Hiệu ứng chọn/bỏ chọn
-            foreach (Control ctrl in flowUserListPanel.Controls)
-            {
-                if (ctrl is UC_UserContactItem item) item.Deselect();
-            }
-            clickedItem.Select();
-
-            // Dọn dẹp cũ
-            _messageSubscription?.Dispose();
-            flowChatPanel.Controls.Clear();
-            _typingSubscription?.Dispose();
-
-            // Cập nhật thông tin partner
-            _currentPartnerUid = clickedItem.UserId;
-            // Giả sử UserContactItem có các property public HoTen, Email, Role
-            // Nếu báo lỗi đỏ ở đây -> Vào UC_UserContactItem đổi biến thành public properties
-            lblInfoName.Text = clickedItem.HoTen;
-            lblInfoEmail.Text = clickedItem.Email;
-            lblInfoRole.Text = clickedItem.Role;
-
-            // Tạo Chat ID và lắng nghe
-            _currentChatId = _chatService.GenerateChatId(_currentUserUid, _currentPartnerUid);
-            _messageSubscription = _chatService.ListenForMessages(_currentChatId, DisplayMessageAsBubble);
-            _typingSubscription = _chatService.ListenForPartnerTyping(_currentChatId, _currentPartnerUid, UpdateTypingStatusUI);
-
-            // Focus vào ô chat ngay
-            panelInput.Enabled = true;
-            txtMessage.Focus();
+        private void flowUserListPanel_Paint(object sender, PaintEventArgs e)
+        {
         }
 
         // [NÂNG CẤP 2] Gửi bằng phím Enter
