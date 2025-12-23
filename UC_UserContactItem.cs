@@ -68,10 +68,19 @@ namespace APP_DOAN
             UserClicked?.Invoke(this, e);
         }
 
-        public void Select()
+        public void SetSelected(bool isSelected)
         {
-            this.BackColor = Color.FromArgb(230, 240, 255);
+            if (isSelected)
+            {
+                this.BackColor = Color.FromArgb(230, 240, 255); 
+            }
+            else
+            {
+                this.BackColor = Color.Transparent;
+            }
         }
+
+        
 
         public void Deselect()
         {

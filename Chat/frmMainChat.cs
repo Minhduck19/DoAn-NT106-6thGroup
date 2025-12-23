@@ -11,7 +11,6 @@ namespace APP_DOAN
         private FirebaseChatService _chatService;
         private const string FIREBASE_URL = "https://nt106-minhduc-default-rtdb.firebaseio.com/";
 
-
         private readonly string _currentUserUid;
         private readonly string _currentUserName;
         private readonly string _idToken;
@@ -19,24 +18,21 @@ namespace APP_DOAN
         private string _currentPartnerUid = null;
         private string _currentChatId = null;
 
-
         private IDisposable _messageSubscription;
+        private System.Windows.Forms.Timer _typingTimer;
 
         public frmMainChat(string uid, string hoTen, string idToken)
         {
             InitializeComponent();
 
-            _currentUserUid = currentUserUid;
-            _currentUserName = currentUserName;
+            _currentUserUid = uid;
+            _currentUserName = hoTen;
             _idToken = idToken;
 
             _chatService = new FirebaseChatService(FIREBASE_URL, _idToken);
             _typingTimer = new System.Windows.Forms.Timer();
             _typingTimer.Interval = 1500;
             _typingTimer.Tick += TypingTimer_Tick;
-
-            // Gắn sự kiện thủ công (đề phòng chú em quên gắn bên Designer)
-            this.Load += frmMainChat_Load;
             this.FormClosing += frmMainChat_FormClosing;
 
             // Sự kiện nút Gửi
@@ -46,14 +42,12 @@ namespace APP_DOAN
             txtMessage.KeyDown += txtMessage_KeyDown;
 
             // [NÂNG CẤP 4] Sự kiện Tìm kiếm
-            // Chú ý: Đảm bảo chú đã thêm TextBox tên là 'txtSearchUser' vào Form
             if (guna2TextBox1_TextChanged != null)
                 guna2TextBox1.TextChanged += guna2TextBox1_TextChanged;
         }
-        // Khi Timer chạy hết 1.5s -> Tắt trạng thái typing
-        private async void TypingTimer_Tick(object sender, EventArgs e)
-        {
 
+        private async void frmMainChat_Load(object sender, EventArgs e)
+        {
             try
             {
                 var allUsers = await _chatService.GetAllUsersAsync();
@@ -69,14 +63,14 @@ namespace APP_DOAN
 
                     // "Bơm" dữ liệu
                     contactItem.SetData(
-                    uid: uid,
-                    hoTen: user.HoTen,
-                    email: user.Email,   
-                    role: user.Role,     
-                    lastMessage: "Nhấn để chat...", 
-                    timestamp: "", 
-                    unreadCount: 0
-                );
+                        uid: uid,
+                        hoTen: user.HoTen,
+                        email: user.Email,
+                        role: user.Role,
+                        lastMessage: "Nhấn để chat...",
+                        timestamp: "",
+                        unreadCount: 0
+                    );
 
                     // Gắn sự kiện Click
                     contactItem.UserClicked += ContactItem_Clicked;
@@ -93,19 +87,17 @@ namespace APP_DOAN
         {
             UC_UserContactItem clickedItem = (UC_UserContactItem)sender;
 
-            // --- BƯỚC NÂNG CẤP HIỆU ỨNG ---
             // 1. "Bỏ chọn" TẤT CẢ item khác
             foreach (Control ctrl in flowUserListPanel.Controls)
             {
                 if (ctrl is UC_UserContactItem item)
                 {
-                    item.Deselect();
+                    item.SetSelected(false);
                 }
             }
-            // 2. "Chọn" item vừa click
-            clickedItem.Select();
-            // --- KẾT THÚC NÂNG CẤP ---
 
+            // 2. "Chọn" item vừa click
+            clickedItem.SetSelected(true);
 
             // 3. Dọn dẹp "đường dây nóng" cũ
             _messageSubscription?.Dispose();
@@ -138,8 +130,14 @@ namespace APP_DOAN
                 return;
             }
 
-        private void flowUserListPanel_Paint(object sender, PaintEventArgs e)
-        {
+            var message = new Message
+            {
+                SenderUid = _currentUserUid,
+                SenderName = _currentUserName,
+                Text = text,
+                Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                Status = "sent"
+            };
 
             try
             {
@@ -153,9 +151,42 @@ namespace APP_DOAN
             }
         }
 
+        private void TypingTimer_Tick(object sender, EventArgs e)
+        {
+            // Tắt trạng thái typing sau 1.5s
+        }
+
+        private void txtMessage_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter && !e.Shift)
+            {
+                e.SuppressKeyPress = true;
+                btnSend_Click(null, null);
+            }
+        }
+
+        private void guna2TextBox1_TextChanged(object sender, EventArgs e)
+        {
+            string keyword = guna2TextBox1.Text.Trim().ToLower();
+
+            flowUserListPanel.SuspendLayout(); // Tối ưu hiệu năng vẽ
+
+            foreach (Control control in flowUserListPanel.Controls)
+            {
+                if (control is UC_UserContactItem item)
+                {
+                    bool matchName = item.HoTen != null && item.HoTen.ToLower().Contains(keyword);
+                    bool matchEmail = item.Email != null && item.Email.ToLower().Contains(keyword);
+
+                    item.Visible = matchName || matchEmail;
+                }
+            }
+
+            flowUserListPanel.ResumeLayout();
+        }
+
         private void DisplayMessageAsBubble(Message msg)
         {
-
             if (flowChatPanel.InvokeRequired)
             {
                 flowChatPanel.Invoke(new Action(() => DisplayMessageAsBubble(msg)));
@@ -165,7 +196,8 @@ namespace APP_DOAN
                 UC_ChatItem bubble = new UC_ChatItem();
                 bubble.Width = flowChatPanel.ClientSize.Width - 25;
                 bool isMe = (msg.SenderUid == _currentUserUid);
-                bubble.SetMessage(msg.Text, isMe);
+                string trangThai = msg.Status ?? "sent";
+                bubble.SetMessage(msg.Text, isMe, trangThai);
                 flowChatPanel.Controls.Add(bubble);
                 flowChatPanel.ScrollControlIntoView(bubble);
             }
@@ -187,6 +219,14 @@ namespace APP_DOAN
             lblInfoName.Text = _currentUserName;
         }
 
-        // (Xóa hàm flowUserListPanel_Paint rỗng)
+        private void flowUserListPanel_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void panelContacts_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 }

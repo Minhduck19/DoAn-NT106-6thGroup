@@ -1,4 +1,4 @@
-    using Firebase.Database;
+using Firebase.Database;
 using Firebase.Database.Query;
 using System;
 using System.Collections.Generic;
@@ -16,9 +16,9 @@ namespace APP_DOAN
         public FirebaseChatService(string dbUrl, string idToken)
         {
             // Cấu hình kết nối với Auth Token
-            _firebaseClient = new FirebaseClient(baseUrl, new FirebaseOptions
+            _firebaseClient = new FirebaseClient(dbUrl, new FirebaseOptions
             {
-                AuthTokenAsyncFactory = () => Task.FromResult(authToken)
+                AuthTokenAsyncFactory = () => Task.FromResult(idToken)
             });
         }
 
@@ -31,13 +31,13 @@ namespace APP_DOAN
         // Gửi tin nhắn
         public async Task SendMessageAsync(string chatId, Message message)
         {
-            await _client.Child("Chats").Child(chatId).Child("Messages").PostAsync(message);
+            await _firebaseClient.Child("Chats").Child(chatId).Child("Messages").PostAsync(message);
         }
 
         // Lắng nghe tin nhắn realtime
         public IDisposable ListenForMessages(string chatId, Action<Message> onMessageReceived)
         {
-            return _client
+            return _firebaseClient
                 .Child("Chats")
                 .Child(chatId)
                 .Child("Messages")
@@ -53,20 +53,20 @@ namespace APP_DOAN
         // Lấy tất cả user
         public async Task<Dictionary<string, User>> GetAllUsersAsync()
         {
-            var users = await _client.Child("Users").OnceAsync<User>();
+            var users = await _firebaseClient.Child("Users").OnceAsync<User>();
             return users.ToDictionary(item => item.Key, item => item.Object);
         }
 
         // Cập nhật trạng thái online/offline
         public async Task UpdateUserOnlineStatus(string uid, bool isOnline)
         {
-            await _client.Child("Users").Child(uid).Child("IsOnline").PutAsync(isOnline);
+            await _firebaseClient.Child("Users").Child(uid).Child("IsOnline").PutAsync(isOnline);
         }
 
         // Lắng nghe trạng thái online/offline realtime
         public IDisposable ListenForUserStatus(Action<string, bool> onStatusChanged)
         {
-            return _client.Child("Users").AsObservable<User>()
+            return _firebaseClient.Child("Users").AsObservable<User>()
                 .Subscribe(userEvent =>
                 {
                     if (userEvent.Object != null && userEvent.Key != null)

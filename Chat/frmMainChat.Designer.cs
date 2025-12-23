@@ -82,6 +82,7 @@ namespace APP_DOAN
             panelContacts.ShadowDecoration.CustomizableEdges = customizableEdges4;
             panelContacts.Size = new Size(280, 750);
             panelContacts.TabIndex = 0;
+            panelContacts.Paint += panelContacts_Paint;
             // 
             // guna2TextBox1
             // 
@@ -289,7 +290,6 @@ namespace APP_DOAN
             txtMessage.ShadowDecoration.CustomizableEdges = customizableEdges9;
             txtMessage.Size = new Size(1126, 55);
             txtMessage.TabIndex = 0;
-            txtMessage.TextChanged += txtMessage_TextChanged;
             // 
             // btnSend
             // 
