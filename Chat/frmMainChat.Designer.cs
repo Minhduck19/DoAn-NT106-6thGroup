@@ -29,20 +29,23 @@ namespace APP_DOAN
         /// </summary>
         private void InitializeComponent()
         {
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges3 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges4 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges1 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges2 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges4 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges5 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges3 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges12 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges13 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges10 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges11 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges6 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges7 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges5 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges14 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges15 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges12 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges13 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges8 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges9 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges10 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges11 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             panelContacts = new Guna.UI2.WinForms.Guna2Panel();
+            guna2TextBox1 = new Guna.UI2.WinForms.Guna2TextBox();
             flowUserListPanel = new FlowLayoutPanel();
             label1 = new Label();
             guna2Separator1 = new Guna.UI2.WinForms.Guna2Separator();
@@ -67,17 +70,39 @@ namespace APP_DOAN
             // panelContacts
             // 
             panelContacts.BackColor = Color.White;
+            panelContacts.Controls.Add(guna2TextBox1);
             panelContacts.Controls.Add(flowUserListPanel);
             panelContacts.Controls.Add(label1);
-            panelContacts.CustomizableEdges = customizableEdges1;
+            panelContacts.CustomizableEdges = customizableEdges3;
             panelContacts.Dock = DockStyle.Left;
             panelContacts.FillColor = Color.FromArgb(249, 249, 249);
             panelContacts.Location = new Point(0, 0);
             panelContacts.Margin = new Padding(3, 4, 3, 4);
             panelContacts.Name = "panelContacts";
-            panelContacts.ShadowDecoration.CustomizableEdges = customizableEdges2;
+            panelContacts.ShadowDecoration.CustomizableEdges = customizableEdges4;
             panelContacts.Size = new Size(280, 750);
             panelContacts.TabIndex = 0;
+            // 
+            // guna2TextBox1
+            // 
+            guna2TextBox1.CustomizableEdges = customizableEdges1;
+            guna2TextBox1.DefaultText = "";
+            guna2TextBox1.DisabledState.BorderColor = Color.FromArgb(208, 208, 208);
+            guna2TextBox1.DisabledState.FillColor = Color.FromArgb(226, 226, 226);
+            guna2TextBox1.DisabledState.ForeColor = Color.FromArgb(138, 138, 138);
+            guna2TextBox1.DisabledState.PlaceholderForeColor = Color.FromArgb(138, 138, 138);
+            guna2TextBox1.FocusedState.BorderColor = Color.FromArgb(94, 148, 255);
+            guna2TextBox1.Font = new Font("Segoe UI", 9F);
+            guna2TextBox1.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
+            guna2TextBox1.Location = new Point(0, 62);
+            guna2TextBox1.Margin = new Padding(3, 4, 3, 4);
+            guna2TextBox1.Name = "guna2TextBox1";
+            guna2TextBox1.PlaceholderText = "";
+            guna2TextBox1.SelectedText = "";
+            guna2TextBox1.ShadowDecoration.CustomizableEdges = customizableEdges2;
+            guna2TextBox1.Size = new Size(274, 41);
+            guna2TextBox1.TabIndex = 0;
+            guna2TextBox1.TextChanged += guna2TextBox1_TextChanged;
             // 
             // flowUserListPanel
             // 
@@ -85,10 +110,10 @@ namespace APP_DOAN
             flowUserListPanel.AutoScroll = true;
             flowUserListPanel.BackColor = Color.Transparent;
             flowUserListPanel.FlowDirection = FlowDirection.TopDown;
-            flowUserListPanel.Location = new Point(0, 62);
+            flowUserListPanel.Location = new Point(0, 99);
             flowUserListPanel.Margin = new Padding(3, 4, 3, 4);
             flowUserListPanel.Name = "flowUserListPanel";
-            flowUserListPanel.Size = new Size(280, 688);
+            flowUserListPanel.Size = new Size(280, 651);
             flowUserListPanel.TabIndex = 1;
             flowUserListPanel.WrapContents = false;
             // 
@@ -120,13 +145,13 @@ namespace APP_DOAN
             panelInfo.Controls.Add(lblInfoEmail);
             panelInfo.Controls.Add(lblInfoName);
             panelInfo.Controls.Add(guna2CirclePictureBox1);
-            panelInfo.CustomizableEdges = customizableEdges4;
+            panelInfo.CustomizableEdges = customizableEdges6;
             panelInfo.Dock = DockStyle.Right;
             panelInfo.FillColor = Color.FromArgb(249, 249, 249);
             panelInfo.Location = new Point(1528, 0);
             panelInfo.Margin = new Padding(3, 4, 3, 4);
             panelInfo.Name = "panelInfo";
-            panelInfo.ShadowDecoration.CustomizableEdges = customizableEdges5;
+            panelInfo.ShadowDecoration.CustomizableEdges = customizableEdges7;
             panelInfo.Size = new Size(250, 750);
             panelInfo.TabIndex = 2;
             // 
@@ -176,7 +201,7 @@ namespace APP_DOAN
             guna2CirclePictureBox1.Location = new Point(75, 62);
             guna2CirclePictureBox1.Margin = new Padding(3, 4, 3, 4);
             guna2CirclePictureBox1.Name = "guna2CirclePictureBox1";
-            guna2CirclePictureBox1.ShadowDecoration.CustomizableEdges = customizableEdges3;
+            guna2CirclePictureBox1.ShadowDecoration.CustomizableEdges = customizableEdges5;
             guna2CirclePictureBox1.ShadowDecoration.Mode = Guna.UI2.WinForms.Enums.ShadowMode.Circle;
             guna2CirclePictureBox1.Size = new Size(100, 125);
             guna2CirclePictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
@@ -198,12 +223,12 @@ namespace APP_DOAN
             panelChatArea.BackColor = Color.White;
             panelChatArea.Controls.Add(flowChatPanel);
             panelChatArea.Controls.Add(panelInput);
-            panelChatArea.CustomizableEdges = customizableEdges12;
+            panelChatArea.CustomizableEdges = customizableEdges14;
             panelChatArea.Dock = DockStyle.Fill;
             panelChatArea.Location = new Point(281, 0);
             panelChatArea.Margin = new Padding(3, 4, 3, 4);
             panelChatArea.Name = "panelChatArea";
-            panelChatArea.ShadowDecoration.CustomizableEdges = customizableEdges13;
+            panelChatArea.ShadowDecoration.CustomizableEdges = customizableEdges15;
             panelChatArea.Size = new Size(1246, 750);
             panelChatArea.TabIndex = 4;
             // 
@@ -225,7 +250,7 @@ namespace APP_DOAN
             // 
             panelInput.Controls.Add(txtMessage);
             panelInput.Controls.Add(btnSend);
-            panelInput.CustomizableEdges = customizableEdges10;
+            panelInput.CustomizableEdges = customizableEdges12;
             panelInput.Dock = DockStyle.Bottom;
             panelInput.Enabled = false;
             panelInput.FillColor = Color.FromArgb(249, 249, 249);
@@ -233,7 +258,7 @@ namespace APP_DOAN
             panelInput.Margin = new Padding(3, 4, 3, 4);
             panelInput.Name = "panelInput";
             panelInput.Padding = new Padding(10);
-            panelInput.ShadowDecoration.CustomizableEdges = customizableEdges11;
+            panelInput.ShadowDecoration.CustomizableEdges = customizableEdges13;
             panelInput.ShadowDecoration.Depth = 5;
             panelInput.ShadowDecoration.Enabled = true;
             panelInput.ShadowDecoration.Shadow = new Padding(0, -5, 0, 0);
@@ -245,7 +270,7 @@ namespace APP_DOAN
             txtMessage.BorderRadius = 8;
             txtMessage.BorderThickness = 0;
             txtMessage.Cursor = Cursors.IBeam;
-            txtMessage.CustomizableEdges = customizableEdges6;
+            txtMessage.CustomizableEdges = customizableEdges8;
             txtMessage.DefaultText = "";
             txtMessage.DisabledState.BorderColor = Color.FromArgb(208, 208, 208);
             txtMessage.DisabledState.FillColor = Color.FromArgb(226, 226, 226);
@@ -260,15 +285,16 @@ namespace APP_DOAN
             txtMessage.Name = "txtMessage";
             txtMessage.PlaceholderText = "Nhập tin nhắn...";
             txtMessage.SelectedText = "";
-            txtMessage.ShadowDecoration.CustomizableEdges = customizableEdges7;
+            txtMessage.ShadowDecoration.CustomizableEdges = customizableEdges9;
             txtMessage.Size = new Size(1126, 55);
             txtMessage.TabIndex = 0;
+            txtMessage.TextChanged += txtMessage_TextChanged;
             // 
             // btnSend
             // 
             btnSend.Animated = true;
             btnSend.BorderRadius = 8;
-            btnSend.CustomizableEdges = customizableEdges8;
+            btnSend.CustomizableEdges = customizableEdges10;
             btnSend.DisabledState.BorderColor = Color.DarkGray;
             btnSend.DisabledState.CustomBorderColor = Color.DarkGray;
             btnSend.DisabledState.FillColor = Color.FromArgb(169, 169, 169);
@@ -282,7 +308,7 @@ namespace APP_DOAN
             btnSend.Location = new Point(1136, 10);
             btnSend.Margin = new Padding(3, 4, 3, 4);
             btnSend.Name = "btnSend";
-            btnSend.ShadowDecoration.CustomizableEdges = customizableEdges9;
+            btnSend.ShadowDecoration.CustomizableEdges = customizableEdges11;
             btnSend.Size = new Size(100, 55);
             btnSend.TabIndex = 1;
             btnSend.Click += btnSend_Click;
@@ -331,5 +357,6 @@ namespace APP_DOAN
         private Guna.UI2.WinForms.Guna2Panel panelInput;
         private Guna.UI2.WinForms.Guna2TextBox txtMessage;
         private Guna.UI2.WinForms.Guna2Button btnSend;
+        private Guna.UI2.WinForms.Guna2TextBox guna2TextBox1;
     }
 }

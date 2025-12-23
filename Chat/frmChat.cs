@@ -95,8 +95,17 @@ namespace APP_DOAN
             {
                 UC_ChatItem bubble = new UC_ChatItem();
                 bubble.Width = flowChatPanel.ClientSize.Width - 25;
+
                 bool isMe = (msg.SenderUid == _currentUserUid);
-                bubble.SetMessage(msg.Text, isMe);
+
+                // --- SỬA DÒNG NÀY ---
+                // Lấy status từ tin nhắn, nếu null (tin cũ) thì mặc định là "sent"
+                string trangThai = msg.Status ?? "sent";
+
+                // Gọi đủ 3 tham số: Text, isMe, Status
+                bubble.SetMessage(msg.Text, isMe, trangThai);
+                // --------------------
+
                 flowChatPanel.Controls.Add(bubble);
                 flowChatPanel.ScrollControlIntoView(bubble);
             }

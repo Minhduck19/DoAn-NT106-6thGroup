@@ -31,6 +31,7 @@
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges1 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges2 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             panelBubble = new Guna.UI2.WinForms.Guna2Panel();
+            lblStatus = new Label();
             lblMessage = new Guna.UI2.WinForms.Guna2HtmlLabel();
             panelBubble.SuspendLayout();
             SuspendLayout();
@@ -38,6 +39,7 @@
             // panelBubble
             // 
             panelBubble.BorderRadius = 10;
+            panelBubble.Controls.Add(lblStatus);
             panelBubble.Controls.Add(lblMessage);
             panelBubble.CustomizableEdges = customizableEdges1;
             panelBubble.FillColor = Color.FromArgb(230, 230, 230);
@@ -45,9 +47,19 @@
             panelBubble.Margin = new Padding(3, 4, 3, 4);
             panelBubble.Name = "panelBubble";
             panelBubble.ShadowDecoration.CustomizableEdges = customizableEdges2;
-            panelBubble.Size = new Size(200, 62);
+            panelBubble.Size = new Size(245, 89);
             panelBubble.TabIndex = 0;
-            panelBubble.Paint += panelBubble_Paint;
+            // 
+            // lblStatus
+            // 
+            lblStatus.AutoSize = true;
+            lblStatus.ForeColor = Color.White;
+            lblStatus.Location = new Point(147, 58);
+            lblStatus.Name = "lblStatus";
+            lblStatus.Size = new Size(50, 20);
+            lblStatus.TabIndex = 1;
+            lblStatus.Text = "label1";
+            lblStatus.Click += lblStatus_Click;
             // 
             // lblMessage
             // 
@@ -69,7 +81,7 @@
             Controls.Add(panelBubble);
             Margin = new Padding(3, 4, 3, 4);
             Name = "UC_ChatItem";
-            Size = new Size(206, 70);
+            Size = new Size(251, 97);
             panelBubble.ResumeLayout(false);
             panelBubble.PerformLayout();
             ResumeLayout(false);
@@ -80,5 +92,6 @@
 
         private Guna.UI2.WinForms.Guna2Panel panelBubble;
         private Guna.UI2.WinForms.Guna2HtmlLabel lblMessage;
+        private Label lblStatus;
     }
 }
