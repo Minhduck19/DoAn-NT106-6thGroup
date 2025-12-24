@@ -19,10 +19,10 @@ namespace APP_DOAN
         {
             InitializeComponent();
 
-            // Indicator trạng thái online
+            // Indicator trạng thái online (Giữ nguyên logic vẽ của bạn)
             pnlOnlineStatus = new Panel();
             pnlOnlineStatus.Size = new Size(12, 12);
-            pnlOnlineStatus.BackColor = Color.Gray; // offline mặc định
+            pnlOnlineStatus.BackColor = Color.Gray;
             pnlOnlineStatus.Location = new Point(5, 5);
             pnlOnlineStatus.BorderStyle = BorderStyle.None;
             pnlOnlineStatus.Anchor = AnchorStyles.Top | AnchorStyles.Right;
@@ -35,6 +35,7 @@ namespace APP_DOAN
                     (byte)System.Drawing.Drawing2D.PathPointType.Line
                 }));
             this.Controls.Add(pnlOnlineStatus);
+            pnlOnlineStatus.BringToFront();
 
             // Click cho tất cả control con
             this.Click += OnClick;
@@ -58,8 +59,14 @@ namespace APP_DOAN
             btnNotification.Visible = (unreadCount > 0);
         }
 
+        // Cập nhật: Thêm Invoke để an toàn khi chạy đa luồng
         public void SetOnlineStatus(bool isOnline)
         {
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new Action(() => SetOnlineStatus(isOnline)));
+                return;
+            }
             pnlOnlineStatus.BackColor = isOnline ? Color.LimeGreen : Color.Gray;
         }
 
@@ -70,17 +77,8 @@ namespace APP_DOAN
 
         public void SetSelected(bool isSelected)
         {
-            if (isSelected)
-            {
-                this.BackColor = Color.FromArgb(230, 240, 255); 
-            }
-            else
-            {
-                this.BackColor = Color.Transparent;
-            }
+            this.BackColor = isSelected ? Color.FromArgb(230, 240, 255) : Color.Transparent;
         }
-
-        
 
         public void Deselect()
         {
@@ -98,5 +96,7 @@ namespace APP_DOAN
             if (this.BackColor != Color.FromArgb(230, 240, 255))
                 this.BackColor = Color.Transparent;
         }
+
+        private void UC_UserContactItem_Load(object sender, EventArgs e) { }
     }
 }
