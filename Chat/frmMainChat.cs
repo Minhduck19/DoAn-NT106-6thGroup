@@ -47,8 +47,11 @@ namespace APP_DOAN
                 guna2TextBox1.TextChanged += guna2TextBox1_TextChanged;
         }
 
+
+
         private async void frmMainChat_Load(object sender, EventArgs e)
         {
+            await _chatService.UpdateUserOnlineStatus(_currentUserUid, true);
             try
             {
                 var allUsers = await _chatService.GetAllUsersAsync();
@@ -77,6 +80,7 @@ namespace APP_DOAN
 
                     // Set trạng thái online ban đầu
                     contactItem.SetOnlineStatus(user.IsOnline);
+                    contactItem.SetLastOnline(user.IsOnline, user.LastOnline);
 
                     contactItem.UserClicked += ContactItem_Clicked;
                     flowUserListPanel.Controls.Add(contactItem);
@@ -96,22 +100,26 @@ namespace APP_DOAN
 
         private void ListenForOnlineStatus()
         {
-            // Sử dụng FirebaseClient trực tiếp để lắng nghe node Users
-            var client = new FirebaseClient(FIREBASE_URL, new FirebaseOptions
-            {
-                AuthTokenAsyncFactory = () => Task.FromResult(_idToken)
-            });
 
-            _onlineStatusSubscription = client
-                .Child("Users")
-                .AsObservable<User>()
-                .Subscribe(item => {
-                    if (_contactItems.ContainsKey(item.Key))
+
+            _onlineStatusSubscription = _chatService.ListenForUserStatus((uid, isOnline) =>
+            {
+                if (_contactItems.ContainsKey(uid))
+                {
+                    _contactItems[uid].SetOnlineStatus(isOnline);
+
+                    // Khi offline → hiển thị "Vừa truy cập"
+                    if (!isOnline)
                     {
-                        // Cập nhật đèn trạng thái cho đúng item trong danh sách
-                        _contactItems[item.Key].SetOnlineStatus(item.Object.IsOnline);
+                        _contactItems[uid].SetLastOnline(false,
+                            DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
                     }
-                });
+                    else
+                    {
+                        _contactItems[uid].SetLastOnline(true, 0);
+                    }
+                }
+            });
         }
 
         private void ContactItem_Clicked(object sender, EventArgs e)
@@ -217,16 +225,25 @@ namespace APP_DOAN
             flowUserListPanel.ResumeLayout();
         }
 
-        private void frmMainChat_FormClosing(object sender, FormClosingEventArgs e)
+        private async void frmMainChat_FormClosing(object sender, FormClosingEventArgs e)
         {
+            await _chatService.UpdateUserOnlineStatus(_currentUserUid, false);
+
             _messageSubscription?.Dispose();
-            _onlineStatusSubscription?.Dispose(); // Hủy lắng nghe online
+            _onlineStatusSubscription?.Dispose();
         }
+
 
         private void TypingTimer_Tick(object sender, EventArgs e) { }
         private void lblInfoEmail_Click(object sender, EventArgs e) { }
         private void lblInfoName_Click(object sender, EventArgs e) { }
         private void flowUserListPanel_Paint(object sender, PaintEventArgs e) { }
         private void panelContacts_Paint(object sender, PaintEventArgs e) { }
+
+        private void flowChatPanel_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
     }
 }
