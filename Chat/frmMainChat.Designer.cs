@@ -247,6 +247,7 @@ namespace APP_DOAN
             flowChatPanel.Size = new Size(1246, 675);
             flowChatPanel.TabIndex = 1;
             flowChatPanel.WrapContents = false;
+            flowChatPanel.Paint += flowChatPanel_Paint;
             // 
             // panelInput
             // 

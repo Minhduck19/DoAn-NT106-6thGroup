@@ -16,5 +16,6 @@ namespace APP_DOAN
         public string Role { get; set; }
         public bool IsOnline { get; set; }
         public string CreatedDate { get; set; }
+        public long LastOnline { get; set; }
     }
 }

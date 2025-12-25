@@ -68,6 +68,8 @@ namespace APP_DOAN
                 return;
             }
             pnlOnlineStatus.BackColor = isOnline ? Color.LimeGreen : Color.Gray;
+            if (isOnline) this.BackColor = Color.LightGreen; // Nếu online thì cả dòng hóa xanh để test
+            else this.BackColor = Color.Transparent;
         }
 
         private void OnClick(object sender, EventArgs e)
@@ -98,5 +100,48 @@ namespace APP_DOAN
         }
 
         private void UC_UserContactItem_Load(object sender, EventArgs e) { }
+
+        private void lblLastMessage_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnNotification_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void lblTimestamp_Click(object sender, EventArgs e)
+        {
+
+        }
+        private string FormatLastOnline(long lastOnline)
+        {
+            var last = DateTimeOffset.FromUnixTimeMilliseconds(lastOnline).LocalDateTime;
+            var diff = DateTime.Now - last;
+
+            if (diff.TotalSeconds < 60)
+                return "Vừa truy cập";
+            if (diff.TotalMinutes < 60)
+                return $"Hoạt động {Math.Floor(diff.TotalMinutes)} phút trước";
+            if (diff.TotalHours < 24)
+                return $"Hoạt động {Math.Floor(diff.TotalHours)} giờ trước";
+
+            return $"Online {last:dd/MM/yyyy HH:mm}";
+        }
+        public void SetLastOnline(bool isOnline, long lastOnline)
+        {
+            if (isOnline)
+            {
+                lblTimestamp.Text = "Đang online";
+                lblTimestamp.ForeColor = Color.LimeGreen;
+            }
+            else
+            {
+                lblTimestamp.Text = FormatLastOnline(lastOnline);
+                lblTimestamp.ForeColor = Color.Gray;
+            }
+        }
+
     }
 }
