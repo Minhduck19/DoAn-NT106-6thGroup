@@ -1,18 +1,13 @@
 ﻿using APP_DOAN.GiaoDienChinh;
 using APP_DOAN.Services;
-using Firebase.Database;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 
 namespace APP_DOAN
 {
     public partial class MainForm_GiangVien : Form
     {
-        private readonly string _currentUserUid;
-        private readonly string _currentUserName;
-        private readonly string _idToken;
         private string loggedInEmail;
         private string idToken;
         private bool isLoggingOut = false;
@@ -26,11 +21,6 @@ namespace APP_DOAN
             this.idToken = token;
             this.currentUid = uid;
             this.currentDisplayName = displayName;
-
-            _currentUserUid = uid;
-            _idToken = token;
-
-           
 
             // Đăng ký sự kiện Resize để cột tự giãn khi phóng to Form
             lvMyCourses.Resize += lvMyCourses_Resize;
@@ -203,26 +193,13 @@ namespace APP_DOAN
         {
             this.Hide();
             Teacher_Information profileForm = new Teacher_Information(currentUid, idToken, loggedInEmail);
-
-            profileForm.FormClosed += (s, args) =>
-            {
+            
+            profileForm.FormClosed += (s, args) => {
                 this.Show();
                 lblWelcome.Text = $"Chào mừng,\nGV. {currentDisplayName}";
             };
 
             profileForm.ShowDialog();
-        }
-
-        private void guna2Button1_Click(object sender, EventArgs e)
-        {
-
-            frmMainChat chatLobby = new frmMainChat(
-         _currentUserUid,
-         _currentUserName,
-         this._idToken
-        );
-
-            chatLobby.Show();
         }
     }
 }

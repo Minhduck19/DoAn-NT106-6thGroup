@@ -114,7 +114,6 @@ namespace APP_DOAN
         {
             try
             {
-                // 1. Tải danh sách tất cả các lớp học
                 var firebaseCourses = await _firebaseClient
                     .Child("Courses")
                     .OnceAsync<Course>();
@@ -124,31 +123,22 @@ namespace APP_DOAN
                 foreach (var c in firebaseCourses)
                 {
                     var courseData = c.Object;
-                    string courseId = c.Key; // Đây là ID của lớp học
                     bool isJoined = false;
 
-                    // 2. KIỂM TRA QUAN TRỌNG: Kiểm tra trong node CourseStudents
-                    // cấu trúc: CourseStudents -> {courseId} -> {uid}: true
-                    var studentStatus = await _firebaseClient
-                        .Child("CourseStudents")
-                        .Child(courseId)
-                        .Child(_currentUserUid)
-                        .OnceSingleAsync<bool?>(); // Sử dụng bool? để kiểm tra null
-
-                    if (studentStatus == true)
+                    if (courseData.Students != null && courseData.Students.Contains(_currentUserUid))
                     {
                         isJoined = true;
                     }
 
-                    // 3. Thêm vào danh sách hiển thị
-                    _allCourses.Add(new Course(courseId, courseData.TenLop, courseData.Instructor, isJoined)
+                    _allCourses.Add(new Course(c.Key, courseData.TenLop, courseData.Instructor, isJoined)
                     {
+                        Students = courseData.Students ?? new List<string>(),
                         MaLop = courseData.MaLop,
                         SiSo = courseData.SiSo
                     });
                 }
 
-                // 4. Hiển thị lên ListView
+                // Đổi tên gọi tại đây cho đúng với tên hàm bên dưới
                 PopulateAllCourses();
             }
             catch (Exception ex)

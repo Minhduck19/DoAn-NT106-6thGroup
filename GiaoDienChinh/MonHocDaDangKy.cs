@@ -55,49 +55,53 @@ namespace APP_DOAN.GiaoDienChinh
             {
                 lvCourses.Items.Clear();
 
-                // 1. Chỉ lấy những ID lớp học mà sinh viên này THỰC SỰ tham gia
-                // Chúng ta sẽ truy cập thẳng vào node của sinh viên đó
-                var joinedCourses = await firebaseClient
-                    .Child("CourseStudents")
-                    .OnceAsync<object>();
+                // Lấy toàn bộ danh sách khóa học
+                var courseData = await firebaseClient
+                    .Child("Courses")
+                    .OnceAsync<CourseModel>();
 
-                foreach (var courseNode in joinedCourses)
+                bool hasJoinedAny = false;
+
+                foreach (var c in courseData)
                 {
-                    // Kiểm tra xem trong lớp này có UID của sinh viên hiện tại không
-                    var studentInCourse = await firebaseClient
-                        .Child("CourseStudents")
-                        .Child(courseNode.Key) // courseNode.Key là ID lớp
-                        .Child(_studentUid)
-                        .OnceSingleAsync<object>(); // Dùng object để tránh lỗi ép kiểu bool null
+                    var course = c.Object;
 
-                    if (studentInCourse != null)
+                    if (course.Students != null && course.Students.Contains(_studentUid))
                     {
-                        // 2. Nếu tìm thấy sinh viên, mới đi lấy thông tin chi tiết môn học từ node "Courses"
-                        var courseDetail = await firebaseClient
-                            .Child("Courses")
-                            .Child(courseNode.Key)
-                            .OnceSingleAsync<CourseModel>();
+                        string displayId = !string.IsNullOrEmpty(course.MaLop) ? course.MaLop : c.Key;
 
-                        if (courseDetail != null)
-                        {
-                            string displayId = !string.IsNullOrEmpty(courseDetail.MaLop) ? courseDetail.MaLop : courseNode.Key;
-                            ListViewItem item = new ListViewItem(displayId);
-                            item.SubItems.Add(courseDetail.TenLop ?? "Không có tên");
-                            item.SubItems.Add(courseDetail.InstructorName ?? "Chưa rõ");
-                            item.Tag = courseNode.Key;
-                            lvCourses.Items.Add(item);
-                        }
+                        ListViewItem item = new ListViewItem(displayId);
+
+                        // THAY ĐỔI TẠI ĐÂY: Ưu tiên lấy TenLop, nếu null thì lấy Name
+                        string tenHienThi = course.TenLop ??  "Không có tên";
+                        item.SubItems.Add(tenHienThi);
+
+                        item.SubItems.Add(course.InstructorName ?? "Chưa rõ");
+                        item.Tag = c.Key;
+                        lvCourses.Items.Add(item);
+                        hasJoinedAny = true;
                     }
                 }
 
-                if (lvCourses.Items.Count == 0)
+                // Tự động căn chỉnh độ rộng cột theo nội dung sau khi thêm dữ liệu
+                if (lvCourses.Items.Count > 0)
                 {
-                    MessageBox.Show("Bạn chưa có môn học nào được duyệt!", "Thông báo");
+                    // Giãn các cột theo nội dung dài nhất bên trong
+                    lvCourses.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
+
+                    // Riêng cột Tên Môn Học nếu quá ngắn thì tối thiểu là 250
+                    if (lvCourses.Columns[1].Width < 250) lvCourses.Columns[1].Width = 250;
+                }
+                else
+                {
+                    // Nếu không có dữ liệu, giãn theo tiêu đề
+                    lvCourses.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
+                    MessageBox.Show("Bạn chưa tham gia môn học nào!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Lỗi tải dữ liệu: " + ex.Message);
+                MessageBox.Show("Lỗi tải dữ liệu: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -143,7 +147,7 @@ namespace APP_DOAN.GiaoDienChinh
                     .Child(_studentUid)
                     .PutAsync(new JoinRequest
                     {
-                        HoTen = "Học viên", // Có thể lấy tên từ Profile nếu có
+                        StudentName = "Học viên", // Có thể lấy tên từ Profile nếu có
                         Status = "pending"
                     });
 
@@ -153,11 +157,6 @@ namespace APP_DOAN.GiaoDienChinh
             {
                 MessageBox.Show("Lỗi: " + ex.Message);
             }
-        }
-
-        private void lvCourses_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
         }
     }
 
@@ -172,7 +171,7 @@ namespace APP_DOAN.GiaoDienChinh
 
     public class JoinRequest
     {
-        public string HoTen { get; set; } // Đổi từ StudentName thành HoTen
-        public string Status { get; set; }
+        public string StudentName { get; set; }
+        public string Status { get; set; } // pending, approved, denied
     }
 }

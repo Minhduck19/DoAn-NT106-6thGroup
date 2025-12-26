@@ -8,19 +8,6 @@ namespace APP_DOAN
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-
         #region Windows Form Designer generated code
 
         /// <summary>
@@ -78,17 +65,17 @@ namespace APP_DOAN
             panelContacts.Controls.Add(label1);
             panelContacts.CustomizableEdges = customizableEdges3;
             panelContacts.Dock = DockStyle.Left;
-            panelContacts.FillColor = Color.FromArgb(249, 249, 249);
+            panelContacts.FillColor = Color.FromArgb(255, 255, 255);
             panelContacts.Location = new Point(0, 0);
-            panelContacts.Margin = new Padding(3, 4, 3, 4);
+            panelContacts.Margin = new Padding(0);
             panelContacts.Name = "panelContacts";
             panelContacts.ShadowDecoration.CustomizableEdges = customizableEdges4;
-            panelContacts.Size = new Size(342, 750);
+            panelContacts.Size = new Size(360, 750);
             panelContacts.TabIndex = 0;
-            panelContacts.Paint += panelContacts_Paint;
             // 
             // guna2TextBox1
             // 
+            guna2TextBox1.BorderRadius = 8;
             guna2TextBox1.CustomizableEdges = customizableEdges1;
             guna2TextBox1.DefaultText = "";
             guna2TextBox1.DisabledState.BorderColor = Color.FromArgb(208, 208, 208);
@@ -98,13 +85,13 @@ namespace APP_DOAN
             guna2TextBox1.FocusedState.BorderColor = Color.FromArgb(94, 148, 255);
             guna2TextBox1.Font = new Font("Segoe UI", 9F);
             guna2TextBox1.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
-            guna2TextBox1.Location = new Point(0, 62);
+            guna2TextBox1.Location = new Point(12, 68);
             guna2TextBox1.Margin = new Padding(3, 4, 3, 4);
             guna2TextBox1.Name = "guna2TextBox1";
-            guna2TextBox1.PlaceholderText = "";
+            guna2TextBox1.PlaceholderText = "🔍 Tìm kiếm...";
             guna2TextBox1.SelectedText = "";
             guna2TextBox1.ShadowDecoration.CustomizableEdges = customizableEdges2;
-            guna2TextBox1.Size = new Size(343, 41);
+            guna2TextBox1.Size = new Size(336, 40);
             guna2TextBox1.TabIndex = 0;
             guna2TextBox1.TextChanged += guna2TextBox1_TextChanged;
             // 
@@ -114,31 +101,31 @@ namespace APP_DOAN
             flowUserListPanel.AutoScroll = true;
             flowUserListPanel.BackColor = Color.Transparent;
             flowUserListPanel.FlowDirection = FlowDirection.TopDown;
-            flowUserListPanel.Location = new Point(0, 99);
-            flowUserListPanel.Margin = new Padding(3, 4, 3, 4);
+            flowUserListPanel.Location = new Point(0, 115);
+            flowUserListPanel.Margin = new Padding(0);
             flowUserListPanel.Name = "flowUserListPanel";
-            flowUserListPanel.Size = new Size(343, 651);
+            flowUserListPanel.Size = new Size(360, 635);
             flowUserListPanel.TabIndex = 1;
             flowUserListPanel.WrapContents = false;
-            flowUserListPanel.Paint += flowUserListPanel_Paint;
             // 
             // label1
             // 
             label1.AutoSize = true;
             label1.BackColor = Color.Transparent;
-            label1.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label1.Location = new Point(12, 16);
+            label1.Font = new Font("Segoe UI", 13F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label1.ForeColor = Color.FromArgb(50, 50, 50);
+            label1.Location = new Point(12, 18);
             label1.Name = "label1";
-            label1.Size = new Size(113, 28);
+            label1.Size = new Size(122, 30);
             label1.TabIndex = 0;
             label1.Text = "TIN NHẮN";
             // 
             // guna2Separator1
             // 
             guna2Separator1.Dock = DockStyle.Left;
-            guna2Separator1.FillColor = Color.FromArgb(220, 220, 220);
-            guna2Separator1.Location = new Point(342, 0);
-            guna2Separator1.Margin = new Padding(3, 4, 3, 4);
+            guna2Separator1.FillColor = Color.FromArgb(230, 230, 230);
+            guna2Separator1.Location = new Point(360, 0);
+            guna2Separator1.Margin = new Padding(0);
             guna2Separator1.Name = "guna2Separator1";
             guna2Separator1.Size = new Size(1, 750);
             guna2Separator1.TabIndex = 1;
@@ -152,12 +139,12 @@ namespace APP_DOAN
             panelInfo.Controls.Add(guna2CirclePictureBox1);
             panelInfo.CustomizableEdges = customizableEdges6;
             panelInfo.Dock = DockStyle.Right;
-            panelInfo.FillColor = Color.FromArgb(249, 249, 249);
-            panelInfo.Location = new Point(1509, 0);
-            panelInfo.Margin = new Padding(3, 4, 3, 4);
+            panelInfo.FillColor = Color.FromArgb(255, 255, 255);
+            panelInfo.Location = new Point(1508, 0);
+            panelInfo.Margin = new Padding(0);
             panelInfo.Name = "panelInfo";
             panelInfo.ShadowDecoration.CustomizableEdges = customizableEdges7;
-            panelInfo.Size = new Size(269, 750);
+            panelInfo.Size = new Size(270, 750);
             panelInfo.TabIndex = 2;
             // 
             // lblInfoRole
@@ -165,10 +152,10 @@ namespace APP_DOAN
             lblInfoRole.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             lblInfoRole.BackColor = Color.Transparent;
             lblInfoRole.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblInfoRole.ForeColor = Color.Gray;
-            lblInfoRole.Location = new Point(6, 275);
+            lblInfoRole.ForeColor = Color.FromArgb(120, 120, 120);
+            lblInfoRole.Location = new Point(10, 310);
             lblInfoRole.Name = "lblInfoRole";
-            lblInfoRole.Size = new Size(251, 29);
+            lblInfoRole.Size = new Size(250, 25);
             lblInfoRole.TabIndex = 3;
             lblInfoRole.Text = "(Vai trò)";
             lblInfoRole.TextAlign = ContentAlignment.TopCenter;
@@ -178,10 +165,10 @@ namespace APP_DOAN
             lblInfoEmail.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             lblInfoEmail.BackColor = Color.Transparent;
             lblInfoEmail.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblInfoEmail.ForeColor = Color.Gray;
-            lblInfoEmail.Location = new Point(6, 246);
+            lblInfoEmail.ForeColor = Color.FromArgb(120, 120, 120);
+            lblInfoEmail.Location = new Point(10, 280);
             lblInfoEmail.Name = "lblInfoEmail";
-            lblInfoEmail.Size = new Size(251, 29);
+            lblInfoEmail.Size = new Size(250, 25);
             lblInfoEmail.TabIndex = 2;
             lblInfoEmail.Text = "(Email)";
             lblInfoEmail.TextAlign = ContentAlignment.TopCenter;
@@ -191,9 +178,10 @@ namespace APP_DOAN
             lblInfoName.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             lblInfoName.BackColor = Color.Transparent;
             lblInfoName.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblInfoName.Location = new Point(6, 200);
+            lblInfoName.ForeColor = Color.FromArgb(50, 50, 50);
+            lblInfoName.Location = new Point(10, 220);
             lblInfoName.Name = "lblInfoName";
-            lblInfoName.Size = new Size(251, 35);
+            lblInfoName.Size = new Size(250, 30);
             lblInfoName.TabIndex = 1;
             lblInfoName.Text = "(Chọn để chat)";
             lblInfoName.TextAlign = ContentAlignment.TopCenter;
@@ -203,12 +191,13 @@ namespace APP_DOAN
             guna2CirclePictureBox1.BackColor = Color.Transparent;
             guna2CirclePictureBox1.Image = Properties.Resources.avatar_trang_1_cd729c335b;
             guna2CirclePictureBox1.ImageRotate = 0F;
-            guna2CirclePictureBox1.Location = new Point(75, 62);
-            guna2CirclePictureBox1.Margin = new Padding(3, 4, 3, 4);
+            guna2CirclePictureBox1.Location = new Point(85, 65);
+            guna2CirclePictureBox1.Margin = new Padding(0);
             guna2CirclePictureBox1.Name = "guna2CirclePictureBox1";
             guna2CirclePictureBox1.ShadowDecoration.CustomizableEdges = customizableEdges5;
             guna2CirclePictureBox1.ShadowDecoration.Mode = Guna.UI2.WinForms.Enums.ShadowMode.Circle;
-            guna2CirclePictureBox1.Size = new Size(100, 125);
+            guna2CirclePictureBox1.ShadowDecoration.Shadow = new Padding(0, 0, 5, 5);
+            guna2CirclePictureBox1.Size = new Size(100, 100);
             guna2CirclePictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             guna2CirclePictureBox1.TabIndex = 0;
             guna2CirclePictureBox1.TabStop = false;
@@ -216,42 +205,40 @@ namespace APP_DOAN
             // guna2Separator2
             // 
             guna2Separator2.Dock = DockStyle.Right;
-            guna2Separator2.FillColor = Color.FromArgb(220, 220, 220);
-            guna2Separator2.Location = new Point(1508, 0);
-            guna2Separator2.Margin = new Padding(3, 4, 3, 4);
+            guna2Separator2.FillColor = Color.FromArgb(230, 230, 230);
+            guna2Separator2.Location = new Point(1507, 0);
+            guna2Separator2.Margin = new Padding(0);
             guna2Separator2.Name = "guna2Separator2";
             guna2Separator2.Size = new Size(1, 750);
             guna2Separator2.TabIndex = 3;
             // 
             // panelChatArea
             // 
-            panelChatArea.BackColor = Color.White;
+            panelChatArea.BackColor = Color.FromArgb(250, 250, 250);
             panelChatArea.Controls.Add(flowChatPanel);
             panelChatArea.Controls.Add(panelInput);
             panelChatArea.CustomizableEdges = customizableEdges14;
             panelChatArea.Dock = DockStyle.Fill;
-            panelChatArea.Location = new Point(343, 0);
-            panelChatArea.Margin = new Padding(3, 4, 3, 4);
+            panelChatArea.Location = new Point(361, 0);
+            panelChatArea.Margin = new Padding(0);
             panelChatArea.Name = "panelChatArea";
             panelChatArea.ShadowDecoration.CustomizableEdges = customizableEdges15;
-            panelChatArea.Size = new Size(1165, 750);
+            panelChatArea.Size = new Size(1146, 750);
             panelChatArea.TabIndex = 4;
             // 
             // flowChatPanel
             // 
             flowChatPanel.AutoScroll = true;
-            flowChatPanel.AutoSize = false;
-            flowChatPanel.BackColor = Color.WhiteSmoke;
+            flowChatPanel.BackColor = Color.FromArgb(250, 250, 250);
             flowChatPanel.Dock = DockStyle.Fill;
             flowChatPanel.FlowDirection = FlowDirection.TopDown;
             flowChatPanel.Location = new Point(0, 0);
-            flowChatPanel.Margin = new Padding(3, 4, 3, 4);
+            flowChatPanel.Margin = new Padding(0);
             flowChatPanel.Name = "flowChatPanel";
-            flowChatPanel.Padding = new Padding(10, 12, 0, 12);
-            flowChatPanel.Size = new Size(1165, 675);
+            flowChatPanel.Padding = new Padding(15, 15, 5, 15);
+            flowChatPanel.Size = new Size(1146, 675);
             flowChatPanel.TabIndex = 1;
             flowChatPanel.WrapContents = false;
-            flowChatPanel.Paint += flowChatPanel_Paint;
             // 
             // panelInput
             // 
@@ -262,16 +249,16 @@ namespace APP_DOAN
             panelInput.CustomizableEdges = customizableEdges12;
             panelInput.Dock = DockStyle.Bottom;
             panelInput.Enabled = false;
-            panelInput.FillColor = Color.FromArgb(249, 249, 249);
+            panelInput.FillColor = Color.White;
             panelInput.Location = new Point(0, 675);
-            panelInput.Margin = new Padding(3, 4, 3, 4);
+            panelInput.Margin = new Padding(0);
             panelInput.Name = "panelInput";
-            panelInput.Padding = new Padding(10);
+            panelInput.Padding = new Padding(12, 10, 12, 10);
             panelInput.ShadowDecoration.CustomizableEdges = customizableEdges13;
-            panelInput.ShadowDecoration.Depth = 5;
+            panelInput.ShadowDecoration.Depth = 3;
             panelInput.ShadowDecoration.Enabled = true;
-            panelInput.ShadowDecoration.Shadow = new Padding(0, -5, 0, 0);
-            panelInput.Size = new Size(1165, 75);
+            panelInput.ShadowDecoration.Shadow = new Padding(0, -3, 0, 0);
+            panelInput.Size = new Size(1146, 75);
             panelInput.TabIndex = 0;
             // 
             // btnUpload
@@ -279,9 +266,9 @@ namespace APP_DOAN
             btnUpload.BackgroundImage = (Image)resources.GetObject("btnUpload.BackgroundImage");
             btnUpload.BackgroundImageLayout = ImageLayout.Stretch;
             btnUpload.ForeColor = SystemColors.ControlLight;
-            btnUpload.Location = new Point(998, 13);
+            btnUpload.Location = new Point(974, 17);
             btnUpload.Name = "btnUpload";
-            btnUpload.Size = new Size(46, 38);
+            btnUpload.Size = new Size(38, 38);
             btnUpload.TabIndex = 3;
             btnUpload.UseVisualStyleBackColor = true;
             btnUpload.Click += btnUpload_Click_1;
@@ -291,17 +278,16 @@ namespace APP_DOAN
             button1.BackgroundImage = Properties.Resources._8721408;
             button1.BackgroundImageLayout = ImageLayout.Stretch;
             button1.ForeColor = SystemColors.ControlLight;
-            button1.Location = new Point(1050, 13);
+            button1.Location = new Point(1026, 17);
             button1.Name = "button1";
-            button1.Size = new Size(46, 38);
+            button1.Size = new Size(38, 38);
             button1.TabIndex = 2;
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
             // 
             // txtMessage
             // 
-            txtMessage.BorderRadius = 8;
-            txtMessage.BorderThickness = 0;
+            txtMessage.BorderRadius = 10;
             txtMessage.Cursor = Cursors.IBeam;
             txtMessage.CustomizableEdges = customizableEdges8;
             txtMessage.DefaultText = "";
@@ -313,13 +299,13 @@ namespace APP_DOAN
             txtMessage.FocusedState.BorderColor = Color.FromArgb(94, 148, 255);
             txtMessage.Font = new Font("Segoe UI", 9F);
             txtMessage.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
-            txtMessage.Location = new Point(10, 10);
-            txtMessage.Margin = new Padding(3, 5, 3, 5);
+            txtMessage.Location = new Point(12, 10);
+            txtMessage.Margin = new Padding(0);
             txtMessage.Name = "txtMessage";
             txtMessage.PlaceholderText = "Nhập tin nhắn...";
             txtMessage.SelectedText = "";
             txtMessage.ShadowDecoration.CustomizableEdges = customizableEdges9;
-            txtMessage.Size = new Size(1073, 55);
+            txtMessage.Size = new Size(1058, 55);
             txtMessage.TabIndex = 0;
             txtMessage.TextChanged += txtMessage_TextChanged;
             // 
@@ -334,18 +320,16 @@ namespace APP_DOAN
             btnSend.DisabledState.FillColor = Color.FromArgb(169, 169, 169);
             btnSend.DisabledState.ForeColor = Color.FromArgb(141, 141, 141);
             btnSend.Dock = DockStyle.Right;
-            btnSend.FillColor = Color.Transparent;
+            btnSend.FillColor = Color.FromArgb(33, 150, 243);
             btnSend.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             btnSend.ForeColor = Color.White;
             btnSend.Image = Properties.Resources.maybay;
-            btnSend.ImageSize = new Size(25, 25);
-            btnSend.Location = new Point(1083, 10);
+            btnSend.Location = new Point(1070, 10);
             btnSend.Margin = new Padding(3, 4, 3, 4);
             btnSend.Name = "btnSend";
             btnSend.ShadowDecoration.CustomizableEdges = customizableEdges11;
-            btnSend.Size = new Size(72, 55);
+            btnSend.Size = new Size(64, 55);
             btnSend.TabIndex = 1;
-            btnSend.Click += btnSend_Click_1;
             // 
             // frmMainChat
             // 
@@ -358,7 +342,7 @@ namespace APP_DOAN
             Controls.Add(panelInfo);
             Controls.Add(guna2Separator1);
             Controls.Add(panelContacts);
-            Margin = new Padding(3, 4, 3, 4);
+            Margin = new Padding(0);
             Name = "frmMainChat";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Chat";
@@ -370,7 +354,6 @@ namespace APP_DOAN
             panelInfo.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)guna2CirclePictureBox1).EndInit();
             panelChatArea.ResumeLayout(false);
-            panelChatArea.PerformLayout();
             panelInput.ResumeLayout(false);
             ResumeLayout(false);
         }

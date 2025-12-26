@@ -60,4 +60,46 @@ public class CloudinaryHelper
             return null;
         }
     }
+
+    /// <summary>
+    /// Upload file từ đường dẫn file trên máy tính (hỗ trợ PDF, Word, Excel, etc.)
+    /// </summary>
+    /// <param name="filePath">Đường dẫn file (C:\Users\Document.pdf)</param>
+    /// <returns>Trả về URL file online. Trả về null nếu lỗi.</returns>
+    public static string UploadFile(string filePath)
+    {
+        try
+        {
+            if (!File.Exists(filePath))
+            {
+                MessageBox.Show("File không tồn tại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return null;
+            }
+
+            var uploadParams = new RawUploadParams()
+            {
+                File = new FileDescription(filePath),
+                Folder = "WinForms_App_Uploads",
+                PublicId = $"file_{DateTime.Now.Ticks}",
+                Overwrite = true
+            };
+
+            var uploadResult = _cloudinary.Upload(uploadParams);
+
+            if (uploadResult.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                return uploadResult.SecureUrl.ToString();
+            }
+            else
+            {
+                MessageBox.Show($"Lỗi từ Server: {uploadResult.Error.Message}", "Lỗi Upload", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return null;
+            }
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Có lỗi ngoại lệ: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return null;
+        }
+    }
 }
