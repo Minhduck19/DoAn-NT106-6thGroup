@@ -43,6 +43,7 @@ namespace APP_DOAN
             this.FormClosing += frmMainChat_FormClosing;
 
             btnSend.Click += btnSend_Click;
+            btnUpload.Click += btnUpload_Click_1;  
             txtMessage.KeyDown += txtMessage_KeyDown;
 
             if (guna2TextBox1_TextChanged != null)
@@ -90,6 +91,47 @@ namespace APP_DOAN
                     flowUserListPanel.Controls.Add(contactItem);
                     
                     _userLastMessageTime[uid] = 0;
+
+                    contactItem.DeleteConversation += async (s, uid) =>
+                    {
+                        try
+                        {
+                            // Xóa toàn bộ cuộc trò chuyện từ Firebase
+                            string chatId = _chatService.GenerateChatId(_currentUserUid, (string)uid);
+                            await _chatService.DeleteChatAsync(chatId);
+                            
+                            // Xóa từ cache
+                            if (_messageCache.ContainsKey((string)uid))
+                                _messageCache.Remove((string)uid);
+                            if (_chatLastLoadTime.ContainsKey((string)uid))
+                                _chatLastLoadTime.Remove((string)uid);
+                            
+                            // Xóa từ giao diện
+                            flowUserListPanel.Controls.Remove(contactItem);
+                            
+                            // Nếu đang chat với người này thì reset
+                            if (_currentPartnerUid == (string)uid)
+                            {
+                                _currentPartnerUid = null;
+                                _currentChatId = null;
+                                flowChatPanel.Controls.Clear();
+                                panelInput.Enabled = false;
+                                lblInfoName.Text = "(Chọn để chat)";
+                                lblInfoEmail.Text = "(Email)";
+                                lblInfoRole.Text = "(Vai trò)";
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show($"Lỗi xóa cuộc trò chuyện: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    };
+
+                    contactItem.MuteNotification += (s, uid) =>
+                    {
+                        // Xử lý tắt thông báo cho contact này
+                        MessageBox.Show("Đã tắt thông báo cho " + contactItem.HoTen);
+                    };
                 }
 
                 var userList = flowUserListPanel.Controls.Cast<Control>()
@@ -346,9 +388,23 @@ namespace APP_DOAN
         // Hiển thị tin nhắn mới và cập nhật danh sách contact
         private void DisplayMessageAsBubble(Message msg)
         {
+            // Safety check: Ensure control and form are not disposed
+            if (flowChatPanel.IsDisposed)
+            {
+                return;
+            }
+
             if (flowChatPanel.InvokeRequired)
             {
-                flowChatPanel.Invoke(new Action(() => DisplayMessageAsBubble(msg)));
+                try
+                {
+                    flowChatPanel.Invoke(new Action(() => DisplayMessageAsBubble(msg)));
+                }
+                catch (ObjectDisposedException)
+                {
+                    // Control was disposed between the check and invoke, gracefully exit
+                    return;
+                }
             }
             else
             {
@@ -513,9 +569,20 @@ namespace APP_DOAN
             flowUserListPanel.ResumeLayout();
         }
 
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _messageSubscription?.Dispose();
+                _typingTimer?.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
         private void frmMainChat_FormClosing(object? sender, FormClosingEventArgs e)
         {
             _messageSubscription?.Dispose();
+            _messageSubscription = null;
         }
 
         private void lblInfoEmail_Click(object? sender, EventArgs e)
@@ -533,7 +600,7 @@ namespace APP_DOAN
         {
             if (!string.IsNullOrEmpty(_currentChatId))
             {
-                _ = _chatService.SetTypingStatus(_currentChatId, _currentUserUid, true);
+                _chatService.SetTypingStatus(_currentChatId, _currentUserUid, true);
             }
 
             _typingTimer.Stop();
@@ -545,7 +612,7 @@ namespace APP_DOAN
         {
             if (!string.IsNullOrEmpty(_currentChatId))
             {
-                _ = _chatService.SetTypingStatus(_currentChatId, _currentUserUid, false);
+                _chatService.SetTypingStatus(_currentChatId, _currentUserUid, false);
             }
             _typingTimer.Stop();
         }
@@ -565,53 +632,82 @@ namespace APP_DOAN
             };
         }
 
-        // Gửi hình ảnh qua chat
+        // Gửi hình ảnh hoặc file qua chat
         private async void btnUpload_Click_1(object? sender, EventArgs e)
         {
-            OpenFileDialog open = new OpenFileDialog();
-            open.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.gif;*.bmp";
-
-            if (open.ShowDialog() == DialogResult.OK)
+            if (string.IsNullOrEmpty(_currentPartnerUid))
             {
-                try
+                MessageBox.Show("Vui lòng chọn người để chat trước", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.Filter = "Tất cả file hỗ trợ (*.jpg;*.jpeg;*.png;*.gif;*.bmp;*.pdf;*.docx;*.doc;*.xlsx;*.xls;*.txt;*.pptx)|*.jpg;*.jpeg;*.png;*.gif;*.bmp;*.pdf;*.docx;*.doc;*.xlsx;*.xls;*.txt;*.pptx|Hình ảnh (*.jpg;*.jpeg;*.png;*.gif;*.bmp)|*.jpg;*.jpeg;*.png;*.gif;*.bmp|Tài liệu PDF (*.pdf)|*.pdf|Word (*.docx;*.doc)|*.docx;*.doc|Excel (*.xlsx;*.xls)|*.xlsx;*.xls|Text (*.txt)|*.txt|PowerPoint (*.pptx)|*.pptx|Tất cả file (*.*)|*.*";
+                openFileDialog.Title = "Chọn hình ảnh hoặc file để gửi";
+
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    if (string.IsNullOrEmpty(_currentPartnerUid) || string.IsNullOrEmpty(_currentChatId))
+                    try
                     {
-                        MessageBox.Show("Vui lòng chọn một người để chat trước khi gửi ảnh.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        return;
+                        string filePath = openFileDialog.FileName;
+                        string fileName = System.IO.Path.GetFileName(filePath);
+                        string fileExtension = System.IO.Path.GetExtension(filePath).ToLower();
+                        
+                        // Xác định loại file (ảnh hay tài liệu)
+                        bool isImage = IsImageFile(fileExtension);
+                        
+                        // Hiển thị thông báo đang upload
+                        MessageBox.Show("Đang tải file...", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                        using (var fileStream = System.IO.File.OpenRead(filePath))
+                        {
+                            string fileUrl = await _chatService.UploadFile(fileStream, fileName);
+
+                            // Tạo tin nhắn phù hợp dựa trên loại file
+                            Message fileMessage;
+                            
+                            if (isImage)
+                            {
+                                // Tin nhắn ảnh
+                                fileMessage = new Message
+                                {
+                                    SenderUid = _currentUserUid,
+                                    SenderName = _currentUserName,
+                                    Text = fileUrl,  // URL ảnh
+                                    Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                                    Status = "sent",
+                                    Type = "image",  // Loại ảnh
+                                    FileUrl = fileUrl,
+                                    FileName = fileName
+                                };
+                            }
+                            else
+                            {
+                                // Tin nhắn file thường
+                                fileMessage = new Message
+                                {
+                                    SenderUid = _currentUserUid,
+                                    SenderName = _currentUserName,
+                                    Text = $"📎 {fileName}",
+                                    Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                                    Status = "sent",
+                                    Type = "file",
+                                    FileUrl = fileUrl,
+                                    FileName = fileName
+                                };
+                            }
+
+                            // Gửi tin nhắn
+                            await _chatService.SendMessageAsync(_currentChatId, fileMessage);
+                            
+                            MessageBox.Show("Gửi file thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
                     }
-
-                    panelInput.Enabled = false;
-                    Cursor = Cursors.WaitCursor;
-
-                    string? imageUrl = CloudinaryHelper.UploadImage(open.FileName);
-
-                    if (string.IsNullOrEmpty(imageUrl))
+                    catch (Exception ex)
                     {
-                        MessageBox.Show("Không thể upload ảnh. Vui lòng thử lại.", "Lỗi Upload", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
+                        MessageBox.Show($"Lỗi gửi file: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
-
-                    var msg = new Message
-                    {
-                        SenderUid = _currentUserUid,
-                        SenderName = _currentUserName,
-                        Text = imageUrl,
-                        Type = "image",
-                        Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                        Status = "sent"
-                    };
-
-                    await _chatService.SendMessageAsync(_currentChatId, msg);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Lỗi khi gửi ảnh: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                finally
-                {
-                    panelInput.Enabled = true;
-                    Cursor = Cursors.Default;
                 }
             }
         }
@@ -620,6 +716,13 @@ namespace APP_DOAN
         private string GenerateMessageId(Message msg)
         {
             return $"{msg.SenderUid}_{msg.Timestamp}";
+        }
+
+        private bool IsImageFile(string extension)
+        {
+            // List of supported image file extensions
+            string[] imageExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".bmp" };
+            return imageExtensions.Contains(extension, StringComparer.OrdinalIgnoreCase);
         }
     }
 }

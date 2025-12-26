@@ -33,6 +33,7 @@
             panelBubble = new Guna.UI2.WinForms.Guna2Panel();
             lblStatus = new Label();
             lblMessage = new Guna.UI2.WinForms.Guna2HtmlLabel();
+            lnkDownloadFile = new System.Windows.Forms.LinkLabel();
             panelBubble.SuspendLayout();
             SuspendLayout();
             // 
@@ -41,6 +42,7 @@
             panelBubble.BorderRadius = 15;
             panelBubble.Controls.Add(lblStatus);
             panelBubble.Controls.Add(lblMessage);
+            panelBubble.Controls.Add(lnkDownloadFile);
             customizableEdges1.BottomLeft = false;
             customizableEdges1.BottomRight = false;
             customizableEdges1.TopLeft = false;
@@ -78,6 +80,15 @@
             lblMessage.TabIndex = 0;
             lblMessage.Text = "Nội dung tin nhắn";
             // 
+            // lnkDownloadFile
+            // 
+            lnkDownloadFile.AutoSize = true;
+            lnkDownloadFile.Location = new Point(15, 35);
+            lnkDownloadFile.Name = "lnkDownloadFile";
+            lnkDownloadFile.Size = new Size(80, 15);
+            lnkDownloadFile.TabIndex = 2;
+            lnkDownloadFile.TabStop = true;
+            lnkDownloadFile.Text = "📥 Tải file";
             // UC_ChatItem
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -100,5 +111,6 @@
         private Guna.UI2.WinForms.Guna2Panel panelBubble;
         private Guna.UI2.WinForms.Guna2HtmlLabel lblMessage;
         private Label lblStatus;
+        private System.Windows.Forms.LinkLabel lnkDownloadFile;
     }
 }

@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using System.Drawing;
+using System.Windows.Forms;
 
 namespace APP_DOAN
 {
@@ -34,6 +36,30 @@ namespace APP_DOAN
 
                 string imageUrl = CloudinaryHelper.UploadImage(tempFilePath);
                 return imageUrl;
+            }
+            finally
+            {
+                if (System.IO.File.Exists(tempFilePath))
+                {
+                    System.IO.File.Delete(tempFilePath);
+                }
+            }
+        }
+
+        // Gửi file
+        public async Task<string> UploadFile(System.IO.Stream fileStream, string fileName)
+        {
+            string tempFilePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), fileName);
+            
+            try
+            {
+                using (var file = System.IO.File.Create(tempFilePath))
+                {
+                    await fileStream.CopyToAsync(file);
+                }
+
+                string fileUrl = CloudinaryHelper.UploadFile(tempFilePath);
+                return fileUrl;
             }
             finally
             {
@@ -142,6 +168,15 @@ namespace APP_DOAN
             return _firebaseClient.Child("Chats").Child(chatId).Child("Typing").Child(partnerUid)
                 .AsObservable<bool>()
                 .Subscribe(evt => onTypingChanged?.Invoke(evt.Object));
+        }
+
+        // Xóa toàn bộ cuộc trò chuyện (tất cả tin nhắn)
+        public async Task DeleteChatAsync(string chatId)
+        {
+            await _firebaseClient
+                .Child("Chats")
+                .Child(chatId)
+                .DeleteAsync();
         }
     }
 }

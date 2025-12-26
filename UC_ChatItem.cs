@@ -18,6 +18,7 @@ namespace APP_DOAN
         private int _maxImageSize = 300;
 
         private PictureBox picImage = new PictureBox();
+        private UC_FileMessage _fileMessage = null;
 
         public UC_ChatItem()
         {
@@ -55,8 +56,8 @@ namespace APP_DOAN
             SetMessage(text, isMe, status, type, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(), null);
         }
 
-        // Hiển thị tin nhắn với định dạng bubble (text hoặc image)
-        public void SetMessage(string text, bool isMe, string status, string type, long timestamp, long? previousTimestamp)
+        // Hiển thị tin nhắn với định dạng bubble (text hoặc image hoặc file)
+        public void SetMessage(string text, bool isMe, string status, string type, long timestamp, long? previousTimestamp, string fileUrl = null, string fileName = null)
         {
             // Cấu hình
             int doCongGoc = 20;
@@ -138,12 +139,43 @@ namespace APP_DOAN
                     System.Diagnostics.Debug.WriteLine($"Error loading image: {ex.Message}");
                 }
             }
+            else if (type == "file")
+            {
+                // --- XỬ LÝ FILE ---
+                picImage.Visible = false;
+                panelBubble.Visible = false;
+                lblMessage.Visible = false;
+
+                // Tạo UC_FileMessage nếu chưa có
+                if (_fileMessage == null)
+                {
+                    _fileMessage = new UC_FileMessage();
+                    this.Controls.Add(_fileMessage);
+                }
+
+                _fileMessage.Visible = true;
+                _fileMessage.SetFileData(fileUrl, fileName);
+
+                if (isMe)
+                {
+                    _fileMessage.Location = new Point(this.Width - _fileMessage.Width - rightPadding, showTimeSeparator ? 35 : 5);
+                }
+                else
+                {
+                    _fileMessage.Location = new Point(rightPadding, showTimeSeparator ? 35 : 5);
+                }
+
+                _fileMessage.BringToFront();
+            }
             else
             {
                 // --- XỬ LÝ TEXT ---
                 picImage.Visible = false;
                 panelBubble.Visible = true;
                 lblMessage.Visible = true;
+
+                if (_fileMessage != null)
+                    _fileMessage.Visible = false;
 
                 lblMessage.Text = text;
                 lblMessage.MaximumSize = new Size((int)(this.Width * 0.65), 0);
@@ -171,7 +203,14 @@ namespace APP_DOAN
             }
 
             // --- TÍNH CHIỀU CAO CONTROL ---
-            Control doiTuongCuoi = (type == "image") ? (Control)picImage : panelBubble;
+            Control doiTuongCuoi;
+            if (type == "image")
+                doiTuongCuoi = picImage;
+            else if (type == "file")
+                doiTuongCuoi = _fileMessage;
+            else
+                doiTuongCuoi = panelBubble;
+
             int timeSeparatorHeight = showTimeSeparator ? 30 : 0;
 
             // Status (Đã xem/Đã gửi)
