@@ -12,6 +12,8 @@ namespace APP_DOAN
 {
     public partial class MainForm : Form
     {
+        private IDisposable _courseListener;
+
         private readonly string _currentUserUid;
         private readonly string _currentUserName;
         private readonly string _loggedInEmail;
@@ -41,11 +43,37 @@ namespace APP_DOAN
 
         private async void MainForm_Load(object sender, EventArgs e)
         {
+            FirebaseService.Initialize(_idToken);
             lblWelcome.Text = $"Chào mừng,\n{_currentUserName} (Sinh viên)";
             SetupJoinedListViewColumns();
-            // Chỉ gọi hàm tải từ Firebase, xóa LoadMockClassData();
+
             await LoadClassDataFromFirebase();
+            ListenCourseChanges(); // 🔥 BẮT BUỘC
         }
+
+        private void ListenCourseChanges()
+        {
+            _courseListener = _firebaseClient
+                .Child("CourseStudents")
+                .AsObservable<object>()
+                .Subscribe(_ =>
+                {
+                    if (!IsHandleCreated) return;
+                    BeginInvoke(new Action(async () =>
+                    {
+                        await LoadClassDataFromFirebase();
+                    }));
+                });
+        }
+
+
+
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            _courseListener?.Dispose();
+            base.OnFormClosing(e);
+        }
+
 
         private void LoadMockClassData()
         {
@@ -118,34 +146,33 @@ namespace APP_DOAN
                     .Child("Courses")
                     .OnceAsync<Course>();
 
+                var courseStudents = await _firebaseClient
+                    .Child("CourseStudents")
+                    .OnceAsync<Dictionary<string, bool>>();
+
                 _allCourses.Clear();
 
                 foreach (var c in firebaseCourses)
                 {
-                    var courseData = c.Object;
-                    bool isJoined = false;
+                    bool isJoined = courseStudents.Any(cs =>
+                        cs.Key == c.Key && cs.Object.ContainsKey(_currentUserUid));
 
-                    if (courseData.Students != null && courseData.Students.Contains(_currentUserUid))
-                    {
-                        isJoined = true;
-                    }
-
-                    _allCourses.Add(new Course(c.Key, courseData.TenLop, courseData.Instructor, isJoined)
-                    {
-                        Students = courseData.Students ?? new List<string>(),
-                        MaLop = courseData.MaLop,
-                        SiSo = courseData.SiSo
-                    });
+                    _allCourses.Add(new Course(
+                        c.Key,
+                        c.Object.TenLop,
+                        c.Object.Instructor,
+                        isJoined
+                    ));
                 }
 
-                // Đổi tên gọi tại đây cho đúng với tên hàm bên dưới
                 PopulateAllCourses();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi tải dữ liệu: {ex.Message}");
+                MessageBox.Show("Lỗi tải lớp: " + ex.Message);
             }
         }
+
 
         private void PopulateAllCourses()
         {
@@ -293,16 +320,23 @@ namespace APP_DOAN
 
         private void lvJoinedCourses_ItemActivate(object sender, MouseEventArgs e)
         {
-            if (lvJoinedCourses.SelectedItems.Count > 0)
-            {
-                ListViewItem selectedItem = lvJoinedCourses.SelectedItems[0];
-                string tenLop = selectedItem.Text; // Lấy tên lớp
+            if (lvJoinedCourses.SelectedItems.Count == 0) return;
 
-                // Mở Form nộp bài, truyền tên lớp vào
-                Submit_Agsignment submitForm = new Submit_Agsignment(tenLop);
-                submitForm.ShowDialog();
-            }
+            ListViewItem selectedItem = lvJoinedCourses.SelectedItems[0];
+
+            string courseId = selectedItem.Tag.ToString();   // ✅ ID LỚP
+            string tenLop = selectedItem.Text;               // tên lớp
+
+            Submit_Agsignment submitForm = new Submit_Agsignment(
+                tenLop,
+                _firebaseClient,      // ✅ FirebaseClient có token
+                courseId,             // ✅ courseId THẬT
+                _currentUserUid       // ✅ UID sinh viên
+            );
+
+            submitForm.ShowDialog();
         }
+
 
         private void Find_Click(object sender, EventArgs e)
         {
@@ -349,3 +383,4 @@ var filtered = _allCourses
         }
     }
 }
+
