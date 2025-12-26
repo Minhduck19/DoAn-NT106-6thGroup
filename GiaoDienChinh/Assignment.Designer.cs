@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 namespace APP_DOAN.GiaoDienChinh
 {
-    partial class MonHocDaDangKy
+    partial class Assignment
     {
         private System.ComponentModel.IContainer components = null;
         private Guna2Panel panelContainer;
@@ -49,7 +49,7 @@ namespace APP_DOAN.GiaoDienChinh
             lblTitle.Name = "lblTitle";
             lblTitle.Size = new Size(980, 61);
             lblTitle.TabIndex = 0;
-            lblTitle.Text = "Danh Sách Môn Học Đã Đăng Ký";
+            lblTitle.Text = "Danh Sách Bài Tập Sinh Viên Đã Nộp";
             lblTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // panelContainer
@@ -70,7 +70,6 @@ namespace APP_DOAN.GiaoDienChinh
             // lvCourses
             // 
             lvCourses.BorderStyle = BorderStyle.None;
-            lvCourses.Columns.AddRange(new ColumnHeader[] { colCourseId, colCourseName, colInstructor });
             lvCourses.Font = new Font("Segoe UI", 10F);
             lvCourses.ForeColor = Color.FromArgb(33, 33, 33);
             lvCourses.FullRowSelect = true;
@@ -96,9 +95,9 @@ namespace APP_DOAN.GiaoDienChinh
             btnThoat.Size = new Size(200, 48);
             btnThoat.TabIndex = 4;
             btnThoat.Text = "Thoát";
-            btnThoat.Click += btnThoat_Click;
+            btnThoat.Click += btnThoat_Click_1;
             // 
-            // MonHocDaDangKy
+            // Assignment
             // 
             AutoSize = true;
             BackColor = Color.FromArgb(232, 241, 250);
@@ -107,9 +106,9 @@ namespace APP_DOAN.GiaoDienChinh
             Controls.Add(lblTitle);
             Controls.Add(panelContainer);
             FormBorderStyle = FormBorderStyle.None;
-            Name = "MonHocDaDangKy";
+            Name = "Assignment";
             StartPosition = FormStartPosition.CenterScreen;
-            Load += DangKyMonHoc_Load;
+            Load += Assignment_Load;
             panelContainer.ResumeLayout(false);
             ResumeLayout(false);
         }

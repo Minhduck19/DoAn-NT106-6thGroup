@@ -120,6 +120,7 @@
             lvStudents.TabIndex = 0;
             lvStudents.UseCompatibleStateImageBehavior = false;
             lvStudents.View = View.Details;
+            lvStudents.SelectedIndexChanged += lvStudents_SelectedIndexChanged;
             // 
             // lvRequests
             // 
@@ -131,6 +132,7 @@
             lvRequests.TabIndex = 1;
             lvRequests.UseCompatibleStateImageBehavior = false;
             lvRequests.View = View.Details;
+            lvRequests.SelectedIndexChanged += lvRequests_SelectedIndexChanged;
             // 
             // btnApprove
             // 

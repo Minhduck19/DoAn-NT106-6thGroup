@@ -109,14 +109,20 @@ namespace APP_DOAN.Services
             return response.IsSuccessStatusCode;
         }
 
-        /// <summary>
-        /// Xóa dữ liệu tại đường dẫn (DELETE)
-        /// </summary>
+       
         public static async Task<bool> Delete(string path)
         {
-            string url = BuildUrl(path);
-            var response = await client.DeleteAsync(url);
-            return response.IsSuccessStatusCode;
+            try
+            {
+                string url = BuildUrl(path);
+                var response = await client.DeleteAsync(url);
+                return response.IsSuccessStatusCode;
+            }
+            catch
+            {
+                return false;
+            }
         }
+
     }
 }

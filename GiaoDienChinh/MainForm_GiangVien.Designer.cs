@@ -211,6 +211,7 @@
             btnDeleteCourse.TabIndex = 2;
             btnDeleteCourse.Text = "Xóa Lớp";
             btnDeleteCourse.UseVisualStyleBackColor = false;
+            btnDeleteCourse.Click += BtnDeleteCourse_Click_1;
             // 
             // MainForm_GiangVien
             // 

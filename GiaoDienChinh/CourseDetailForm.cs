@@ -1,8 +1,6 @@
-﻿using Firebase.Auth;
-using Firebase.Database;
+﻿using Firebase.Database;
 using Firebase.Database.Query;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -28,61 +26,76 @@ namespace APP_DOAN.GiaoDienChinh
             _teacherEmail = email;
 
             firebaseClient = new FirebaseClient(
-                 firebaseUrl,
-                 new FirebaseOptions
-                 {
-                     AuthTokenAsyncFactory = () => Task.FromResult(_idToken)
-                 });
+                firebaseUrl,
+                new FirebaseOptions
+                {
+                    AuthTokenAsyncFactory = () => Task.FromResult(_idToken)
+                });
         }
 
-        private void CourseDetailForm_Load(object sender, EventArgs e)
+        private async void CourseDetailForm_Load(object sender, EventArgs e)
         {
             lblTitle.Text = $"{_courseId} - {_courseName}";
             SetupListViews();
 
-            _ = LoadStudents();
-            _ = LoadJoinRequests();
+            await LoadStudents();
+            await LoadJoinRequests();
         }
 
         private void SetupListViews()
         {
-            lvStudents.Columns.Add("UID", 150);
-            lvStudents.Columns.Add("Tên Sinh Viên", 200);
+            // ===== SINH VIÊN ĐÃ DUYỆT =====
+            lvStudents.Clear();
+            lvStudents.View = View.Details;
+            lvStudents.FullRowSelect = true;
+            lvStudents.GridLines = true;
 
-            lvRequests.Columns.Add("UID", 150);
-            lvRequests.Columns.Add("Tên Sinh Viên", 200);
-            lvRequests.Columns.Add("Trạng thái", 100);
+            lvStudents.Columns.Add("Mã SV", 150);
+            lvStudents.Columns.Add("Họ tên", 250);
+
+            // ===== YÊU CẦU CHỜ DUYỆT =====
+            lvRequests.Clear();
+            lvRequests.View = View.Details;
+            lvRequests.FullRowSelect = true;
+            lvRequests.GridLines = true;
+
+            lvRequests.Columns.Add("Mã SV", 150);
+            lvRequests.Columns.Add("Họ tên", 250);
+            lvRequests.Columns.Add("Trạng thái", 120);
         }
+
 
         private async Task LoadStudents()
         {
             lvStudents.Items.Clear();
+
             try
             {
                 var students = await firebaseClient
-                    .Child("CourseStudents")           // SỬA TỪ "Courses" → "CourseStudents"
+                    .Child("CourseStudents")
                     .Child(_courseId)
-                    .OnceAsync<bool>();                        // bool hoặc object đều được
+                    .OnceAsync<bool>();
 
                 foreach (var student in students)
                 {
-                    // Lấy tên thật của sinh viên từ node Users
-                    var userInfo = await firebaseClient
+                    var user = await firebaseClient
                         .Child("Users")
                         .Child(student.Key)
-                        .OnceSingleAsync<UserInfo>(); // bạn cần tạo class UserInfo có displayName
+                        .OnceSingleAsync<User>();
 
                     var item = new ListViewItem(student.Key);
-                    item.SubItems.Add(userInfo?.displayName ?? "Không rõ");
+                    item.SubItems.Add(user?.HoTen ?? "Không rõ");
+
                     item.Tag = student.Key;
                     lvStudents.Items.Add(item);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Lỗi tải danh sách sinh viên: " + ex.Message);
+                MessageBox.Show("Lỗi tải sinh viên: " + ex.Message);
             }
         }
+
 
         private async Task LoadJoinRequests()
         {
@@ -97,9 +110,19 @@ namespace APP_DOAN.GiaoDienChinh
 
                 foreach (var req in requests)
                 {
+                    // ✅ PHÒNG LỖI NULL
+                    if (req.Object == null || req.Object.Status != "pending")
+                        continue;
+
+                    var user = await firebaseClient
+                        .Child("Users")
+                        .Child(req.Key)
+                        .OnceSingleAsync<User>();
+
                     var item = new ListViewItem(req.Key);
-                    item.SubItems.Add(req.Object.StudentName);
+                    item.SubItems.Add(user?.HoTen ?? "Không rõ");
                     item.SubItems.Add(req.Object.Status);
+
                     item.Tag = req.Key;
                     lvRequests.Items.Add(item);
                 }
@@ -110,30 +133,47 @@ namespace APP_DOAN.GiaoDienChinh
             }
         }
 
+
+
+
         private async void btnApprove_Click(object sender, EventArgs e)
         {
-            if (lvRequests.SelectedItems.Count == 0) return;
+            if (lvRequests.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("Vui lòng chọn sinh viên cần duyệt!");
+                return;
+            }
 
             string studentUid = lvRequests.SelectedItems[0].Tag.ToString();
 
-            // SỬA: Thêm vào CourseStudents, không phải Courses/.../Students
-            await firebaseClient
-                .Child("CourseStudents")
-                .Child(_courseId)
-                .Child(studentUid)
-                .PutAsync(true);
+            try
+            {
+                // 1️⃣ Thêm sinh viên vào lớp
+                await firebaseClient
+                    .Child("CourseStudents")
+                    .Child(_courseId)
+                    .Child(studentUid)
+                    .PutAsync(true);
 
-            // Cập nhật trạng thái yêu cầu
-            await firebaseClient
-                .Child("JoinRequests")
-                .Child(_courseId)
-                .Child(studentUid)
-                .Child("Status")
-                .PutAsync("approved");
+                // 2️⃣ XÓA YÊU CẦU (CHUẨN)
+                await firebaseClient
+                    .Child("JoinRequests")
+                    .Child(_courseId)
+                    .Child(studentUid)
+                    .DeleteAsync();
 
-            MessageBox.Show("Đã duyệt sinh viên!");
-            await Task.WhenAll(LoadStudents(), LoadJoinRequests());
+                MessageBox.Show("Đã duyệt sinh viên!");
+
+                // 3️⃣ Reload UI
+                await LoadStudents();
+                await LoadJoinRequests();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi khi duyệt: " + ex.Message);
+            }
         }
+
 
         private async void btnReject_Click(object sender, EventArgs e)
         {
@@ -163,7 +203,7 @@ namespace APP_DOAN.GiaoDienChinh
             string studentUid = lvStudents.SelectedItems[0].Tag.ToString();
 
             await firebaseClient
-                .Child("CourseStudents")  // SỬA ĐÚNG NODE
+                .Child("CourseStudents")
                 .Child(_courseId)
                 .Child(studentUid)
                 .DeleteAsync();
@@ -172,20 +212,28 @@ namespace APP_DOAN.GiaoDienChinh
             await LoadStudents();
         }
 
-        public class UserInfo
+        private async void btnRefresh_Click(object sender, EventArgs e)
         {
-            public string displayName { get; set; }
-            public string Role { get; set; }
-        }
-
-        private void btnRefresh_Click(object sender, EventArgs e)
-        {
-            LoadJoinRequests();
+            await LoadJoinRequests();
         }
 
         private void guna2Button1_Click(object sender, EventArgs e)
         {
             this.Close();
         }
+
+        // ❌ BỎ HOÀN TOÀN EVENT NÀY
+        private void lvStudents_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // ĐỂ TRỐNG
+        }
+
+
+        private void lvRequests_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+       
+
     }
 }
