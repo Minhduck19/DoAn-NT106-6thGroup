@@ -19,10 +19,10 @@ namespace APP_DOAN
         {
             InitializeComponent();
 
-            // Indicator trạng thái online
+            // Hiển thị trạng thái online/offline dưới dạng hình thoi
             pnlOnlineStatus = new Panel();
             pnlOnlineStatus.Size = new Size(12, 12);
-            pnlOnlineStatus.BackColor = Color.Gray; // offline mặc định
+            pnlOnlineStatus.BackColor = Color.Gray;
             pnlOnlineStatus.Location = new Point(5, 5);
             pnlOnlineStatus.BorderStyle = BorderStyle.None;
             pnlOnlineStatus.Anchor = AnchorStyles.Top | AnchorStyles.Right;
@@ -36,30 +36,26 @@ namespace APP_DOAN
                 }));
             this.Controls.Add(pnlOnlineStatus);
 
-            // Click cho tất cả control con
+            // Xử lý click cho tất cả control con
             this.Click += OnClick;
             lblHoTen.Click += OnClick;
             lblLastMessage.Click += OnClick;
             picAvatar.Click += OnClick;
         }
 
-        // Đảm bảo tên biến trong ngoặc (uid, hoTen, email...) phải Y CHANG bên kia gọi
+        // Gán dữ liệu contact vào control
         public void SetData(string uid, string hoTen, string email, string role, string lastMessage, string timestamp, int unreadCount)
         {
-            // Gán dữ liệu vào biến nội bộ (để dùng cho Search)
-            this.UserId = uid;     // Nếu bên kia gọi uid, bên này phải đón bằng uid
+            this.UserId = uid;
             this.HoTen = hoTen;
             this.Email = email;
             this.Role = role;
 
-            // Gán lên giao diện
             lblHoTen.Text = hoTen;
             lblLastMessage.Text = lastMessage;
-
-            // Xử lý timestamp (nếu rỗng thì ẩn)
             lblTimestamp.Text = timestamp;
 
-            // Xử lý số tin nhắn chưa đọc
+            // Hiển thị số tin nhắn chưa đọc
             if (unreadCount > 0)
             {
                 btnNotification.Text = unreadCount.ToString();
@@ -71,6 +67,7 @@ namespace APP_DOAN
             }
         }
 
+        // Cập nhật trạng thái online/offline
         public void SetOnlineStatus(bool isOnline)
         {
             pnlOnlineStatus.BackColor = isOnline ? Color.LimeGreen : Color.Gray;
@@ -81,6 +78,7 @@ namespace APP_DOAN
             UserClicked?.Invoke(this, e);
         }
 
+        // Đánh dấu contact được chọn
         public void SetSelected(bool isSelected)
         {
             if (isSelected)
@@ -93,13 +91,12 @@ namespace APP_DOAN
             }
         }
 
-
-
         public void Deselect()
         {
             this.BackColor = Color.Transparent;
         }
 
+        // Hiệu ứng hover
         private void UC_UserContactItem_MouseEnter(object sender, EventArgs e)
         {
             if (this.BackColor != Color.FromArgb(230, 240, 255))
@@ -110,16 +107,6 @@ namespace APP_DOAN
         {
             if (this.BackColor != Color.FromArgb(230, 240, 255))
                 this.BackColor = Color.Transparent;
-        }
-
-        private void btnNotification_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void UC_UserContactItem_Load(object sender, EventArgs e)
-        {
-
         }
     }
 }

@@ -85,7 +85,6 @@ namespace APP_DOAN
             panelContacts.ShadowDecoration.CustomizableEdges = customizableEdges4;
             panelContacts.Size = new Size(360, 750);
             panelContacts.TabIndex = 0;
-            panelContacts.Paint += panelContacts_Paint;
             // 
             // guna2TextBox1
             // 
@@ -121,7 +120,6 @@ namespace APP_DOAN
             flowUserListPanel.Size = new Size(360, 635);
             flowUserListPanel.TabIndex = 1;
             flowUserListPanel.WrapContents = false;
-            flowUserListPanel.Paint += flowUserListPanel_Paint;
             // 
             // label1
             // 
@@ -347,7 +345,7 @@ namespace APP_DOAN
             btnSend.ShadowDecoration.CustomizableEdges = customizableEdges11;
             btnSend.Size = new Size(64, 55);
             btnSend.TabIndex = 1;
-            btnSend.Click += btnSend_Click_1;
+            
             // 
             // frmMainChat
             // 

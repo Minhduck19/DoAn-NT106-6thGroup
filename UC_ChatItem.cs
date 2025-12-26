@@ -27,14 +27,35 @@ namespace APP_DOAN
             itemXoa.Click += (s, e) => RequestUnsend?.Invoke(this, this.MessageId);
 
             this.ContextMenuStrip = menu;
+            
+            // Cấu hình PictureBox cho ảnh
+            picImage.SizeMode = PictureBoxSizeMode.Zoom;
+            picImage.BackColor = Color.LightGray;
+            picImage.Visible = false;
+            this.Controls.Add(picImage);
+            
             picImage.LoadCompleted += PicImage_LoadCompleted;
+            picImage.Click += PicImage_Click;
         }
+
+        // Mở form xem ảnh khi click vào ảnh
+        private void PicImage_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(_currentImageUrl) && picImage.Image != null)
+            {
+                ImageViewerForm viewer = new ImageViewerForm(_currentImageUrl);
+                viewer.ShowDialog();
+            }
+        }
+
+        private string _currentImageUrl = "";
 
         public void SetMessage(string text, bool isMe, string status, string type = "text")
         {
             SetMessage(text, isMe, status, type, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(), null);
         }
 
+        // Hiển thị tin nhắn với định dạng bubble (text hoặc image)
         public void SetMessage(string text, bool isMe, string status, string type, long timestamp, long? previousTimestamp)
         {
             // Cấu hình
@@ -52,7 +73,7 @@ namespace APP_DOAN
                 lblMessage.Dock = DockStyle.None;
             }
 
-            // Kiểm tra xem có cần hiển thị thời gian phân cách không (cách nhau >= 10 phút)
+            // Hiển thị nhãn thời gian khi cách nhau >= 10 phút
             Label lblTimeSeperator = null;
             bool showTimeSeparator = false;
 
@@ -84,14 +105,14 @@ namespace APP_DOAN
             if (type == "image")
             {
                 // --- XỬ LÝ ẢNH ---
+                _currentImageUrl = text;
                 panelBubble.Visible = false;
                 lblMessage.Visible = false;
                 picImage.Visible = true;
-
-                if (picImage.Parent != this) picImage.Parent = this;
                 picImage.BringToFront();
 
-                // Đặt SizeMode để giữ tỷ lệ ảnh gốc
+                // Tải lại ảnh từ URL
+                picImage.Image = null;
                 picImage.SizeMode = PictureBoxSizeMode.Zoom;
                 picImage.Size = new Size(200, 150);
                 
@@ -104,10 +125,18 @@ namespace APP_DOAN
                     picImage.Location = new Point(rightPadding, showTimeSeparator ? 35 : 5);
                 }
 
-                picImage.Image = null;
                 picImage.BackColor = Color.LightGray;
 
-                try { picImage.LoadAsync(text); } catch { }
+                // *** FIX: Load ảnh với error handling ***
+                try 
+                { 
+                    picImage.LoadAsync(text);
+                    System.Diagnostics.Debug.WriteLine($"Loading image: {text}");
+                } 
+                catch (Exception ex) 
+                { 
+                    System.Diagnostics.Debug.WriteLine($"Error loading image: {ex.Message}");
+                }
             }
             else
             {
