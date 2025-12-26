@@ -7,5 +7,7 @@
         public string Text { get; set; }         // Nội dung tin nhắn
         public long Timestamp { get; set; }      // Dấu thời gian (Unix)
         public string Status { get; set; }       // Trạng thái tin nhắn (sent, read, etc.)
+
+        public string Type { get; set; } = "text";
     }
 }
