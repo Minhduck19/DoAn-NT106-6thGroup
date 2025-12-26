@@ -79,6 +79,7 @@ namespace APP_DOAN.GiaoDienChinh
             lvCourses.TabIndex = 0;
             lvCourses.UseCompatibleStateImageBehavior = false;
             lvCourses.View = View.Details;
+            lvCourses.SelectedIndexChanged += lvCourses_SelectedIndexChanged;
             // 
             // btnThoat
             // 
@@ -94,6 +95,7 @@ namespace APP_DOAN.GiaoDienChinh
             btnThoat.Size = new Size(200, 48);
             btnThoat.TabIndex = 4;
             btnThoat.Text = "Thoát";
+            btnThoat.Click += btnThoat_Click_1;
             // 
             // Assignment
             // 
@@ -106,6 +108,7 @@ namespace APP_DOAN.GiaoDienChinh
             FormBorderStyle = FormBorderStyle.None;
             Name = "Assignment";
             StartPosition = FormStartPosition.CenterScreen;
+            Load += Assignment_Load;
             panelContainer.ResumeLayout(false);
             ResumeLayout(false);
         }

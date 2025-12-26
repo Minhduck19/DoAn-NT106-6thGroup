@@ -73,7 +73,7 @@ namespace APP_DOAN.GiaoDienChinh
                         ListViewItem item = new ListViewItem(displayId);
 
                         // THAY ĐỔI TẠI ĐÂY: Ưu tiên lấy TenLop, nếu null thì lấy Name
-                        string tenHienThi = course.TenLop ??  "Không có tên";
+                        string tenHienThi = course.TenLop ?? "Không có tên";
                         item.SubItems.Add(tenHienThi);
 
                         item.SubItems.Add(course.InstructorName ?? "Chưa rõ");
@@ -157,6 +157,13 @@ namespace APP_DOAN.GiaoDienChinh
             {
                 MessageBox.Show("Lỗi: " + ex.Message);
             }
+        }
+
+        private void lvCourses_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Submit_Agsignment submit_Agsignment = new Submit_Agsignment(lvCourses.SelectedItems[0].SubItems[1].Text);   
+            submit_Agsignment.ShowDialog();
+
         }
     }
 
