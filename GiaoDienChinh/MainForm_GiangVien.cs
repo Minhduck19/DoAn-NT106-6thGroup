@@ -118,22 +118,7 @@ namespace APP_DOAN
 
         // --- CÁC HÀM SỰ KIỆN KHÁC (GIỮ NGUYÊN) ---
 
-        private async void BtnDeleteCourse_Click_1(object sender, EventArgs e)
-        {
-            if (lvMyCourses.SelectedItems.Count == 0) return;
-            var item = lvMyCourses.SelectedItems[0];
-            string maLop = item.Text;
-
-            if (MessageBox.Show($"Xóa lớp {maLop}?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
-            {
-                bool success = await FirebaseApi.Put<object>($"Courses/{maLop}", null);
-                if (success)
-                {
-                    lvMyCourses.Items.Remove(item);
-                    MessageBox.Show("Đã xóa thành công!");
-                }
-            }
-        }
+        
 
         private async void btnCreateCourse_Click_1(object sender, EventArgs e)
         {
@@ -193,13 +178,76 @@ namespace APP_DOAN
         {
             this.Hide();
             Teacher_Information profileForm = new Teacher_Information(currentUid, idToken, loggedInEmail);
-            
-            profileForm.FormClosed += (s, args) => {
+
+            profileForm.FormClosed += (s, args) =>
+            {
                 this.Show();
                 lblWelcome.Text = $"Chào mừng,\nGV. {currentDisplayName}";
             };
 
             profileForm.ShowDialog();
         }
+
+        private async void BtnDeleteCourse_Click_1(object sender, EventArgs e)
+        {
+            if (lvMyCourses.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("Vui lòng chọn lớp cần xóa.", "Thông báo",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var selectedItem = lvMyCourses.SelectedItems[0];
+            string courseId = selectedItem.Tag.ToString();
+            string courseName = selectedItem.SubItems[1].Text;
+
+            var confirm = MessageBox.Show(
+                $"Bạn có chắc chắn muốn XÓA LỚP:\n\n{courseName}\n\n" +
+                "⚠ Hành động này sẽ xóa:\n" +
+                "- Lớp học\n" +
+                "- Danh sách sinh viên\n" +
+                "- Yêu cầu tham gia\n" +
+                "- Bài tập liên quan\n\n" +
+                "Không thể khôi phục!",
+                "Xác nhận xóa lớp",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning
+            );
+
+            if (confirm != DialogResult.Yes) return;
+
+            try
+            {
+                Cursor = Cursors.WaitCursor;
+
+                // 1️⃣ Xóa lớp
+                await FirebaseApi.Delete($"Courses/{courseId}");
+
+                // 2️⃣ Xóa sinh viên trong lớp
+                await FirebaseApi.Delete($"CourseStudents/{courseId}");
+
+                // 3️⃣ Xóa yêu cầu tham gia
+                await FirebaseApi.Delete($"JoinRequests/{courseId}");
+
+                // 4️⃣ (Nếu có) Xóa assignment
+                await FirebaseApi.Delete($"Assignments/{courseId}");
+
+                // 5️⃣ Cập nhật UI
+                lvMyCourses.Items.Remove(selectedItem);
+
+                MessageBox.Show("Đã xóa lớp học thành công!", "Thành công",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi khi xóa lớp:\n" + ex.Message,
+                    "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                Cursor = Cursors.Default;
+            }
+        }
+
     }
 }

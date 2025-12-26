@@ -8,9 +8,12 @@ using System.ComponentModel;
 
 namespace APP_DOAN.GiaoDienChinh
 {
+    
+
     // Form logic
     public partial class Submit_Agsignment
     {
+        public event Action<AssignmentSubmitResult> OnSubmitSuccess;
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public string TenLopHoc { get; set; }
 
@@ -47,9 +50,9 @@ namespace APP_DOAN.GiaoDienChinh
 
         }
 
-        private void btnSubmit_Click_1(object sender, EventArgs e)
+        private async void btnSubmit_Click_1(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(txtFilePath.Text) || txtFilePath.Text.Contains("chưa chọn tệp"))
+            if (string.IsNullOrEmpty(txtFilePath.Text) || !File.Exists(txtFilePath.Text))
             {
                 Guna2MessageDialog errorDialog = new Guna2MessageDialog
                 {
@@ -63,18 +66,56 @@ namespace APP_DOAN.GiaoDienChinh
                 return;
             }
 
-            // Giả lập xử lý nộp bài
-            Guna2MessageDialog successDialog = new Guna2MessageDialog
+            try
             {
-                Caption = "Thành Công!",
-                Text = $"Đã nộp tệp: \n{Path.GetFileName(txtFilePath.Text)}\n\n cho lớp {this.TenLopHoc}.",
-                Icon = MessageDialogIcon.Information,
-                Buttons = MessageDialogButtons.OK,
-                Parent = this
-            };
-            successDialog.Show();
+                // Hiển thị dialog đang upload
+                Cursor = Cursors.WaitCursor;
 
-            this.Close();
+                // Upload file lên Cloudinary
+                string fileUrl = await Task.Run(() =>
+                    CloudinaryHelper.UploadFile(txtFilePath.Text)
+                );
+
+                Cursor = Cursors.Default;
+
+                if (string.IsNullOrEmpty(fileUrl))
+                {
+                    Guna2MessageDialog failDialog = new Guna2MessageDialog
+                    {
+                        Caption = "Thất bại",
+                        Text = "Không thể upload bài tập. Vui lòng thử lại.",
+                        Icon = MessageDialogIcon.Error,
+                        Buttons = MessageDialogButtons.OK,
+                        Parent = this
+                    };
+                    failDialog.Show();
+                    return;
+                }
+
+                // Thành công
+                Guna2MessageDialog successDialog = new Guna2MessageDialog
+                {
+                    Caption = "Nộp bài thành công 🎉",
+                    Text =
+                        $"Lớp: {this.TenLopHoc}\n\n" +
+                        $"Tệp: {Path.GetFileName(txtFilePath.Text)}\n\n" +
+                        $"Link bài nộp:\n{fileUrl}",
+                    Icon = MessageDialogIcon.Information,
+                    Buttons = MessageDialogButtons.OK,
+                    Parent = this
+                };
+                successDialog.Show();
+
+                // TODO: Lưu fileUrl vào DB (Firebase / SQL) nếu cần
+
+                this.Close();
+            }
+            catch (Exception ex)
+            {
+                Cursor = Cursors.Default;
+                MessageBox.Show("Lỗi khi nộp bài: " + ex.Message);
+            }
         }
+
     }
 }
