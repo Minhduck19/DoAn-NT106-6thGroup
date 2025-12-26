@@ -140,7 +140,7 @@ namespace APP_DOAN.GiaoDienChinh
         {
             if (lvRequests.SelectedItems.Count == 0)
             {
-                MessageBox.Show("Vui lòng chọn sinh viên cần duyệt!");
+                MessageBox.Show("Chọn sinh viên cần duyệt!");
                 return;
             }
 
@@ -148,14 +148,12 @@ namespace APP_DOAN.GiaoDienChinh
 
             try
             {
-                // 1️⃣ Thêm sinh viên vào lớp
                 await firebaseClient
                     .Child("CourseStudents")
                     .Child(_courseId)
                     .Child(studentUid)
                     .PutAsync(true);
 
-                // 2️⃣ XÓA YÊU CẦU (CHUẨN)
                 await firebaseClient
                     .Child("JoinRequests")
                     .Child(_courseId)
@@ -164,13 +162,12 @@ namespace APP_DOAN.GiaoDienChinh
 
                 MessageBox.Show("Đã duyệt sinh viên!");
 
-                // 3️⃣ Reload UI
                 await LoadStudents();
                 await LoadJoinRequests();
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Lỗi khi duyệt: " + ex.Message);
+                MessageBox.Show("Lỗi: " + ex.Message);
             }
         }
 
@@ -222,18 +219,27 @@ namespace APP_DOAN.GiaoDienChinh
             this.Close();
         }
 
-        // ❌ BỎ HOÀN TOÀN EVENT NÀY
-        private void lvStudents_SelectedIndexChanged(object sender, EventArgs e)
+        private void btnViewAssignments_Click(object sender, EventArgs e)
         {
-            // ĐỂ TRỐNG
+
         }
+
 
 
         private void lvRequests_SelectedIndexChanged(object sender, EventArgs e)
         {
 
         }
-       
 
+        private void btnViewAssignments_Click_1(object sender, EventArgs e)
+        {
+            Assignment frm = new Assignment(_courseId);
+            frm.ShowDialog();
+        }
+
+        private void lvStudents_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }
