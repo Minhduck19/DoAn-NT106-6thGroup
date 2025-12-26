@@ -85,7 +85,7 @@ namespace APP_DOAN
         {
             if (isSelected)
             {
-                this.BackColor = Color.FromArgb(230, 240, 255); 
+                this.BackColor = Color.FromArgb(230, 240, 255);
             }
             else
             {
@@ -93,7 +93,7 @@ namespace APP_DOAN
             }
         }
 
-        
+
 
         public void Deselect()
         {
@@ -110,6 +110,16 @@ namespace APP_DOAN
         {
             if (this.BackColor != Color.FromArgb(230, 240, 255))
                 this.BackColor = Color.Transparent;
+        }
+
+        private void btnNotification_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void UC_UserContactItem_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -73,7 +73,7 @@
             lblTimestamp.BackColor = Color.Transparent;
             lblTimestamp.Font = new Font("Segoe UI", 7F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblTimestamp.ForeColor = Color.DimGray;
-            lblTimestamp.Location = new Point(230, 19);
+            lblTimestamp.Location = new Point(529, 20);
             lblTimestamp.Margin = new Padding(3, 4, 3, 4);
             lblTimestamp.Name = "lblTimestamp";
             lblTimestamp.Size = new Size(29, 17);
@@ -91,7 +91,7 @@
             btnNotification.FillColor = Color.DodgerBlue;
             btnNotification.Font = new Font("Segoe UI", 7F, FontStyle.Bold);
             btnNotification.ForeColor = Color.White;
-            btnNotification.Location = new Point(245, 46);
+            btnNotification.Location = new Point(535, 46);
             btnNotification.Margin = new Padding(3, 4, 3, 4);
             btnNotification.Name = "btnNotification";
             btnNotification.ShadowDecoration.CustomizableEdges = customizableEdges2;
@@ -100,12 +100,12 @@
             btnNotification.TabIndex = 4;
             btnNotification.Text = "3";
             btnNotification.Visible = false;
+            btnNotification.Click += btnNotification_Click;
             // 
             // UC_UserContactItem
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            AutoSize = true;
             BackColor = Color.White;
             Controls.Add(btnNotification);
             Controls.Add(lblTimestamp);
@@ -115,7 +115,8 @@
             Cursor = Cursors.Hand;
             Margin = new Padding(3, 4, 3, 4);
             Name = "UC_UserContactItem";
-            Size = new Size(285, 88);
+            Size = new Size(600, 88);
+            Load += UC_UserContactItem_Load;
             MouseEnter += UC_UserContactItem_MouseEnter;
             MouseLeave += UC_UserContactItem_MouseLeave;
             ((System.ComponentModel.ISupportInitialize)picAvatar).EndInit();
