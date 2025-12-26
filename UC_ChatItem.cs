@@ -1,7 +1,8 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-using System.ComponentModel;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace APP_DOAN
 {
@@ -9,91 +10,230 @@ namespace APP_DOAN
     {
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         [Browsable(false)]
-        public string MassageId { get; set; }
+        public string MessageId { get; set; } // Fixed property name
+
+        public event EventHandler<string> RequestUnsend;
+        private bool _isMe;
+        private int _maxImageSize = 300;
         public UC_ChatItem()
         {
             InitializeComponent();
+            ContextMenuStrip menu = new ContextMenuStrip();
+            var itemXoa = menu.Items.Add("Thu hồi tin nhắn");
+            itemXoa.Click += (s, e) => RequestUnsend?.Invoke(this, this.MessageId); // Fixed property name
+
+            this.ContextMenuStrip = menu;
+            picImage.LoadCompleted += PicImage_LoadCompleted;
         }
 
-        public void SetMessage(string text, bool isMe, string status)
-{
-    // 1. XỬ LÝ NỘI DUNG VÀ XUỐNG DÒNG
-    lblMessage.Text = text;
-
-    // Ép Label không được rộng quá 60% khung chat
-    int maxWidth = (int)(this.Width * 0.6);
-    lblMessage.MaximumSize = new Size(maxWidth, 0);
-    lblMessage.AutoSize = true; // Đảm bảo Label tự co giãn
-
-    // 2. TÍNH TOÁN LẠI KÍCH THƯỚC BONG BÓNG (BUBBLE)
-    int padding = 10;
-    panelBubble.Width = lblMessage.Width + (padding * 2);
-    panelBubble.Height = lblMessage.Height + (padding * 2);
-    
-    // Đặt Label nằm giữa bong bóng
-    lblMessage.Location = new Point(padding, padding);
-
-    // 3. XỬ LÝ ALIGNMENT & STATUS
-    if (isMe)
-    {
-        // --- TIN NHẮN CỦA MÌNH (BÊN PHẢI) ---
-
-        // Vị trí bong bóng: Căn phải
-        panelBubble.Location = new Point(this.Width - panelBubble.Width - 10, 5);
-        
-        // Màu sắc bong bóng
-        panelBubble.FillColor = Color.FromArgb(0, 118, 212); // Xanh Win 10
-        lblMessage.ForeColor = Color.White;
-
-        // --- FIX LỖI STATUS Ở ĐÂY ---
-        // Nếu lblStatus chưa có (null), ta tự tạo nó bằng code luôn cho chắc
-        if (lblStatus == null)
+        public void SetMessage(string text, bool isMe, string status, string type = "text")
         {
-            lblStatus = new Label();
-            lblStatus.Name = "lblStatus";
-            lblStatus.AutoSize = true;
-            lblStatus.Font = new Font("Segoe UI", 8, FontStyle.Italic); // Chữ nhỏ, nghiêng
-            this.Controls.Add(lblStatus); // Thêm vào UserControl
+            // Cấu hình
+            int doCongGoc = 20; // Độ bo tròn
+            int padding = 12;   // Khoảng cách từ viền bong bóng vào chữ
+            int rightPadding = 10; // Padding phải
+
+            _isMe = isMe;
+
+            // Reset Control
+            if (lblMessage.Parent != panelBubble)
+            {
+                panelBubble.Controls.Add(lblMessage);
+                lblMessage.BackColor = Color.Transparent;
+                lblMessage.Dock = DockStyle.None;
+            }
+
+            if (type == "image")
+            {
+                // --- XỬ LÝ ẢNH ---
+                panelBubble.Visible = false;
+                lblMessage.Visible = false;
+                picImage.Visible = true;
+
+                if (picImage.Parent != this) picImage.Parent = this;
+                picImage.BringToFront();
+
+                // Đặt tạm kích thước placeholder
+                picImage.Size = new Size(200, 150);
+                
+                // Vị trí placeholder - GIỮ NGUYÊN (sẽ thay đổi sau khi load)
+                picImage.Location = new Point(10, 5);
+                
+                picImage.Image = null;
+                picImage.BackColor = Color.LightGray;
+
+                // BẮT ĐẦU TẢI ẢNH
+                try { picImage.LoadAsync(text); } catch { }
+            }
+            else
+            {
+                // --- XỬ LÝ TEXT ---
+                picImage.Visible = false;
+                panelBubble.Visible = true;
+                lblMessage.Visible = true;
+
+                // 1. Setup nội dung
+                lblMessage.Text = text;
+                lblMessage.MaximumSize = new Size((int)(this.Width * 0.65), 0);
+                lblMessage.AutoSize = true;
+
+                // 2. Tính kích thước bong bóng bao quanh chữ
+                panelBubble.Width = lblMessage.Width + (padding * 2);
+                panelBubble.Height = lblMessage.Height + (padding * 2);
+
+                // 3. Đặt Text nằm giữa bong bóng
+                lblMessage.Location = new Point(padding, padding);
+
+                // 4. Màu sắc & Vị trí
+                if (isMe)
+                {
+                    // MÌNH GỬI: Nền Xanh - Chữ Trắng
+                    panelBubble.FillColor = Color.FromArgb(0, 118, 212);
+                    lblMessage.ForeColor = Color.White;
+                    panelBubble.Location = new Point(this.Width - panelBubble.Width - rightPadding, 5);
+                }
+                else
+                {
+                    // NGƯỜI KHÁC: Nền Xám - Chữ Đen
+                    panelBubble.FillColor = Color.FromArgb(229, 229, 234);
+                    lblMessage.ForeColor = Color.Black;
+                    panelBubble.Location = new Point(rightPadding, 5);
+                }
+
+                // 5. Bo góc bong bóng
+                LamTronGoc(panelBubble, doCongGoc);
+            }
+
+            // --- TÍNH CHIỀU CAO CONTROL ---
+            Control doiTuongCuoi = (type == "image") ? (Control)picImage : panelBubble;
+
+            // Status (Đã xem/Đã gửi)
+            if (isMe && lblStatus != null)
+            {
+                lblStatus.Visible = true;
+                lblStatus.Text = (status == "read") ? "Đã xem" : "Đã gửi";
+                lblStatus.ForeColor = Color.Gray;
+                lblStatus.Location = new Point(this.Width - lblStatus.Width - 15, doiTuongCuoi.Bottom + 3);
+                this.Height = lblStatus.Bottom + 10;
+            }
+            else
+            {
+                if (lblStatus != null) lblStatus.Visible = false;
+                this.Height = doiTuongCuoi.Bottom + 10;
+            }
         }
 
-        lblStatus.Visible = true;
-        lblStatus.Text = (status == "read") ? "Đã xem" : "Đã gửi";
-        lblStatus.ForeColor = Color.Gray; // Màu xám cho dễ nhìn trên nền trắng
-        
-        // Cực kỳ quan trọng: BringToFront để chắc chắn nó không bị bong bóng đè
-        lblStatus.BringToFront(); 
+        private System.Drawing.Drawing2D.GraphicsPath GetRoundedPath(Rectangle rect, int radius)
+        {
+            System.Drawing.Drawing2D.GraphicsPath path = new System.Drawing.Drawing2D.GraphicsPath();
+            float curveSize = radius * 2F;
 
-        // Tính toán vị trí Status: Nằm dưới bong bóng, căn phải thẳng hàng với bong bóng
-        // Dùng Application.DoEvents() hoặc tính toán kỹ vì AutoSize cần thời gian cập nhật Width
-        lblStatus.Location = new Point(this.Width - lblStatus.Width - 10, panelBubble.Bottom + 2);
-    }
-    else
-    {
-        // --- TIN NHẮN NGƯỜI KHÁC (BÊN TRÁI) ---
+            path.StartFigure();
+            path.AddArc(rect.X, rect.Y, curveSize, curveSize, 180, 90);
+            path.AddArc(rect.Right - curveSize, rect.Y, curveSize, curveSize, 270, 90);
+            path.AddArc(rect.Right - curveSize, rect.Bottom - curveSize, curveSize, curveSize, 0, 90);
+            path.AddArc(rect.X, rect.Bottom - curveSize, curveSize, curveSize, 90, 90);
+            path.CloseFigure();
+            return path;
+        }
 
-        panelBubble.Location = new Point(10, 5);
-        panelBubble.FillColor = Color.FromArgb(229, 229, 234); // Xám
-        lblMessage.ForeColor = Color.Black;
+        // Hàm cắt góc cho mọi Control (Panel, PictureBox, Button...)
+        private void LamTronGoc(Control control, int radius)
+        {
+            System.Drawing.Drawing2D.GraphicsPath path = new System.Drawing.Drawing2D.GraphicsPath();
+            path.StartFigure();
 
-        // Ẩn status nếu là tin nhắn người khác
-        if (lblStatus != null) lblStatus.Visible = false;
-    }
+            // Tạo 4 góc bo tròn
+            path.AddArc(0, 0, radius, radius, 180, 90);                         // Góc trên-trái
+            path.AddArc(control.Width - radius, 0, radius, radius, 270, 90);    // Góc trên-phải
+            path.AddArc(control.Width - radius, control.Height - radius, radius, radius, 0, 90); // Góc dưới-phải
+            path.AddArc(0, control.Height - radius, radius, radius, 90, 90);    // Góc dưới-trái
 
-    // 4. TÍNH TOÁN ĐỘ CAO CHO TOÀN BỘ ITEM
-    // Nếu là Me thì cộng thêm chiều cao của Status, ngược lại thì thôi
-    int statusHeight = (isMe && lblStatus != null && lblStatus.Visible) ? lblStatus.Height + 5 : 0;
+            path.CloseFigure();
+
+            // Áp dụng vùng cắt (Region) vào control
+            control.Region = new Region(path);
+        }
+        private void PicImage_LoadCompleted(object sender, AsyncCompletedEventArgs e)
+        {
+            if (picImage.Image == null) return;
+
+            // 1. Lấy kích thước thật của ảnh gốc
+            int imgW = picImage.Image.Width;
+            int imgH = picImage.Image.Height;
+
+            // 2. Tính toán kích thước hiển thị mới (Giữ nguyên tỷ lệ)
+            int newWidth, newHeight;
+
+            if (imgW > imgH) // Ảnh ngang (Landscape)
+            {
+                newWidth = _maxImageSize;
+                newHeight = (int)((double)imgH / imgW * _maxImageSize);
+            }
+            else // Ảnh dọc (Portrait) hoặc Vuông
+            {
+                newHeight = _maxImageSize;
+                newWidth = (int)((double)imgW / imgH * _maxImageSize);
+            }
+
+            // 3. ĐẢM BẢO ẢNH KHÔNG VƯỢT QUÁ CHIỀU RỘNG CONTROL
+            int rightPadding = 10;
+            // Để dư 10px ở lề trái AND 10px ở lề phải
+            int maxAllowedWidth = this.Width - (rightPadding * 2);
     
-    // Cập nhật chiều cao UserControl
-    this.Height = panelBubble.Bottom + statusHeight + 10; // Dùng panelBubble.Bottom cho chuẩn
-}
+            if (newWidth > maxAllowedWidth)
+            {
+                float scale = (float)maxAllowedWidth / newWidth;
+                newWidth = maxAllowedWidth;
+                newHeight = (int)(newHeight * scale);
+            }
 
-        // Fix lỗi bong bóng không resize khi form thay đổi kích thước
+            // 4. Áp dụng kích thước mới cho PictureBox
+            picImage.Size = new Size(newWidth, newHeight);
+
+            // 5. Căn chỉnh vị trí - BỎ Math.Max() để ảnh ở đúng vị trí phải
+            if (_isMe)
+            {
+                // MÌNH GỬI: Ảnh căn phải (Right edge = this.Width - 10)
+                // Left edge = this.Width - picImage.Width - 10
+                int xPos = this.Width - picImage.Width - rightPadding;
+                picImage.Location = new Point(xPos, 5);
+            }
+            else
+            {
+                // NGƯỜI KHÁC: Ảnh căn trái (Left edge = 10)
+                picImage.Location = new Point(rightPadding, 5);
+            }
+
+            // 6. Bo góc lại
+            LamTronGoc(picImage, 20);
+
+            // 7. Cập nhật chiều cao UserControl
+            int statusOffset = (lblStatus != null && lblStatus.Visible) ? lblStatus.Height + 5 : 0;
+
+            // Đặt lại vị trí status nếu có
+            if (lblStatus != null && lblStatus.Visible)
+            {
+                lblStatus.Location = new Point(this.Width - lblStatus.Width - 10, picImage.Bottom + 2);
+            }
+
+            this.Height = picImage.Bottom + statusOffset + 10;
+        }
         private void UC_ChatItem_Resize(object sender, EventArgs e)
         {
-            // Gọi lại logic để tính toán lại vị trí nếu cần (nâng cao)
         }
 
         private void lblStatus_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void panelBubble_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void guna2PictureBox1_Click(object sender, EventArgs e)
         {
 
         }

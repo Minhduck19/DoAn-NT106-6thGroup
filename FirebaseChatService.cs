@@ -1,5 +1,6 @@
 using Firebase.Database;
 using Firebase.Database.Query;
+using Firebase.Database.Streaming;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +23,33 @@ namespace APP_DOAN
             });
         }
 
+        public async Task<string> UploadImage(System.IO.Stream imageStream, string fileName)
+        {
+            // Lưu stream vào file tạm thời
+            string tempFilePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), fileName);
+            
+            try
+            {
+                using (var fileStream = System.IO.File.Create(tempFilePath))
+                {
+                    await imageStream.CopyToAsync(fileStream);
+                }
+
+                // Dùng CloudinaryHelper để upload
+                string imageUrl = CloudinaryHelper.UploadImage(tempFilePath);
+                
+                return imageUrl;
+            }
+            finally
+            {
+                // Xóa file tạm thời sau khi upload
+                if (System.IO.File.Exists(tempFilePath))
+                {
+                    System.IO.File.Delete(tempFilePath);
+                }
+            }
+        }
+
         // Tạo chatId
         public string GenerateChatId(string uid1, string uid2)
         {
@@ -32,6 +60,16 @@ namespace APP_DOAN
         public async Task SendMessageAsync(string chatId, Message message)
         {
             await _firebaseClient.Child("Chats").Child(chatId).Child("Messages").PostAsync(message);
+        }
+
+        public async Task DeleteMessageAsync(string chatId, string messageId)
+        {
+            await _firebaseClient
+                .Child("Chats")
+                .Child(chatId)
+                .Child("Messages")
+                .Child(messageId)
+                .DeleteAsync();
         }
 
         // Lắng nghe tin nhắn realtime
@@ -81,15 +119,34 @@ namespace APP_DOAN
             return _firebaseClient.Child("Users").AsObservable<User>()
                 .Subscribe(userEvent =>
                 {
-                    if (userEvent.Object != null && userEvent.Key != null)
+                    if (userEvent.Object != null)
                     {
-                        bool isOnline = false;
-                        var prop = userEvent.Object.GetType().GetProperty("IsOnline");
-                        if (prop != null)
-                            isOnline = Convert.ToBoolean(prop.GetValue(userEvent.Object));
-                        onStatusChanged?.Invoke(userEvent.Key, isOnline);
+                        var userObj = userEvent.Object;
+                        string uid = userEvent.Key;
+
+                        if (userEvent.EventType == Firebase.Database.Streaming.FirebaseEventType.Delete)
+                        {
+                            // Xử lý khi user bị xóa (nếu cần)
+                        }
+                        else
+                        {
+                            onStatusChanged?.Invoke(uid, userObj.IsOnline);
+                        }
                     }
                 });
+        }
+
+        public async Task SetTypingStatus(string chatId, string uid, bool isTyping)
+        {
+            await _firebaseClient.Child("Chats").Child(chatId).Child("Typing").Child(uid).PutAsync(isTyping);
+        }
+
+        // Lắng nghe người kia gõ
+        public IDisposable ListenForTyping(string chatId, string partnerUid, Action<bool> onTypingChanged)
+        {
+            return _firebaseClient.Child("Chats").Child(chatId).Child("Typing").Child(partnerUid)
+                .AsObservable<bool>()
+                .Subscribe(evt => onTypingChanged?.Invoke(evt.Object));
         }
     }
 }
