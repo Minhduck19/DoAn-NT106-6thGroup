@@ -218,8 +218,7 @@ namespace APP_DOAN
 
                     _userLastMessageTime[partnerId] = latestMsg.Timestamp;
                 }
-            }
-            catch
+            } catch
             {
             }
         }
@@ -376,7 +375,26 @@ namespace APP_DOAN
 
                 bubble.MessageId = GenerateMessageId(msg);
 
-                bubble.SetMessage(msg.Text, isMe, trangThai, type, msg.Timestamp, _previousMessageTimestamp);
+                // Debug log
+                System.Diagnostics.Debug.WriteLine($"Message Type: {type}, FileUrl: {msg.FileUrl}, FileName: {msg.FileName}");
+
+                if (type == "file" || type == "image")
+                {
+                    bubble.SetMessage(
+                        text: msg.Text, 
+                        isMe: isMe, 
+                        status: trangThai, 
+                        type: type, 
+                        timestamp: msg.Timestamp, 
+                        previousTimestamp: _previousMessageTimestamp, 
+                        fileUrl: msg.FileUrl ?? "",     
+                        fileName: msg.FileName ?? ""     
+                    );
+                }
+                else
+                {
+                    bubble.SetMessage(msg.Text, isMe, trangThai, type, msg.Timestamp, _previousMessageTimestamp);
+                }
 
                 _previousMessageTimestamp = msg.Timestamp;
 
@@ -424,7 +442,28 @@ namespace APP_DOAN
                 string type = msg.Type ?? "text";
 
                 newBubble.MessageId = GenerateMessageId(msg);
-                newBubble.SetMessage(msg.Text, isMe, trangThai, type, msg.Timestamp, _previousMessageTimestamp);
+                
+                // Debug log
+                System.Diagnostics.Debug.WriteLine($"Message Type: {type}, FileUrl: {msg.FileUrl}, FileName: {msg.FileName}");
+                
+                // ✅ Truyền fileUrl và fileName cho ảnh/file
+                if (type == "file" || type == "image")
+                {
+                    newBubble.SetMessage(
+                        text: msg.Text, 
+                        isMe: isMe, 
+                        status: trangThai, 
+                        type: type, 
+                        timestamp: msg.Timestamp, 
+                        previousTimestamp: _previousMessageTimestamp, 
+                        fileUrl: msg.FileUrl ?? "",   
+                        fileName: msg.FileName ?? ""     
+                    );
+                }
+                else
+                {
+                    newBubble.SetMessage(msg.Text, isMe, trangThai, type, msg.Timestamp, _previousMessageTimestamp);
+                }
 
                 _previousMessageTimestamp = msg.Timestamp;
 
@@ -619,8 +658,33 @@ namespace APP_DOAN
 
         private void button1_Click(object? sender, EventArgs e)
         {
-            txtMessage.Focus();
-            SendKeys.Send("^{.}");
+            Button btnEmoji = sender as Button;
+            Point buttonLocation = btnEmoji?.PointToScreen(new Point(0, btnEmoji.Height)) ?? Cursor.Position;
+
+            EmojiPickerForm emojiForm = new EmojiPickerForm();
+            emojiForm.Location = buttonLocation;
+
+            // Khi chọn emoji, thêm vào ô tin nhắn
+            emojiForm.EmojiSelected += (s, emoji) =>
+            {
+                if (txtMessage.InvokeRequired)
+                {
+                    txtMessage.Invoke(new Action(() =>
+                    {
+                        txtMessage.Text += emoji + " ";
+                        txtMessage.Focus();
+                        txtMessage.SelectionStart = txtMessage.Text.Length;
+                    }));
+                }
+                else
+                {
+                    txtMessage.Text += emoji + " ";
+                    txtMessage.Focus();
+                    txtMessage.SelectionStart = txtMessage.Text.Length;
+                }
+            };
+
+            emojiForm.ShowDialog();
         }
 
         // Tự động scroll khi có tin nhắn mới
@@ -674,11 +738,11 @@ namespace APP_DOAN
                                 {
                                     SenderUid = _currentUserUid,
                                     SenderName = _currentUserName,
-                                    Text = fileUrl,  // URL ảnh
+                                    Text = fileName,  // Chỉ tên file, không URL
                                     Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
                                     Status = "sent",
-                                    Type = "image",  // Loại ảnh
-                                    FileUrl = fileUrl,
+                                    Type = "image",
+                                    FileUrl = fileUrl,  // URL riêng
                                     FileName = fileName
                                 };
                             }
@@ -689,11 +753,11 @@ namespace APP_DOAN
                                 {
                                     SenderUid = _currentUserUid,
                                     SenderName = _currentUserName,
-                                    Text = $"📎 {fileName}",
+                                    Text = fileName,  // Chỉ tên file, không emoji lồng
                                     Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
                                     Status = "sent",
                                     Type = "file",
-                                    FileUrl = fileUrl,
+                                    FileUrl = fileUrl,  // URL riêng
                                     FileName = fileName
                                 };
                             }

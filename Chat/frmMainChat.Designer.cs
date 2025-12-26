@@ -266,7 +266,7 @@ namespace APP_DOAN
             btnUpload.BackgroundImage = (Image)resources.GetObject("btnUpload.BackgroundImage");
             btnUpload.BackgroundImageLayout = ImageLayout.Stretch;
             btnUpload.ForeColor = SystemColors.ControlLight;
-            btnUpload.Location = new Point(974, 17);
+            btnUpload.Location = new Point(948, 17);
             btnUpload.Name = "btnUpload";
             btnUpload.Size = new Size(38, 38);
             btnUpload.TabIndex = 3;
@@ -278,7 +278,7 @@ namespace APP_DOAN
             button1.BackgroundImage = Properties.Resources._8721408;
             button1.BackgroundImageLayout = ImageLayout.Stretch;
             button1.ForeColor = SystemColors.ControlLight;
-            button1.Location = new Point(1026, 17);
+            button1.Location = new Point(992, 17);
             button1.Name = "button1";
             button1.Size = new Size(38, 38);
             button1.TabIndex = 2;

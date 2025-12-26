@@ -1,7 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
@@ -90,7 +93,7 @@ namespace APP_DOAN
                     lblTimeSeperator = new Label();
                     lblTimeSeperator.Name = "lblTimeSeparator";
                     lblTimeSeperator.AutoSize = true;
-                    lblTimeSeperator.Font = new Font("Segoe UI", 8, FontStyle.Regular);
+                    lblTimeSeperator.Font = new Font("Segoe UI Emoji", 9F, FontStyle.Regular, GraphicsUnit.Point, 163);
                     lblTimeSeperator.ForeColor = Color.Gray;
                     lblTimeSeperator.TextAlign = ContentAlignment.MiddleCenter;
 
@@ -106,11 +109,14 @@ namespace APP_DOAN
             if (type == "image")
             {
                 // --- XỬ LÝ ẢNH ---
-                _currentImageUrl = text;
                 panelBubble.Visible = false;
                 lblMessage.Visible = false;
                 picImage.Visible = true;
                 picImage.BringToFront();
+
+                // Sử dụng fileUrl nếu có, nếu không thì dùng text
+                string imageUrlToLoad = !string.IsNullOrEmpty(fileUrl) ? fileUrl : text;
+                _currentImageUrl = imageUrlToLoad;
 
                 // Tải lại ảnh từ URL
                 picImage.Image = null;
@@ -127,16 +133,28 @@ namespace APP_DOAN
                 }
 
                 picImage.BackColor = Color.LightGray;
+                picImage.ErrorImage = null;
+                picImage.WaitOnLoad = false;
 
-                // *** FIX: Load ảnh với error handling ***
+                // *** Load ảnh với error handling ***
                 try 
                 { 
-                    picImage.LoadAsync(text);
-                    System.Diagnostics.Debug.WriteLine($"Loading image: {text}");
+                    if (!string.IsNullOrEmpty(imageUrlToLoad))
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Loading image: {imageUrlToLoad}");
+                        picImage.LoadAsync(imageUrlToLoad);
+                    }
+                    else
+                    {
+                        picImage.Image = new Bitmap(picImage.Width, picImage.Height);
+                        picImage.BackColor = Color.DarkGray;
+                        System.Diagnostics.Debug.WriteLine("Image URL is empty");
+                    }
                 } 
                 catch (Exception ex) 
                 { 
                     System.Diagnostics.Debug.WriteLine($"Error loading image: {ex.Message}");
+                    picImage.BackColor = Color.Red;
                 }
             }
             else if (type == "file")
@@ -177,7 +195,22 @@ namespace APP_DOAN
                 if (_fileMessage != null)
                     _fileMessage.Visible = false;
 
+                lblMessage.UseCompatibleTextRendering = false;
+                lblMessage.AutoEllipsis = false;
+
+                // Font fallback: Segoe UI trước, nếu không được sẽ thử Segoe UI Emoji
+                try
+                {
+                    lblMessage.Font = new Font("Segoe UI Emoji", 10, FontStyle.Regular);
+                   
+                }
+                catch
+                {
+                    lblMessage.Font = new Font("Segoe UI", 10, FontStyle.Regular);
+                }
+
                 lblMessage.Text = text;
+
                 lblMessage.MaximumSize = new Size((int)(this.Width * 0.65), 0);
                 lblMessage.AutoSize = true;
 
@@ -213,12 +246,25 @@ namespace APP_DOAN
 
             int timeSeparatorHeight = showTimeSeparator ? 30 : 0;
 
-            // Status (Đã xem/Đã gửi)
+            // Status (Đã xem/Đã gửi) - with icons
             if (isMe && lblStatus != null)
             {
                 lblStatus.Visible = true;
-                lblStatus.Text = (status == "read") ? "Đã xem" : "Đã gửi";
-                lblStatus.ForeColor = Color.Gray;
+                
+                // Use Unicode characters or emoji for status indicators
+                if (status == "read")
+                {
+                    lblStatus.Text = "✓✓";  // Double check mark for "read"
+                    lblStatus.ForeColor = Color.DeepSkyBlue;  // Blue for read
+                }
+                else
+                {
+                    lblStatus.Text = "✓";   // Single check mark for "sent"
+                    lblStatus.ForeColor = Color.Gray;  // Gray for sent
+                }
+                
+                lblStatus.Font = new Font("Segoe UI Symbol", 12, FontStyle.Regular);
+                lblStatus.AutoSize = true;
                 lblStatus.Location = new Point(this.Width - lblStatus.Width - 15, doiTuongCuoi.Bottom + 3);
                 this.Height = lblStatus.Bottom + 10 + timeSeparatorHeight;
             }

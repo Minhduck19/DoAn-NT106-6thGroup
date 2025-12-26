@@ -17,9 +17,16 @@ namespace APP_DOAN
 
         public FirebaseChatService(string dbUrl, string idToken)
         {
+            var jsonSettings = new Newtonsoft.Json.JsonSerializerSettings
+            {
+                StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeNonAscii,
+                ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            };
+
             _firebaseClient = new FirebaseClient(dbUrl, new FirebaseOptions
             {
-                AuthTokenAsyncFactory = () => Task.FromResult(idToken)
+                AuthTokenAsyncFactory = () => Task.FromResult(idToken),
+                JsonSerializerSettings = jsonSettings
             });
         }
 
@@ -77,7 +84,13 @@ namespace APP_DOAN
 
         public async Task SendMessageAsync(string chatId, Message message)
         {
+            // DEBUG: Log the message before sending
+            System.Diagnostics.Debug.WriteLine($"[SEND] Sending message - Text: {message.Text}, Timestamp: {message.Timestamp}");
+            System.Diagnostics.Debug.WriteLine($"[SEND_BYTES] Text bytes: {string.Join(",", System.Text.Encoding.UTF8.GetBytes(message.Text ?? ""))}");
+            
             await _firebaseClient.Child("Chats").Child(chatId).Child("Messages").PostAsync(message);
+            
+            System.Diagnostics.Debug.WriteLine($"[SEND_SUCCESS] Message sent successfully to chat: {chatId}");
         }
 
         public async Task DeleteMessageAsync(string chatId, string messageId)
@@ -112,6 +125,8 @@ namespace APP_DOAN
         // [CẬP NHẬT] Lắng nghe TOÀN BỘ tin nhắn (cũ + mới) realtime
         public IDisposable ListenForMessages(string chatId, Action<Message> onMessageReceived)
         {
+            System.Diagnostics.Debug.WriteLine($"[LISTENER] Subscribing to messages for chat: {chatId}");
+            
             return _firebaseClient
                 .Child("Chats")
                 .Child(chatId)
@@ -121,7 +136,16 @@ namespace APP_DOAN
                 {
                     if (firebaseEvent.Object != null)
                     {
-                        onMessageReceived?.Invoke(firebaseEvent.Object);
+                        // DEBUG: Log the message after receiving
+                        var msg = firebaseEvent.Object;
+                        System.Diagnostics.Debug.WriteLine($"[LISTENER_EVENT] Received message - Text: {msg.Text}, Timestamp: {msg.Timestamp}, EventType: {firebaseEvent.EventType}");
+                        System.Diagnostics.Debug.WriteLine($"[LISTENER_BYTES] Text bytes: {string.Join(",", System.Text.Encoding.UTF8.GetBytes(msg.Text ?? ""))}");
+                        
+                        onMessageReceived?.Invoke(msg);
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine($"[LISTENER_EVENT] Received null message, EventType: {firebaseEvent.EventType}");
                     }
                 });
         }
