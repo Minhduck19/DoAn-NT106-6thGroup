@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Firebase.Database;
-using System.Threading.Tasks; 
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace APP_DOAN
 {
@@ -19,7 +20,11 @@ namespace APP_DOAN
         private string _currentChatId = null;
 
         private IDisposable _messageSubscription;
+        private IDisposable _onlineStatusSubscription; // Lắng nghe online
         private System.Windows.Forms.Timer _typingTimer;
+
+        // Dictionary để quản lý nhanh các Item theo UID
+        private Dictionary<string, UC_UserContactItem> _contactItems = new Dictionary<string, UC_UserContactItem>();
 
         public frmMainChat(string uid, string hoTen, string idToken)
         {
@@ -35,35 +40,36 @@ namespace APP_DOAN
             _typingTimer.Tick += TypingTimer_Tick;
             this.FormClosing += frmMainChat_FormClosing;
 
-            // Sự kiện nút Gửi
             btnSend.Click += btnSend_Click;
-
-            // [NÂNG CẤP 2] Sự kiện Enter để gửi
             txtMessage.KeyDown += txtMessage_KeyDown;
 
-            // [NÂNG CẤP 4] Sự kiện Tìm kiếm
             if (guna2TextBox1_TextChanged != null)
                 guna2TextBox1.TextChanged += guna2TextBox1_TextChanged;
             
             SetupAutoScroll();
         }
 
+
+
         private async void frmMainChat_Load(object sender, EventArgs e)
         {
+            await _chatService.UpdateUserOnlineStatus(_currentUserUid, true);
             try
             {
                 var allUsers = await _chatService.GetAllUsersAsync();
+                flowUserListPanel.Controls.Clear();
+                _contactItems.Clear();
+
                 foreach (var entry in allUsers)
                 {
                     string uid = entry.Key;
                     User user = entry.Value;
 
-                    if (uid == _currentUserUid) continue; // Bỏ qua chính mình
+                    if (uid == _currentUserUid) continue;
 
                     UC_UserContactItem contactItem = new UC_UserContactItem();
                     contactItem.Width = flowUserListPanel.ClientSize.Width - 25;
 
-                    // "Bơm" dữ liệu
                     contactItem.SetData(
                         uid: uid,
                         hoTen: user.HoTen,
@@ -74,10 +80,19 @@ namespace APP_DOAN
                         unreadCount: 0
                     );
 
-                    // Gắn sự kiện Click
+                    // Set trạng thái online ban đầu
+                    contactItem.SetOnlineStatus(user.IsOnline);
+                    contactItem.SetLastOnline(user.IsOnline, user.LastOnline);
+
                     contactItem.UserClicked += ContactItem_Clicked;
                     flowUserListPanel.Controls.Add(contactItem);
+
+                    // Thêm vào Dictionary để quản lý realtime
+                    _contactItems[uid] = contactItem;
                 }
+
+                // Bắt đầu lắng nghe thay đổi trạng thái online từ Firebase
+                ListenForOnlineStatus();
             }
             catch (Exception ex)
             {
@@ -85,38 +100,59 @@ namespace APP_DOAN
             }
         }
 
+        private void ListenForOnlineStatus()
+        {
+
+
+            _onlineStatusSubscription = _chatService.ListenForUserStatus((uid, isOnline) =>
+            {
+                if (_contactItems.ContainsKey(uid))
+                {
+                    _contactItems[uid].SetOnlineStatus(isOnline);
+
+                    // Khi offline → hiển thị "Vừa truy cập"
+                    if (!isOnline)
+                    {
+                        _contactItems[uid].SetLastOnline(false,
+                            DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
+                    }
+                    else
+                    {
+                        _contactItems[uid].SetLastOnline(true, 0);
+                    }
+                }
+            });
+        }
+
         private void ContactItem_Clicked(object sender, EventArgs e)
         {
             UC_UserContactItem clickedItem = (UC_UserContactItem)sender;
 
-            // 1. "Bỏ chọn" TẤT CẢ item khác
-            foreach (Control ctrl in flowUserListPanel.Controls)
+            // 1. "Bỏ chọn" TẤT CẢ item thông qua Dictionary
+            foreach (var item in _contactItems.Values)
             {
-                if (ctrl is UC_UserContactItem item)
-                {
-                    item.SetSelected(false);
-                }
+                item.SetSelected(false);
             }
 
             // 2. "Chọn" item vừa click
             clickedItem.SetSelected(true);
 
-            // 3. Dọn dẹp "đường dây nóng" cũ
+            // 3. Dọn dẹp Subscription cũ
             _messageSubscription?.Dispose();
 
-            // 4. Dọn dẹp Cột 2 (Khung Chat)
+            // 4. Dọn dẹp Khung Chat
             flowChatPanel.Controls.Clear();
 
             // 5. Cập nhật "người đang chat"
             _currentPartnerUid = clickedItem.UserId;
             _currentChatId = _chatService.GenerateChatId(_currentUserUid, _currentPartnerUid);
 
-            // 6. Cập nhật Cột 3 (Thông tin)
+            // 6. Cập nhật Thông tin
             lblInfoName.Text = clickedItem.HoTen;
             lblInfoEmail.Text = clickedItem.Email;
             lblInfoRole.Text = clickedItem.Role;
 
-            // 7. Mở "đường dây nóng" MỚI
+            // 7. Mở đường dây nóng mới
             _messageSubscription = _chatService.ListenForMessages(_currentChatId, DisplayMessageAsBubble);
 
             // 8. Bật ô gõ phím
@@ -124,13 +160,12 @@ namespace APP_DOAN
             txtMessage.Focus();
         }
 
+        // --- CÁC PHẦN DƯỚI ĐÂY GIỮ NGUYÊN NHƯ CODE CŨ CỦA BẠN ---
+
         private async void btnSend_Click(object sender, EventArgs e)
         {
             string text = txtMessage.Text.Trim();
-            if (string.IsNullOrEmpty(text) || _currentPartnerUid == null)
-            {
-                return;
-            }
+            if (string.IsNullOrEmpty(text) || _currentPartnerUid == null) return;
 
             var message = new Message
             {
@@ -153,9 +188,21 @@ namespace APP_DOAN
             }
         }
 
-        private void TypingTimer_Tick(object sender, EventArgs e)
+        private void DisplayMessageAsBubble(Message msg)
         {
-            // Tắt trạng thái typing sau 1.5s
+            if (flowChatPanel.InvokeRequired)
+            {
+                flowChatPanel.Invoke(new Action(() => DisplayMessageAsBubble(msg)));
+            }
+            else
+            {
+                UC_ChatItem bubble = new UC_ChatItem();
+                bubble.Width = flowChatPanel.ClientSize.Width - 25;
+                bool isMe = (msg.SenderUid == _currentUserUid);
+                bubble.SetMessage(msg.Text, isMe, msg.Status ?? "sent");
+                flowChatPanel.Controls.Add(bubble);
+                flowChatPanel.ScrollControlIntoView(bubble);
+            }
         }
 
         private void txtMessage_KeyDown(object sender, KeyEventArgs e)
@@ -170,24 +217,17 @@ namespace APP_DOAN
         private void guna2TextBox1_TextChanged(object sender, EventArgs e)
         {
             string keyword = guna2TextBox1.Text.Trim().ToLower();
-
-            flowUserListPanel.SuspendLayout(); // Tối ưu hiệu năng vẽ
-
-            foreach (Control control in flowUserListPanel.Controls)
+            flowUserListPanel.SuspendLayout();
+            foreach (var item in _contactItems.Values)
             {
-                if (control is UC_UserContactItem item)
-                {
-                    bool matchName = item.HoTen != null && item.HoTen.ToLower().Contains(keyword);
-                    bool matchEmail = item.Email != null && item.Email.ToLower().Contains(keyword);
-
-                    item.Visible = matchName || matchEmail;
-                }
+                bool match = (item.HoTen?.ToLower().Contains(keyword) ?? false) ||
+                             (item.Email?.ToLower().Contains(keyword) ?? false);
+                item.Visible = match;
             }
-
             flowUserListPanel.ResumeLayout();
         }
 
-        private void DisplayMessageAsBubble(Message msg)
+        private async void frmMainChat_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (flowChatPanel.InvokeRequired)
             {
@@ -206,23 +246,18 @@ namespace APP_DOAN
             }
         }
 
-        private void frmMainChat_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            // Dọn dẹp khi đóng Form
             _messageSubscription?.Dispose();
+            _onlineStatusSubscription?.Dispose();
         }
 
-        private void lblInfoEmail_Click(object sender, EventArgs e)
-        {
-            lblInfoEmail.Text = _currentUserName;
-        }
 
-        private void lblInfoName_Click(object sender, EventArgs e)
-        {
-            lblInfoName.Text = _currentUserName;
-        }
+        private void TypingTimer_Tick(object sender, EventArgs e) { }
+        private void lblInfoEmail_Click(object sender, EventArgs e) { }
+        private void lblInfoName_Click(object sender, EventArgs e) { }
+        private void flowUserListPanel_Paint(object sender, PaintEventArgs e) { }
+        private void panelContacts_Paint(object sender, PaintEventArgs e) { }
 
-        private void flowUserListPanel_Paint(object sender, PaintEventArgs e)
+        private void flowChatPanel_Paint(object sender, PaintEventArgs e)
         {
 
         }

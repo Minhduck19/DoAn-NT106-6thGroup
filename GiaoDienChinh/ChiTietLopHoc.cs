@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static APP_DOAN.GiaoDienChinh.CourseDetailForm;
 
 namespace APP_DOAN.GiaoDienChinh
 {
@@ -64,62 +65,38 @@ namespace APP_DOAN.GiaoDienChinh
                 MessageBox.Show("Lỗi: Mã định danh lớp học không hợp lệ!");
                 return;
             }
+
             try
             {
-                
-                btnAgree.Enabled = false; // Chặn bấm liên tiếp
-                btnAgree.Text = "Đang xử lý...";
+                // 1. Lấy thông tin cá nhân của sinh viên (Dùng class User bạn đã định nghĩa)
+                var studentProfile = await _firebaseClient
+                    .Child("Users")
+                    .Child(_userUid)
+                    .OnceSingleAsync<User>(); // Sử dụng class User của bạn ở đây
 
-                // 1. Tải dữ liệu mới nhất của lớp này từ Firebase để kiểm tra sĩ số thực tế
-                var latestCourse = await _firebaseClient
-                    .Child("Courses")
-                    .Child(_course.Id) // Id là key của lớp trên Firebase
-                    .OnceSingleAsync<CourseInfo>();
+                // Lấy HoTen từ profile
+                string studentName = studentProfile?.HoTen ?? "Học viên ẩn danh";
 
-                if (latestCourse == null)
+                // 2. Tạo yêu cầu mới với biến HoTen
+                var newRequest = new JoinRequest
                 {
-                    MessageBox.Show("Không tìm thấy dữ benevolence lớp học!", "Lỗi");
-                    return;
-                }
+                    HoTen = studentName, // Đưa giá trị vào HoTen
+                    Status = "pending"
+                };
 
-                // 2. Kiểm tra danh sách Students (tránh lỗi null)
-                if (latestCourse.Students == null)
-                    latestCourse.Students = new List<string>();
-
-                // 3. KIỂM TRA ĐẦY LỚP (Logic chính)
-                if (latestCourse.Students.Count >= latestCourse.SiSo)
-                {
-                    MessageBox.Show($"Rất tiếc! Lớp học vừa mới đầy ({latestCourse.Students.Count}/{latestCourse.SiSo}), bạn không thể đăng ký.",
-                                    "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    HienThiThongTinLop(); // Cập nhật lại giao diện
-                    return;
-                }
-
-                // 4. Kiểm tra xem mình đã có trong lớp chưa (phòng hờ)
-                if (latestCourse.Students.Contains(_userUid))
-                {
-                    MessageBox.Show("Bạn đã tham gia lớp này rồi.", "Thông báo");
-                    return;
-                }
-
-                // 5. Nếu còn chỗ -> Thêm UID vào danh sách và cập nhật
-                latestCourse.Students.Add(_userUid);
-                latestCourse.SiSoHienTai = latestCourse.Students.Count; // Đồng bộ sĩ số hiện tại
-
+                // 3. Đẩy lên Firebase
                 await _firebaseClient
-                    .Child("Courses")
+                    .Child("JoinRequests")
                     .Child(_course.Id)
-                    .PutAsync(latestCourse);
+                    .Child(_userUid)
+                    .PutAsync(newRequest);
 
-                MessageBox.Show("Đăng ký tham gia lớp học thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                this.DialogResult = DialogResult.OK;
+                MessageBox.Show("Đã gửi yêu cầu thành công!");
                 this.Close();
             }
             catch (Exception ex)
             {
-                // Hiển thị StackTrace để biết chính xác dòng nào bị lỗi
-                MessageBox.Show($"Lỗi chi tiết: {ex.Message}\n\nTại: {ex.StackTrace}", "Lỗi hệ thống");
+                MessageBox.Show($"Lỗi gửi yêu cầu: {ex.Message}", "Lỗi hệ thống");
                 btnAgree.Enabled = true;
                 btnAgree.Text = "Đồng ý";
             }
@@ -128,6 +105,11 @@ namespace APP_DOAN.GiaoDienChinh
         private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+        public class JoinRequest
+        {
+            public string HoTen { get; set; } // Đổi từ StudentName thành HoTen
+            public string Status { get; set; }
         }
     }
 }

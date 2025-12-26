@@ -19,6 +19,8 @@
         {
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges1 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges2 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges3 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges4 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             panelLeft = new Panel();
             btnLogout = new Guna.UI2.WinForms.Guna2Button();
             lblWelcome = new Label();
@@ -34,6 +36,7 @@
             btnCreateCourse = new Button();
             btnEditCourse = new Button();
             btnDeleteCourse = new Button();
+            guna2Button1 = new Guna.UI2.WinForms.Guna2Button();
             panelLeft.SuspendLayout();
             panelTop.SuspendLayout();
             panelMainContent.SuspendLayout();
@@ -158,6 +161,7 @@
             flpActions.Controls.Add(btnCreateCourse);
             flpActions.Controls.Add(btnEditCourse);
             flpActions.Controls.Add(btnDeleteCourse);
+            flpActions.Controls.Add(guna2Button1);
             flpActions.Dock = DockStyle.Top;
             flpActions.Location = new Point(10, 12);
             flpActions.Margin = new Padding(3, 4, 3, 4);
@@ -212,6 +216,23 @@
             btnDeleteCourse.Text = "Xóa Lớp";
             btnDeleteCourse.UseVisualStyleBackColor = false;
             // 
+            // guna2Button1
+            // 
+            guna2Button1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            guna2Button1.BackColor = Color.Transparent;
+            guna2Button1.BorderRadius = 15;
+            guna2Button1.CustomizableEdges = customizableEdges3;
+            guna2Button1.FillColor = Color.DeepSkyBlue;
+            guna2Button1.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            guna2Button1.ForeColor = Color.Black;
+            guna2Button1.Location = new Point(381, 3);
+            guna2Button1.Name = "guna2Button1";
+            guna2Button1.ShadowDecoration.CustomizableEdges = customizableEdges4;
+            guna2Button1.Size = new Size(200, 45);
+            guna2Button1.TabIndex = 3;
+            guna2Button1.Text = "Chat";
+            guna2Button1.Click += guna2Button1_Click;
+            // 
             // MainForm_GiangVien
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -250,5 +271,6 @@
         private System.Windows.Forms.Button btnEditCourse;
         private System.Windows.Forms.Button btnDeleteCourse;
         private Guna.UI2.WinForms.Guna2Button btnLogout;
+        private Guna.UI2.WinForms.Guna2Button guna2Button1;
     }
 }

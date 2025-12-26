@@ -98,8 +98,20 @@ namespace APP_DOAN
         // Cập nhật trạng thái online/offline
         public async Task UpdateUserOnlineStatus(string uid, bool isOnline)
         {
-            await _firebaseClient.Child("Users").Child(uid).Child("IsOnline").PutAsync(isOnline);
+            
+            var updates = new Dictionary<string, object>
+    {
+        { "IsOnline", isOnline },
+        { "LastOnline", DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() }
+    };
+
+            await _firebaseClient
+                .Child("Users")
+                .Child(uid)
+                .PatchAsync(updates);
         }
+
+
 
         // Lắng nghe trạng thái online/offline realtime
         public IDisposable ListenForUserStatus(Action<string, bool> onStatusChanged)
