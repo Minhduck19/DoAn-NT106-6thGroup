@@ -29,22 +29,22 @@ namespace APP_DOAN
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges3 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges4 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges1 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges2 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges7 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges8 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges5 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges6 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges15 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges16 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges13 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges14 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges9 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges10 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges11 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges12 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges19 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges20 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges17 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges18 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges23 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges24 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges21 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges22 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges31 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges32 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges29 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges30 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges25 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges26 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges27 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges28 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             panelLeft = new Guna2Panel();
             btnLogout = new Guna2Button();
             lblWelcome = new Guna2HtmlLabel();
@@ -75,11 +75,11 @@ namespace APP_DOAN
             panelLeft.BackColor = Color.FromArgb(52, 152, 219);
             panelLeft.Controls.Add(btnLogout);
             panelLeft.Controls.Add(lblWelcome);
-            panelLeft.CustomizableEdges = customizableEdges3;
+            panelLeft.CustomizableEdges = customizableEdges19;
             panelLeft.Dock = DockStyle.Left;
             panelLeft.Location = new Point(0, 0);
             panelLeft.Name = "panelLeft";
-            panelLeft.ShadowDecoration.CustomizableEdges = customizableEdges4;
+            panelLeft.ShadowDecoration.CustomizableEdges = customizableEdges20;
             panelLeft.ShadowDecoration.Depth = 10;
             panelLeft.ShadowDecoration.Enabled = true;
             panelLeft.Size = new Size(250, 781);
@@ -90,13 +90,13 @@ namespace APP_DOAN
             btnLogout.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             btnLogout.BackColor = Color.Transparent;
             btnLogout.BorderRadius = 15;
-            btnLogout.CustomizableEdges = customizableEdges1;
+            btnLogout.CustomizableEdges = customizableEdges17;
             btnLogout.FillColor = Color.FromArgb(255, 255, 255);
             btnLogout.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
             btnLogout.ForeColor = Color.Black;
             btnLogout.Location = new Point(25, 720);
             btnLogout.Name = "btnLogout";
-            btnLogout.ShadowDecoration.CustomizableEdges = customizableEdges2;
+            btnLogout.ShadowDecoration.CustomizableEdges = customizableEdges18;
             btnLogout.Size = new Size(200, 45);
             btnLogout.TabIndex = 0;
             btnLogout.Text = "Đăng xuất";
@@ -122,11 +122,11 @@ namespace APP_DOAN
             panelTop.BackColor = Color.White;
             panelTop.Controls.Add(guna2Button1);
             panelTop.Controls.Add(lblTitle);
-            panelTop.CustomizableEdges = customizableEdges7;
+            panelTop.CustomizableEdges = customizableEdges23;
             panelTop.Dock = DockStyle.Top;
             panelTop.Location = new Point(250, 0);
             panelTop.Name = "panelTop";
-            panelTop.ShadowDecoration.CustomizableEdges = customizableEdges8;
+            panelTop.ShadowDecoration.CustomizableEdges = customizableEdges24;
             panelTop.Size = new Size(1524, 79);
             panelTop.TabIndex = 1;
             // 
@@ -135,13 +135,13 @@ namespace APP_DOAN
             guna2Button1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             guna2Button1.BackColor = Color.Transparent;
             guna2Button1.BorderRadius = 15;
-            guna2Button1.CustomizableEdges = customizableEdges5;
+            guna2Button1.CustomizableEdges = customizableEdges21;
             guna2Button1.FillColor = Color.DeepSkyBlue;
             guna2Button1.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
             guna2Button1.ForeColor = Color.Black;
             guna2Button1.Location = new Point(1310, 18);
             guna2Button1.Name = "guna2Button1";
-            guna2Button1.ShadowDecoration.CustomizableEdges = customizableEdges6;
+            guna2Button1.ShadowDecoration.CustomizableEdges = customizableEdges22;
             guna2Button1.Size = new Size(200, 45);
             guna2Button1.TabIndex = 2;
             guna2Button1.Text = "Chat";
@@ -162,12 +162,12 @@ namespace APP_DOAN
             // 
             panelMainContent.BackColor = Color.FromArgb(236, 240, 241);
             panelMainContent.Controls.Add(grpJoinedCourses);
-            panelMainContent.CustomizableEdges = customizableEdges15;
+            panelMainContent.CustomizableEdges = customizableEdges31;
             panelMainContent.Dock = DockStyle.Fill;
             panelMainContent.Location = new Point(250, 79);
             panelMainContent.Name = "panelMainContent";
             panelMainContent.Padding = new Padding(15);
-            panelMainContent.ShadowDecoration.CustomizableEdges = customizableEdges16;
+            panelMainContent.ShadowDecoration.CustomizableEdges = customizableEdges32;
             panelMainContent.Size = new Size(1524, 702);
             panelMainContent.TabIndex = 0;
             // 
@@ -180,14 +180,14 @@ namespace APP_DOAN
             grpJoinedCourses.Controls.Add(txtNameClass);
             grpJoinedCourses.Controls.Add(lvJoinedCourses);
             grpJoinedCourses.CustomBorderColor = Color.FromArgb(52, 152, 219);
-            grpJoinedCourses.CustomizableEdges = customizableEdges13;
+            grpJoinedCourses.CustomizableEdges = customizableEdges29;
             grpJoinedCourses.Dock = DockStyle.Fill;
             grpJoinedCourses.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             grpJoinedCourses.ForeColor = Color.FromArgb(52, 73, 94);
             grpJoinedCourses.Location = new Point(15, 15);
             grpJoinedCourses.Name = "grpJoinedCourses";
             grpJoinedCourses.Padding = new Padding(10);
-            grpJoinedCourses.ShadowDecoration.CustomizableEdges = customizableEdges14;
+            grpJoinedCourses.ShadowDecoration.CustomizableEdges = customizableEdges30;
             grpJoinedCourses.ShadowDecoration.Enabled = true;
             grpJoinedCourses.Size = new Size(1494, 672);
             grpJoinedCourses.TabIndex = 0;
@@ -199,13 +199,13 @@ namespace APP_DOAN
             Find.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             Find.BackColor = Color.Transparent;
             Find.BorderRadius = 15;
-            Find.CustomizableEdges = customizableEdges9;
+            Find.CustomizableEdges = customizableEdges25;
             Find.FillColor = Color.DeepSkyBlue;
             Find.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
             Find.ForeColor = Color.Black;
             Find.Location = new Point(1340, 53);
             Find.Name = "Find";
-            Find.ShadowDecoration.CustomizableEdges = customizableEdges10;
+            Find.ShadowDecoration.CustomizableEdges = customizableEdges26;
             Find.Size = new Size(140, 34);
             Find.TabIndex = 12;
             Find.Text = "Find";
@@ -223,7 +223,7 @@ namespace APP_DOAN
             // txtNameClass
             // 
             txtNameClass.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            txtNameClass.CustomizableEdges = customizableEdges11;
+            txtNameClass.CustomizableEdges = customizableEdges27;
             txtNameClass.DefaultText = "";
             txtNameClass.Font = new Font("Segoe UI", 9F);
             txtNameClass.Location = new Point(180, 54);
@@ -231,9 +231,10 @@ namespace APP_DOAN
             txtNameClass.Name = "txtNameClass";
             txtNameClass.PlaceholderText = "";
             txtNameClass.SelectedText = "";
-            txtNameClass.ShadowDecoration.CustomizableEdges = customizableEdges12;
+            txtNameClass.ShadowDecoration.CustomizableEdges = customizableEdges28;
             txtNameClass.Size = new Size(1140, 33);
             txtNameClass.TabIndex = 10;
+            txtNameClass.TextChanged += txtNameClass_TextChanged;
             // 
             // lvJoinedCourses
             // 
@@ -255,42 +256,42 @@ namespace APP_DOAN
             cmsUserOptions.ImageScalingSize = new Size(20, 20);
             cmsUserOptions.Items.AddRange(new ToolStripItem[] { profileToolStripMenuItem, scheduleToolStripMenuItem, gradesToolStripMenuItem, changePasswordToolStripMenuItem, đăngKýMônHọcToolStripMenuItem });
             cmsUserOptions.Name = "cmsUserOptions";
-            cmsUserOptions.Size = new Size(214, 152);
+            cmsUserOptions.Size = new Size(203, 124);
             cmsUserOptions.Opening += cmsUserOptions_Opening_1;
             // 
             // profileToolStripMenuItem
             // 
             profileToolStripMenuItem.Name = "profileToolStripMenuItem";
-            profileToolStripMenuItem.Size = new Size(213, 24);
+            profileToolStripMenuItem.Size = new Size(202, 24);
             profileToolStripMenuItem.Text = "Hồ sơ";
             profileToolStripMenuItem.Click += profileToolStripMenuItem_Click;
             // 
             // scheduleToolStripMenuItem
             // 
             scheduleToolStripMenuItem.Name = "scheduleToolStripMenuItem";
-            scheduleToolStripMenuItem.Size = new Size(213, 24);
+            scheduleToolStripMenuItem.Size = new Size(202, 24);
             scheduleToolStripMenuItem.Text = "Lịch học";
             scheduleToolStripMenuItem.Click += scheduleToolStripMenuItem_Click_1;
             // 
             // gradesToolStripMenuItem
             // 
             gradesToolStripMenuItem.Name = "gradesToolStripMenuItem";
-            gradesToolStripMenuItem.Size = new Size(213, 24);
+            gradesToolStripMenuItem.Size = new Size(202, 24);
             gradesToolStripMenuItem.Text = "Điểm";
             gradesToolStripMenuItem.Click += gradesToolStripMenuItem_Click_1;
             // 
             // changePasswordToolStripMenuItem
             // 
             changePasswordToolStripMenuItem.Name = "changePasswordToolStripMenuItem";
-            changePasswordToolStripMenuItem.Size = new Size(213, 24);
+            changePasswordToolStripMenuItem.Size = new Size(202, 24);
             changePasswordToolStripMenuItem.Text = "Đổi mật khẩu";
             changePasswordToolStripMenuItem.Click += changePasswordToolStripMenuItem_Click;
             // 
             // đăngKýMônHọcToolStripMenuItem
             // 
             đăngKýMônHọcToolStripMenuItem.Name = "đăngKýMônHọcToolStripMenuItem";
-            đăngKýMônHọcToolStripMenuItem.Size = new Size(213, 24);
-            đăngKýMônHọcToolStripMenuItem.Text = "Môn học đã đăng ký";
+            đăngKýMônHọcToolStripMenuItem.Size = new Size(202, 24);
+            đăngKýMônHọcToolStripMenuItem.Text = "Tất cả các lớp học ";
             đăngKýMônHọcToolStripMenuItem.Click += đăngKýMônHọcToolStripMenuItem_Click;
             // 
             // MainForm

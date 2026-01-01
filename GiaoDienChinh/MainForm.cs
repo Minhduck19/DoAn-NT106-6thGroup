@@ -134,7 +134,7 @@ namespace APP_DOAN
             lvJoinedCourses.Columns.Clear();
             lvJoinedCourses.Columns.Add("Tên môn học", 400);
             lvJoinedCourses.Columns.Add("Giảng viên", 300);
-            lvJoinedCourses.Columns.Add("Trạng thái", 250); 
+            lvJoinedCourses.Columns.Add("Trạng thái", 250);
         }
 
         // Tải dữ liệu lớp học từ Firebase
@@ -179,24 +179,25 @@ namespace APP_DOAN
             if (lvJoinedCourses == null) return;
             lvJoinedCourses.Items.Clear();
 
-            foreach (var c in _allCourses)
+            var joinedCourses = _allCourses.Where(c => c.IsJoined).ToList();
+
+            if (joinedCourses.Count == 0)
             {
-                // Sử dụng c.TenLop thay vì c.Name
+                var empty = new ListViewItem("Chưa đăng ký môn nào");
+                empty.SubItems.Add("-");
+                empty.SubItems.Add("-");
+                lvJoinedCourses.Items.Add(empty);
+                return;
+            }
+
+            foreach (var c in joinedCourses)
+            {
                 var item = new ListViewItem(c.TenLop ?? "Không có tên");
                 item.SubItems.Add(c.Instructor ?? "Chưa rõ");
-
-                if (c.IsJoined)
-                {
-                    item.SubItems.Add("✅ Đã tham gia");
-                    item.ForeColor = Color.Green;
-                }
-                else
-                {
-                    item.SubItems.Add("❌ Chưa tham gia");
-                    item.ForeColor = Color.Black;
-                }
-
+                item.SubItems.Add("✅ Đã đăng ký");
+                item.ForeColor = Color.Green;
                 item.Tag = c.Id;
+
                 lvJoinedCourses.Items.Add(item);
             }
         }
@@ -259,23 +260,26 @@ namespace APP_DOAN
         {
             if (lvJoinedCourses.SelectedItems.Count == 0) return;
 
-            ListViewItem selectedItem = lvJoinedCourses.SelectedItems[0];
-            if (selectedItem.Tag == null) return;
+            var item = lvJoinedCourses.SelectedItems[0];
+            if (item.Tag == null) return;
 
-            var id = selectedItem.Tag.ToString();
-            var course = _allCourses.FirstOrDefault(c => c.Id == id);
+            string courseId = item.Tag.ToString();
+            string tenLop = item.Text;
 
-            if (course != null)
-            {
-                // Truyền thêm _currentUserUid và _idToken vào Form Chi Tiết
-                ChiTietLopHoc form = new ChiTietLopHoc(course, _currentUserUid, _idToken);
-                if (form.ShowDialog() == DialogResult.OK)
-                {
-                    // Nếu đăng ký thành công (DialogResult.OK), tải lại danh sách
-                    _ = LoadClassDataFromFirebase();
-                }
-            }
+            Assignment frmAssignment = new Assignment(courseId);
+            frmAssignment.Show();
+
+            Submit_Agsignment frmSubmit = new Submit_Agsignment(
+                tenLop,
+                _firebaseClient,
+                courseId,
+                _currentUserUid
+            );
+
+            frmSubmit.OnSubmitSuccess += frmAssignment.Frm_OnSubmitSuccess;
+            frmSubmit.ShowDialog();
         }
+
 
         private void cmsUserOptions_Opening(object sender, System.ComponentModel.CancelEventArgs e) { }
         private void grpJoinedCourses_Click(object sender, EventArgs e) { }
@@ -343,9 +347,9 @@ namespace APP_DOAN
             string searchText = txtNameClass.Text.ToLower().Trim();
             lvJoinedCourses.Items.Clear();
 
-var filtered = _allCourses
-    .Where(c => c.Name?.ToLower().Contains(searchText) == true)
-    .ToList();
+            var filtered = _allCourses
+                .Where(c => c.Name?.ToLower().Contains(searchText) == true)
+                .ToList();
 
             foreach (var c in filtered)
             {
@@ -355,6 +359,11 @@ var filtered = _allCourses
                 item.Tag = c.Id;
                 lvJoinedCourses.Items.Add(item);
             }
+        }
+
+        private void txtNameClass_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 
