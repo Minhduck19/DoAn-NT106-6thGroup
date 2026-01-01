@@ -1,38 +1,48 @@
-﻿using System;
-using System.Drawing;
-using System.Windows.Forms;
+﻿using Firebase.Database;
+using Firebase.Database.Query;
 using Guna.UI2.WinForms;
 using Guna.UI2.WinForms.Enums;
-using System.IO; // Để dùng Path.GetFileName
+using System;
 using System.ComponentModel;
+using System.Drawing;
+using System.IO; // Để dùng Path.GetFileName
+using System.Windows.Forms;
 
 namespace APP_DOAN.GiaoDienChinh
 {
     
 
     // Form logic
-    public partial class Submit_Agsignment
+    public partial class Submit_Agsignment : Form
     {
         public event Action<AssignmentSubmitResult> OnSubmitSuccess;
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public string TenLopHoc { get; set; }
 
-        public Submit_Agsignment(string tenLop = "Bài tập chung")
+        private readonly FirebaseClient firebaseClient;
+
+        private readonly string courseId;
+        private readonly string studentUid;
+
+        public Submit_Agsignment(
+     string tenLop,
+     FirebaseClient firebaseClient,
+     string courseId,
+     string studentUid)
         {
             InitializeComponent();
-            this.TenLopHoc = tenLop;
 
-            // Cập nhật các control đã tạo trong Designer
-            if (lblAssignmentName != null)
-            {
-                lblAssignmentName.Text = $"NỘP BÀI TẬP LỚP: {this.TenLopHoc.ToUpper()}";
-            }
-            // Gán giá trị cho thuộc tính Text được thừa kế từ Form
-            this.Text = "Nộp Bài Tập: " + TenLopHoc;
+            TenLopHoc = tenLop;
+            this.firebaseClient = firebaseClient;
+            this.courseId = courseId;
+            this.studentUid = studentUid;
+
+            lblAssignmentName.Text = $"NỘP BÀI TẬP LỚP: {tenLop.ToUpper()}";
         }
 
 
-        
+
+
 
         private void btnBrowse_Click_1(object sender, EventArgs e)
         {
@@ -106,7 +116,26 @@ namespace APP_DOAN.GiaoDienChinh
                 };
                 successDialog.Show();
 
-                // TODO: Lưu fileUrl vào DB (Firebase / SQL) nếu cần
+
+                await firebaseClient
+                 .Child("Assignments")
+                 .Child(courseId)          // ID môn học
+                 .Child(studentUid)        // UID sinh viên
+                 .PutAsync(new
+                 {
+                       TenFile = Path.GetFileName(txtFilePath.Text),
+                       FileUrl = fileUrl,
+                       ThoiGianNop = DateTime.Now
+                 });
+
+
+                OnSubmitSuccess?.Invoke(new AssignmentSubmitResult
+                {
+                    TenLop = this.TenLopHoc,
+                    TenFile = Path.GetFileName(txtFilePath.Text),
+                    FileUrl = fileUrl,
+                    ThoiGianNop = DateTime.Now
+                });
 
                 this.Close();
             }
@@ -116,6 +145,8 @@ namespace APP_DOAN.GiaoDienChinh
                 MessageBox.Show("Lỗi khi nộp bài: " + ex.Message);
             }
         }
+
+
 
     }
 }

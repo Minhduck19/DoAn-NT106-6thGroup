@@ -12,6 +12,11 @@ namespace APP_DOAN
         public string TenFile { get; set; }
         public string FileUrl { get; set; }
         public DateTime ThoiGianNop { get; set; }
+
+        public string StudentUid { get; set; } // optional
+
+        public AssignmentSubmitResult() { } // 🔥 BẮT BUỘC
     }
+
 
 }
