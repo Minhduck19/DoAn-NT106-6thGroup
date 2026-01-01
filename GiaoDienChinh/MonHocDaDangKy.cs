@@ -17,6 +17,7 @@ namespace APP_DOAN.GiaoDienChinh
         private readonly string _idToken;
         private readonly string firebaseDatabaseUrl = "https://nt106-minhduc-default-rtdb.firebaseio.com/";
         private FirebaseClient firebaseClient;
+        private List<Course> _allCourses = new();
 
         public MonHocDaDangKy(string studentUid, string idToken)
         {
@@ -75,7 +76,7 @@ namespace APP_DOAN.GiaoDienChinh
 
         private async Task LoadCourses()
         {
-            if (_isLoading) return;   // 🔥 CHẶN GỌI CHỒNG
+            if (_isLoading) return;
             _isLoading = true;
 
             try
@@ -89,31 +90,40 @@ namespace APP_DOAN.GiaoDienChinh
                 var courseStudents = await firebaseClient
                     .Child("CourseStudents")
                     .OnceAsync<Dictionary<string, bool>>();
+                _allCourses.Clear();
 
                 foreach (var c in courses)
                 {
                     bool joined = courseStudents.Any(cs =>
                         cs.Key == c.Key && cs.Object.ContainsKey(_studentUid));
 
-                    if (!joined) continue;
+                    var course = new Course
+                    {
+                        Id = c.Key,
+                        MaLop = c.Object.MaLop,
+                        TenLop = c.Object.TenLop,
+                        Instructor = c.Object.InstructorName,
+                        IsJoined = joined
+                    };
 
-                    var course = c.Object;
+                    _allCourses.Add(course);
 
-                    var item = new ListViewItem(course.MaLop ?? c.Key);
+                    var item = new ListViewItem(course.MaLop ?? course.Id);
                     item.SubItems.Add(course.TenLop ?? "Không có tên");
-                    item.SubItems.Add(course.InstructorName ?? "Chưa rõ");
-                    item.Tag = c.Key;
+                    item.SubItems.Add(course.Instructor ?? "Chưa rõ");
+
+                    item.Tag = course.Id;
+
+                    if (joined)
+                        item.ForeColor = System.Drawing.Color.Green;
 
                     lvCourses.Items.Add(item);
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Lỗi tải dữ liệu: " + ex.Message);
+
             }
             finally
             {
-                _isLoading = false; // 🔥 MỞ KHÓA
+                _isLoading = false;
             }
         }
 
@@ -122,29 +132,48 @@ namespace APP_DOAN.GiaoDienChinh
             if (lvCourses.SelectedItems.Count == 0) return;
 
             var item = lvCourses.SelectedItems[0];
-            string courseId = item.Tag.ToString();      // ID môn học
-            string tenLop = item.SubItems[1].Text;
+            if (item.Tag == null) return;
 
-            // FORM GIẢNG VIÊN / DANH SÁCH BÀI
-            Assignment frmAssignment = new Assignment(courseId);
-            frmAssignment.Show();
+            string courseId = item.Tag.ToString();
 
-            // FORM SINH VIÊN NỘP BÀI
-            Submit_Agsignment frmSubmit = new Submit_Agsignment(
-                tenLop,
-                firebaseClient,
-                courseId,
-                _studentUid
-            );
+            var course = _allCourses.FirstOrDefault(c => c.Id == courseId);
+            if (course == null) return;
 
-            frmSubmit.OnSubmitSuccess += frmAssignment.Frm_OnSubmitSuccess;
-            frmSubmit.ShowDialog();
+            ChiTietLopHoc form = new ChiTietLopHoc(course, _studentUid, _idToken);
+            form.ShowDialog();
+
         }
+
 
         private void btnThoat_Click(object sender, EventArgs e)
         {
             this.Close();
         }
+
+        private void Find_Click(object sender, EventArgs e)
+        {
+            string searchText = txtNameClass.Text.ToLower().Trim();
+            lvCourses.Items.Clear();
+
+            var filtered = _allCourses
+                .Where(c => c.TenLop?.ToLower().Contains(searchText) == true)
+                .ToList();
+
+            foreach (var c in filtered)
+            {
+                var item = new ListViewItem(c.MaLop ?? c.Id);
+                item.SubItems.Add(c.TenLop);
+                item.SubItems.Add(c.Instructor);
+                item.Tag = c.Id;
+
+                if (c.IsJoined)
+                    item.ForeColor = System.Drawing.Color.Green;
+
+                lvCourses.Items.Add(item);
+            }
+        }
+
+
     }
 
     public class CourseModel
