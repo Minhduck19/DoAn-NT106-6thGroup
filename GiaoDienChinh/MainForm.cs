@@ -37,7 +37,7 @@ namespace APP_DOAN
             // Ưu tiên dùng Singleton để đồng bộ
             try
             {
-                _firebaseClient = FirebaseService.Instance._client; 
+                _firebaseClient = FirebaseService.Instance._client;
             }
             catch
             {
@@ -65,34 +65,77 @@ namespace APP_DOAN
         {
             try
             {
-                var firebaseCourses = await _firebaseClient
+                // 1. Hiển thị trạng thái "Đang tải..." để người dùng không thấy trống trơn
+                if (_allCourses.Count == 0) // Chỉ hiện khi chưa có dữ liệu
+                {
+                    flpCourses.Controls.Clear();
+                    Label lblLoading = new Label()
+                    {
+                        Text = "Đang tải dữ liệu...",
+                        AutoSize = true,
+                        Font = new Font("Segoe UI", 12, FontStyle.Italic),
+                        ForeColor = Color.Gray,
+                        Location = new Point(20, 20)
+                    };
+                    flpCourses.Controls.Add(lblLoading);
+                }
+
+                // 2. Tạo các Task để lấy dữ liệu song song (Chạy cùng lúc)
+                var taskAllCourses = _firebaseClient
                     .Child("Courses")
                     .OnceAsync<Course>();
 
-                var courseStudents = await _firebaseClient
+                var taskStudentMap = _firebaseClient
                     .Child("CourseStudents")
-                    .OnceAsync<Dictionary<string, bool>>();
+                    .OnceAsync<Dictionary<string, StudentInfo>>(); // Lưu ý: Dùng StudentInfo như đã sửa
+
+                // 3. Chờ cả 2 nhiệm vụ hoàn thành cùng lúc (Tốc độ nhanh gấp đôi)
+                await Task.WhenAll(taskAllCourses, taskStudentMap);
+
+                // 4. Lấy kết quả từ các Task đã hoàn thành
+                var firebaseCourses = taskAllCourses.Result;
+                var courseStudentsSnapshot = taskStudentMap.Result;
+
+                // 5. Xử lý logic ghép nối dữ liệu (Phần này giữ nguyên logic của bạn)
+                var joinedCourseIds = new HashSet<string>();
+
+                if (courseStudentsSnapshot != null)
+                {
+                    joinedCourseIds = new HashSet<string>(
+                        courseStudentsSnapshot
+                            .Where(cs => cs.Object != null &&
+                                         cs.Object.ContainsKey(_currentUserUid))
+                            .Select(cs => cs.Key)
+                    );
+                }
 
                 _allCourses.Clear();
 
                 foreach (var c in firebaseCourses)
                 {
-                    bool isJoined = courseStudents.Any(cs =>
-                        cs.Key == c.Key && cs.Object.ContainsKey(_currentUserUid));
+                    if (c.Object == null) continue;
+
+                    bool isJoined = joinedCourseIds.Contains(c.Key);
 
                     _allCourses.Add(new Course(
                         c.Key,
-                        c.Object.TenLop,
-                        c.Object.Instructor,
+                        c.Object.TenLop ?? "Chưa đặt tên",
+                        c.Object.Instructor ?? "N/A",
                         isJoined
                     ));
                 }
 
-                PopulateAllCourses(); // Gọi hàm vẽ giao diện mới
+                // 6. Vẽ lại giao diện ngay lập tức
+                PopulateAllCourses();
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Lỗi tải lớp: " + ex.Message);
+                MessageBox.Show(
+                    "Lỗi tải lớp:\n" + ex.Message,
+                    "Firebase Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
             }
         }
 
@@ -285,5 +328,16 @@ namespace APP_DOAN
 
         private void grpJoinedCourses_Click_1(object sender, EventArgs e) { }
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e) { }
+
+        private void flpCourses_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+    }
+    public class StudentInfo
+    {
+        public string Email { get; set; }
+        public string HoTen { get; set; }
+        public string MSSV { get; set; }
     }
 }
