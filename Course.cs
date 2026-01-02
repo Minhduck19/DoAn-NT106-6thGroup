@@ -41,5 +41,12 @@ namespace APP_DOAN
             // Mặc định mấy cái này để tránh null
             Students = new List<string>();
         }
+        public class CourseModel
+        {
+            public string TenLop { get; set; }
+            public string InstructorName { get; set; }
+            public string MaLop { get; set; }
+            public int MaxStudents { get; set; } // Giới hạn tối đa (VD: 50)
+        }
     }
 }
