@@ -141,6 +141,7 @@ namespace APP_DOAN
             dtpNgaySinh.Size = new Size(229, 50);
             dtpNgaySinh.TabIndex = 2;
             dtpNgaySinh.Value = new DateTime(2025, 11, 17, 9, 30, 0, 0);
+            dtpNgaySinh.ValueChanged += dtpNgaySinh_ValueChanged;
             // 
             // cboKhoa
             // 

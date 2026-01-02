@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace APP_DOAN
+﻿public class AssignmentModel
 {
-    internal class AssignmentServer
-    {
-    }
+    public string Title { get; set; }
+    public string Description { get; set; }
+    public string DueDate { get; set; }
+    public string FileUrl { get; set; }
+    public long CreatedAt { get; set; }
 }

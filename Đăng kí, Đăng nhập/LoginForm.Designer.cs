@@ -84,6 +84,7 @@ namespace APP_DOAN
             guna2HtmlLabel1.Size = new Size(130, 25);
             guna2HtmlLabel1.TabIndex = 6;
             guna2HtmlLabel1.Text = "<a href='#'>Quên mật khẩu?</a>";
+            guna2HtmlLabel1.Click += guna2HtmlLabel1_Click;
             // 
             // lblMainTitle
             // 
@@ -155,6 +156,7 @@ namespace APP_DOAN
             btnCancel.Size = new Size(250, 45);
             btnCancel.TabIndex = 4;
             btnCancel.Text = "Hủy";
+            btnCancel.Click += btnCancel_Click;
             // 
             // linkRegister
             // 
@@ -167,6 +169,7 @@ namespace APP_DOAN
             linkRegister.Size = new Size(259, 25);
             linkRegister.TabIndex = 5;
             linkRegister.Text = "<a href='#'>Chưa có tài khoản? Đăng ký ngay</a>";
+            linkRegister.Click += linkRegister_Click;
             // 
             // label1
             // 

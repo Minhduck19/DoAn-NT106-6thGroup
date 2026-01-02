@@ -129,7 +129,8 @@ namespace APP_DOAN
             pnlCard.Cursor = Cursors.Hand;
 
             // Vẽ viền
-            pnlCard.Paint += (s, e) => {
+            pnlCard.Paint += (s, e) =>
+            {
                 ControlPaint.DrawBorder(e.Graphics, pnlCard.ClientRectangle,
                     Color.FromArgb(60, 60, 60), ButtonBorderStyle.Solid);
             };
@@ -175,11 +176,13 @@ namespace APP_DOAN
                 {
                     // Mở Form Nộp Bài
                     Submit_Agsignment submitForm = new Submit_Agsignment(
-                        title,          // Tên bài tập
-                        _client,        // Firebase Client
-                        _courseId,      // ID Lớp
-                        _studentId      // ID Sinh viên
-                    );
+     title,          // Tên bài tập
+     assignmentId,   // 🔥 ID bài tập
+     _client,
+     _courseId,
+     _studentId
+ );
+
 
                     submitForm.ShowDialog();
                 }
@@ -203,6 +206,11 @@ namespace APP_DOAN
 
             // Add vào FlowLayout
             flpContent.Controls.Add(pnlCard);
+        }
+
+        private void flpContent_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }
