@@ -72,7 +72,7 @@ namespace APP_DOAN
                 this.Hide();
                 if (userRole == "GiangVien")
                 {
-                    using (MainForm_GiangVien mainFormGV = new MainForm_GiangVien(uid, hoTen, idToken))
+                    using (MainForm_GiangVien mainFormGV = new MainForm_GiangVien(uid, hoTen, idToken,email))
                     {
                         mainFormGV.ShowDialog();
                     }

@@ -12,6 +12,8 @@ namespace APP_DOAN
 {
     public partial class MainForm_GiangVien : Form
     {
+        // Biến lưu thông tin User
+        private string loggedInEmail;
         private string idToken;
         private string currentUid;
         private string currentDisplayName;
@@ -19,13 +21,16 @@ namespace APP_DOAN
         private FirebaseClient _client;
         private List<Course> _allMyCourses = new List<Course>();
 
-        public MainForm_GiangVien(string uid, string displayName, string token)
+        public MainForm_GiangVien(string uid, string displayName, string token, string email)
         {
-            InitializeComponent(); // Kết nối với file Designer
+            InitializeComponent();
+            this.WindowState = FormWindowState.Maximized;
             this.idToken = token;
             this.currentUid = uid;
             this.currentDisplayName = displayName;
+            this.loggedInEmail = email;
 
+            // --- KẾT NỐI FIREBASE ---
             try
             {
                 _client = FirebaseService.Instance._client;
@@ -41,9 +46,66 @@ namespace APP_DOAN
 
         private void MainForm_GiangVien_Load(object sender, EventArgs e)
         {
-            lblWelcome.Text = $"Xin chào, Giảng viên {currentDisplayName}!";
+            lblWelcome.Text = $"Xin chào, {currentDisplayName}!";
+
+            // Đăng ký sự kiện tìm kiếm cho TextBox (txtSearch) trong Designer
+            txtSearch.TextChanged += (s, ev) => PerformSearch(txtSearch.Text);
+
             LoadMyCoursesData();
         }
+
+        // --- CÁC SỰ KIỆN NÚT BẤM (Đã kết nối với Designer) ---
+
+        // 1. Mở Hồ sơ (Nút btnProfile)
+        private void OpenProfile_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            Teacher_Information profileForm = new Teacher_Information(currentUid, idToken, loggedInEmail);
+            profileForm.ShowDialog();
+            this.Show();
+        }
+
+        // 2. Đăng xuất (Nút btnLogout)
+        private void btnLogout_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("Bạn có chắc muốn đăng xuất?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                this.Close();
+            }
+        }
+
+        // 3. Tạo lớp (Nút btnCreate)
+        private void btnCreateCourse_Click(object sender, EventArgs e)
+        {
+            // Cập nhật Token mới nhất cho API trước khi mở form
+            FirebaseApi.CurrentUid = this.currentUid;
+            FirebaseApi.IdToken = this.idToken;
+
+            CreateCourse createCourse = new CreateCourse();
+            // Khi tạo xong thì tải lại danh sách
+            createCourse.OnCourseCreated += (ma, ten, si) => { LoadMyCoursesData(); };
+            createCourse.ShowDialog();
+        }
+
+        // 4. Mở Chat (Nút btnChat - Gradient)
+        private void guna2Button1_Click(object sender, EventArgs e)
+        {
+            // Kiểm tra xem form chat đã mở chưa
+            foreach (Form f in Application.OpenForms)
+            {
+                if (f is frmMainChat)
+                {
+                    f.BringToFront();
+                    return;
+                }
+            }
+
+            // Mở form chat mới
+            frmMainChat chat = new frmMainChat(currentUid, currentDisplayName, idToken);
+            chat.Show();
+        }
+
+        // --- XỬ LÝ DỮ LIỆU & VẼ THẺ (LOGIC GIỮ NGUYÊN) ---
 
         private async void LoadMyCoursesData()
         {
@@ -55,7 +117,8 @@ namespace APP_DOAN
                 FillColor = Color.Transparent,
                 ForeColor = Color.Gray,
                 Font = new Font("Segoe UI", 12),
-                DisabledState = { FillColor = Color.Transparent }
+                DisabledState = { FillColor = Color.Transparent },
+                AutoSize = true
             };
             flpMyCourses.Controls.Add(btnLoad);
 
@@ -63,6 +126,7 @@ namespace APP_DOAN
             {
                 var data = await FirebaseApi.Get<Dictionary<string, Course>>("Courses");
 
+                // Xóa loading để chuẩn bị hiển thị data
                 flpMyCourses.Controls.Clear();
                 _allMyCourses.Clear();
 
@@ -71,6 +135,7 @@ namespace APP_DOAN
                     foreach (var entry in data)
                     {
                         var course = entry.Value;
+                        // Chỉ lấy lớp của giảng viên hiện tại
                         if (course != null && course.GiangVienUid == currentUid)
                         {
                             if (string.IsNullOrEmpty(course.Id)) course.Id = entry.Key;
@@ -83,29 +148,23 @@ namespace APP_DOAN
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Lỗi: " + ex.Message);
+                flpMyCourses.Controls.Clear();
+                MessageBox.Show("Lỗi tải dữ liệu: " + ex.Message);
             }
         }
 
         private void RenderList(List<Course> courses)
         {
             flpMyCourses.Controls.Clear();
-
             if (courses.Count == 0)
             {
-                Label lbl = new Label { Text = "Chưa có lớp học nào.", AutoSize = true, ForeColor = Color.Gray, Margin = new Padding(10) };
+                Label lbl = new Label { Text = "Chưa có lớp học nào.", AutoSize = true, ForeColor = Color.Gray, Margin = new Padding(20) };
                 flpMyCourses.Controls.Add(lbl);
                 return;
             }
-
-            foreach (var course in courses)
-            {
-                // Gọi hàm vẽ thẻ Guna Card
-                RenderGunaCard(course);
-            }
+            foreach (var course in courses) RenderGunaCard(course);
         }
 
-        // --- HÀM VẼ THẺ GUNA (CARD) ---
         private void RenderGunaCard(Course c)
         {
             Guna2Panel pnl = new Guna2Panel();
@@ -121,10 +180,10 @@ namespace APP_DOAN
             pnl.ShadowDecoration.Depth = 5;
             pnl.ShadowDecoration.Color = Color.FromArgb(200, 200, 200);
 
-            // Sự kiện click panel
+            // Sự kiện Click vào thẻ -> Mở chi tiết
             pnl.Click += (s, e) => OpenDetail(c);
 
-            // 1. Tên Lớp
+            // 1. Tên lớp
             Label lblName = new Label();
             lblName.Text = c.TenLop;
             lblName.Font = new Font("Segoe UI", 14, FontStyle.Bold);
@@ -132,12 +191,12 @@ namespace APP_DOAN
             lblName.Location = new Point(20, 15);
             lblName.AutoSize = true;
             lblName.BackColor = Color.Transparent;
-            lblName.Click += (s, e) => OpenDetail(c);
+            lblName.Click += (s, e) => OpenDetail(c); // Click label cũng mở
             pnl.Controls.Add(lblName);
 
             // 2. Thông tin phụ
             Label lblInfo = new Label();
-            lblInfo.Text = $"Mã lớp: {c.MaLop}   •   Sĩ số: {c.SiSoHienTai}/{c.SiSo}";
+            lblInfo.Text = $"Mã lớp: {c.MaLop}    •    Sĩ số: {c.SiSoHienTai}/{c.SiSo}";
             lblInfo.Font = new Font("Segoe UI", 10);
             lblInfo.ForeColor = Color.Gray;
             lblInfo.Location = new Point(23, 50);
@@ -146,11 +205,11 @@ namespace APP_DOAN
             lblInfo.Click += (s, e) => OpenDetail(c);
             pnl.Controls.Add(lblInfo);
 
-            // 3. Nút Sửa (Vàng nhạt)
+            // 3. Nút Sửa
             Guna2Button btnEdit = new Guna2Button();
             btnEdit.Text = "Sửa";
             btnEdit.BorderRadius = 8;
-            btnEdit.FillColor = Color.FromArgb(255, 248, 230);
+            btnEdit.FillColor = Color.FromArgb(255, 248, 230); // Vàng nhạt
             btnEdit.ForeColor = Color.Orange;
             btnEdit.Font = new Font("Segoe UI", 9, FontStyle.Bold);
             btnEdit.Size = new Size(70, 30);
@@ -158,11 +217,11 @@ namespace APP_DOAN
             btnEdit.Click += (s, e) => EditCourseAction(c);
             pnl.Controls.Add(btnEdit);
 
-            // 4. Nút Xóa (Đỏ nhạt)
+            // 4. Nút Xóa
             Guna2Button btnDelete = new Guna2Button();
             btnDelete.Text = "Xóa";
             btnDelete.BorderRadius = 8;
-            btnDelete.FillColor = Color.FromArgb(255, 235, 235);
+            btnDelete.FillColor = Color.FromArgb(255, 235, 235); // Đỏ nhạt
             btnDelete.ForeColor = Color.Red;
             btnDelete.Font = new Font("Segoe UI", 9, FontStyle.Bold);
             btnDelete.Size = new Size(70, 30);
@@ -173,38 +232,9 @@ namespace APP_DOAN
             flpMyCourses.Controls.Add(pnl);
         }
 
-        // --- CÁC HÀM SỰ KIỆN ---
-
-        private void btnCreateNew_Click(object sender, EventArgs e)
-        {
-            FirebaseApi.CurrentUid = this.currentUid;
-            FirebaseApi.IdToken = this.idToken;
-            CreateCourse createCourse = new CreateCourse();
-            createCourse.OnCourseCreated += (ma, ten, si) => { LoadMyCoursesData(); };
-            createCourse.ShowDialog();
-        }
-
-        private void btnLogOut_Click(object sender, EventArgs e)
-        {
-            if (MessageBox.Show("Đăng xuất?", "Xác nhận", MessageBoxButtons.YesNo) == DialogResult.Yes) this.Close();
-        }
-
-        private void txtFind_TextChanged(object sender, EventArgs e)
-        {
-            string keyword = txtFind.Text;
-            if (string.IsNullOrWhiteSpace(keyword))
-            {
-                RenderList(_allMyCourses);
-                return;
-            }
-            var filtered = _allMyCourses.FindAll(c =>
-                c.TenLop.ToLower().Contains(keyword.ToLower()) ||
-                c.MaLop.ToLower().Contains(keyword.ToLower()));
-            RenderList(filtered);
-        }
-
         private void OpenDetail(Course c)
         {
+            // Mở form chi tiết quản lý khóa học
             FormQuanLyKhoaHoc detailForm = new FormQuanLyKhoaHoc(c.Id, c.TenLop, idToken);
             detailForm.ShowDialog();
             LoadMyCoursesData();
@@ -218,35 +248,43 @@ namespace APP_DOAN
                 c.MaLop = maMoi;
                 c.TenLop = tenMoi;
                 c.SiSo = siSoMoi;
+                // Cập nhật lên Firebase
                 await FirebaseApi.Patch($"Courses/{c.Id}", c);
                 LoadMyCoursesData();
             };
             editForm.ShowDialog();
         }
 
-        private void DeleteCourseAction(Course c)
+        private async void DeleteCourseAction(Course c)
         {
-            if (MessageBox.Show($"Xóa lớp '{c.TenLop}'?", "Cảnh báo", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+            if (MessageBox.Show($"Xóa lớp '{c.TenLop}'? Dữ liệu sẽ mất vĩnh viễn.", "Cảnh báo", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
             {
-                DeleteCourseProcess(c);
+                try
+                {
+                    // Xóa tất cả dữ liệu liên quan
+                    await FirebaseApi.Delete($"Courses/{c.Id}");
+                    await FirebaseApi.Delete($"CourseStudents/{c.Id}");
+                    await FirebaseApi.Delete($"Assignments/{c.Id}");
+                    await FirebaseApi.Delete($"JoinRequests/{c.Id}");
+
+                    MessageBox.Show("Đã xóa lớp học thành công!");
+                    LoadMyCoursesData();
+                }
+                catch (Exception ex) { MessageBox.Show("Lỗi xóa: " + ex.Message); }
             }
         }
 
-        private async void DeleteCourseProcess(Course c)
+        private void PerformSearch(string keyword)
         {
-            try
+            if (string.IsNullOrWhiteSpace(keyword))
             {
-                await FirebaseApi.Delete($"Courses/{c.Id}");
-                await FirebaseApi.Delete($"CourseStudents/{c.Id}");
-                await FirebaseApi.Delete($"Assignments/{c.Id}");
-                await FirebaseApi.Delete($"JoinRequests/{c.Id}");
-                MessageBox.Show("Đã xóa thành công.");
-                LoadMyCoursesData();
+                RenderList(_allMyCourses);
+                return;
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Lỗi xóa: " + ex.Message);
-            }
+            var filtered = _allMyCourses.FindAll(c =>
+                (c.TenLop != null && c.TenLop.ToLower().Contains(keyword.ToLower())) ||
+                (c.MaLop != null && c.MaLop.ToLower().Contains(keyword.ToLower())));
+            RenderList(filtered);
         }
     }
 }
