@@ -95,7 +95,7 @@ namespace APP_DOAN.GiaoDienChinh
             btnThoat.Size = new Size(200, 48);
             btnThoat.TabIndex = 4;
             btnThoat.Text = "Thoát";
-            btnThoat.Click += btnThoat_Click_1;
+            btnThoat.Click += btnThoat_Click;
             // 
             // Assignment
             // 

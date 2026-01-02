@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace APP_DOAN
+﻿public class AssignmentSubmitModel
 {
-    internal class AssignmentFile
-    {
-    }
+    public string StudentId { get; set; }
+    public string FileUrl { get; set; }
+    public long SubmittedAt { get; set; }
 }

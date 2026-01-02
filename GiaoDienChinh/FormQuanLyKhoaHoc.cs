@@ -1,4 +1,5 @@
-﻿using APP_DOAN.Services;
+﻿using APP_DOAN.GiaoDienChinh;
+using APP_DOAN.Services;
 using Firebase.Database;
 using Firebase.Database.Query;
 using Guna.UI2.WinForms;
@@ -23,7 +24,7 @@ namespace APP_DOAN
         // Các component giao diện bổ sung
         private Guna2DragControl _dragControl;
         private Guna2ShadowForm _shadowForm;      // 🔥 Tạo bóng đổ
-        private Guna2BorderlessForm _borderlessForm; 
+        private Guna2BorderlessForm _borderlessForm;
         private Guna.UI2.WinForms.Guna2ResizeForm _resizeForm;
 
         public FormQuanLyKhoaHoc(string courseId, string courseName, string token)
@@ -40,10 +41,10 @@ namespace APP_DOAN
             _dragControl.TargetControl = this.pnlHeader; // Kéo form bằng Header
 
             // --- 2. TẠO HIỆU ỨNG VIỀN & BÓNG ĐỔ ---
-            _shadowForm = new Guna2ShadowForm(); 
+            _shadowForm = new Guna2ShadowForm();
             _shadowForm.TargetForm = this;
 
-            _borderlessForm = new Guna2BorderlessForm(); 
+            _borderlessForm = new Guna2BorderlessForm();
             _borderlessForm.ContainerControl = this;
             _borderlessForm.BorderRadius = 15; // Bo góc
             _borderlessForm.ShadowColor = Color.DimGray;
@@ -169,8 +170,10 @@ namespace APP_DOAN
 
         private void btnAddAssignment_Click(object sender, EventArgs e)
         {
-            // Hiệu ứng click Guna đã tự lo, chỉ cần code logic
-            MessageBox.Show("Chức năng thêm bài tập đang phát triển.");
+            CreateAssignment frm = new CreateAssignment(_courseId, _client);
+
+            frm.ShowDialog();
+            LoadAssignments();
         }
 
         private void SubscribeStudents()
@@ -347,6 +350,12 @@ namespace APP_DOAN
             {
                 Console.WriteLine("Lỗi cập nhật sĩ số: " + ex.Message);
             }
+        }
+
+        private void dgvAssignments_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            Assignment frm = new Assignment(_courseId);
+            frm.ShowDialog();
         }
     }
 }

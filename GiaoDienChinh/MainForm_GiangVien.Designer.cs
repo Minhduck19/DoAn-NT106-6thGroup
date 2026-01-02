@@ -68,6 +68,7 @@
             flpMyCourses.Name = "flpMyCourses";
             flpMyCourses.Size = new Size(1300, 850);
             flpMyCourses.TabIndex = 2;
+            flpMyCourses.Paint += flpMyCourses_Paint;
             // 
             // txtSearch
             // 

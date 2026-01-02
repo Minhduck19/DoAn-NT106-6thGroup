@@ -286,5 +286,10 @@ namespace APP_DOAN
                 (c.MaLop != null && c.MaLop.ToLower().Contains(keyword.ToLower())));
             RenderList(filtered);
         }
+
+        private void flpMyCourses_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 }

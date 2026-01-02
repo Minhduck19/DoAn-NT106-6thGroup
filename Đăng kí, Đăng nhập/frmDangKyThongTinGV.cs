@@ -39,6 +39,7 @@ namespace APP_DOAN
             string hoTen = txtHoTen.Text.Trim();
             string maGV = txtMaGiangVien.Text.Trim();
             string ngaySinh = dtpNgaySinh.Text;
+            DateTime birthDate = dtpNgaySinh.Value;
             string khoa = cboKhoa.Text;
             string chucVu = cboChucVu.Text;
             string bang = txtBang.Text.Trim();
@@ -50,12 +51,20 @@ namespace APP_DOAN
                 return;
             }
 
+            // 3. Kiểm tra tuổi >= 18
+            if (!IsAgeValid(birthDate))
+            {
+                MessageBox.Show("Giảng viên phải từ 18 tuổi trở lên.", "Tuổi không hợp lệ", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                dtpNgaySinh.Focus();
+                return;
+            }
+
             ToggleUi(false);
             Cursor = Cursors.WaitCursor;
 
             try
             {
-                // 3. Tạo đối tượng Giảng viên hoàn chỉnh để lưu
+                // 4. Tạo đối tượng Giảng viên hoàn chỉnh để lưu
                 var giangVienProfile = new
                 {
                     Email = _email,
@@ -69,7 +78,7 @@ namespace APP_DOAN
                     CreatedDate = DateTime.UtcNow
                 };
 
-                // 4. Kết nối Firebase với quyền xác thực (idToken)
+                // 5. Kết nối Firebase với quyền xác thực (idToken)
                 var authClient = new FirebaseClient(
                     _firebaseDatabaseUrl,
                     new FirebaseOptions
@@ -77,7 +86,7 @@ namespace APP_DOAN
                         AuthTokenAsyncFactory = () => Task.FromResult(_idToken)
                     });
 
-                // 5. Lưu vào Realtime Database dùng UID (localId)
+                // 6. Lưu vào Realtime Database dùng UID (localId)
                 await authClient
                     .Child("Users")
                     .Child(_localId)
@@ -109,6 +118,25 @@ namespace APP_DOAN
             }
         }
 
+        /// <summary>
+        /// Kiểm tra xem tuổi của người dùng có >= 18 tuổi hay không
+        /// </summary>
+        /// <param name="birthDate">Ngày sinh</param>
+        /// <returns>true nếu tuổi >= 18, false nếu tuổi < 18</returns>
+        private bool IsAgeValid(DateTime birthDate)
+        {
+            DateTime today = DateTime.Today;
+            int age = today.Year - birthDate.Year;
+
+            // Nếu chưa qua sinh nhật trong năm nay thì trừ đi 1 tuổi
+            if (birthDate.Date > today.AddYears(-age))
+            {
+                age--;
+            }
+
+            return age >= 18;
+        }
+
         private void ToggleUi(bool enabled)
         {
             txtHoTen.Enabled = enabled;
@@ -134,6 +162,11 @@ namespace APP_DOAN
                     this.DialogResult = DialogResult.Cancel;
                 }
             }
+        }
+
+        private void dtpNgaySinh_ValueChanged(object sender, EventArgs e)
+        {
+            
         }
     }
 }
