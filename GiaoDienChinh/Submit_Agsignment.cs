@@ -72,6 +72,25 @@ namespace APP_DOAN.GiaoDienChinh
                     Buttons = MessageDialogButtons.OK,
                     Parent = this
                 };
+
+                //Kiểm tra kích thước tệp
+                const long MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
+                FileInfo fileInfo = new FileInfo(txtFilePath.Text);
+
+                if (fileInfo.Length > MAX_FILE_SIZE)
+                {
+                    Guna2MessageDialog sizeDialog = new Guna2MessageDialog
+                    {
+                        Caption = "Tệp quá lớn",
+                        Text = "Dung lượng tệp vượt quá 50MB.\nVui lòng chọn tệp nhỏ hơn.",
+                        Icon = MessageDialogIcon.Warning,
+                        Buttons = MessageDialogButtons.OK,
+                        Parent = this
+                    };
+                    sizeDialog.Show();
+                    return;
+                }
+
                 errorDialog.Show();
                 return;
             }
