@@ -78,6 +78,7 @@ namespace APP_DOAN.GiaoDienChinh
             panelMain.ShadowDecoration.Enabled = true;
             panelMain.Size = new Size(650, 520);
             panelMain.TabIndex = 0;
+            panelMain.Paint += panelMain_Paint;
             // 
             // lblTitle
             // 

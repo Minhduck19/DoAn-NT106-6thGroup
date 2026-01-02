@@ -8,7 +8,7 @@ public class FirebaseService
     // Singleton không khởi tạo trực tiếp ở đây vì cần Token
     public static FirebaseService Instance => _instance ?? throw new Exception("FirebaseService chưa được khởi tạo với Token!");
 
-    private readonly FirebaseClient _client;
+    public  readonly FirebaseClient _client;
 
     // 1. Chuyển Constructor thành private để bảo vệ Singleton
     private FirebaseService(string idToken)

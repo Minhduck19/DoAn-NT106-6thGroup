@@ -33,7 +33,7 @@ namespace APP_DOAN
         public async Task<string> UploadImage(System.IO.Stream imageStream, string fileName)
         {
             string tempFilePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), fileName);
-            
+
             try
             {
                 using (var fileStream = System.IO.File.Create(tempFilePath))
@@ -53,11 +53,10 @@ namespace APP_DOAN
             }
         }
 
-        // Gửi file
         public async Task<string> UploadFile(System.IO.Stream fileStream, string fileName)
         {
             string tempFilePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), fileName);
-            
+
             try
             {
                 using (var file = System.IO.File.Create(tempFilePath))
@@ -84,13 +83,7 @@ namespace APP_DOAN
 
         public async Task SendMessageAsync(string chatId, Message message)
         {
-            // DEBUG: Log the message before sending
-            System.Diagnostics.Debug.WriteLine($"[SEND] Sending message - Text: {message.Text}, Timestamp: {message.Timestamp}");
-            System.Diagnostics.Debug.WriteLine($"[SEND_BYTES] Text bytes: {string.Join(",", System.Text.Encoding.UTF8.GetBytes(message.Text ?? ""))}");
-            
             await _firebaseClient.Child("Chats").Child(chatId).Child("Messages").PostAsync(message);
-            
-            System.Diagnostics.Debug.WriteLine($"[SEND_SUCCESS] Message sent successfully to chat: {chatId}");
         }
 
         public async Task DeleteMessageAsync(string chatId, string messageId)
@@ -103,7 +96,6 @@ namespace APP_DOAN
                 .DeleteAsync();
         }
 
-        // [CẬP NHẬT] Lấy tin nhắn cũ từ Firebase một lần
         public async Task<List<Message>> GetMessagesAsync(string chatId)
         {
             try
@@ -122,11 +114,8 @@ namespace APP_DOAN
             }
         }
 
-        // [CẬP NHẬT] Lắng nghe TOÀN BỘ tin nhắn (cũ + mới) realtime
         public IDisposable ListenForMessages(string chatId, Action<Message> onMessageReceived)
         {
-            System.Diagnostics.Debug.WriteLine($"[LISTENER] Subscribing to messages for chat: {chatId}");
-            
             return _firebaseClient
                 .Child("Chats")
                 .Child(chatId)
@@ -136,16 +125,8 @@ namespace APP_DOAN
                 {
                     if (firebaseEvent.Object != null)
                     {
-                        // DEBUG: Log the message after receiving
                         var msg = firebaseEvent.Object;
-                        System.Diagnostics.Debug.WriteLine($"[LISTENER_EVENT] Received message - Text: {msg.Text}, Timestamp: {msg.Timestamp}, EventType: {firebaseEvent.EventType}");
-                        System.Diagnostics.Debug.WriteLine($"[LISTENER_BYTES] Text bytes: {string.Join(",", System.Text.Encoding.UTF8.GetBytes(msg.Text ?? ""))}");
-                        
                         onMessageReceived?.Invoke(msg);
-                    }
-                    else
-                    {
-                        System.Diagnostics.Debug.WriteLine($"[LISTENER_EVENT] Received null message, EventType: {firebaseEvent.EventType}");
                     }
                 });
         }
@@ -171,10 +152,7 @@ namespace APP_DOAN
                         var userObj = userEvent.Object;
                         string uid = userEvent.Key;
 
-                        if (userEvent.EventType == Firebase.Database.Streaming.FirebaseEventType.Delete)
-                        {
-                        }
-                        else
+                        if (userEvent.EventType != Firebase.Database.Streaming.FirebaseEventType.Delete)
                         {
                             onStatusChanged?.Invoke(uid, userObj.IsOnline);
                         }
@@ -194,13 +172,9 @@ namespace APP_DOAN
                 .Subscribe(evt => onTypingChanged?.Invoke(evt.Object));
         }
 
-        // Xóa toàn bộ cuộc trò chuyện (tất cả tin nhắn)
         public async Task DeleteChatAsync(string chatId)
         {
-            await _firebaseClient
-                .Child("Chats")
-                .Child(chatId)
-                .DeleteAsync();
+            await _firebaseClient.Child("Chats").Child(chatId).DeleteAsync();
         }
     }
 }
