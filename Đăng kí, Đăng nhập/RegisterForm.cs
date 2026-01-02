@@ -1,5 +1,4 @@
-﻿// --- THÊM CÁC 'USING' MỚI ---
-using Firebase.Database;
+﻿using Firebase.Database;
 using Firebase.Database.Query;
 using Newtonsoft.Json.Linq;
 using System;
@@ -14,14 +13,14 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 
+
 namespace APP_DOAN
 {
     public partial class RegisterForm : Form
     {
         private readonly string webApiKey = "AIzaSyA7fh7FLwmHFHrwchTX1gcATk1ulr45QLs";
-        private readonly string firebaseDatabaseUrl = "https://nt106-minhduc-default-rtdb.firebaseio.com/"; // URL thật của bạn
-
-
+        private readonly string firebaseDatabaseUrl = "https://nt106-minhduc-default-rtdb.firebaseio.com/";
+        private readonly EmailService emailService = new EmailService();
 
         public RegisterForm()
         {
@@ -44,7 +43,6 @@ namespace APP_DOAN
             if (rbSinhVien.Checked) role = "SinhVien";
             else if (rbGiangVien.Checked) role = "GiangVien";
 
-            // (Kiểm tra dữ liệu đầu vào...)
             if (!IsValidEmail(email) || password.Length < 6 || string.IsNullOrEmpty(role))
             {
                 MessageBox.Show("Vui lòng nhập email hợp lệ, mật khẩu (ít nhất 6 ký tự) và chọn vai trò.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -56,12 +54,11 @@ namespace APP_DOAN
 
             try
             {
-
+                // --- BƯỚC 1: Đăng ký tài khoản trên Firebase Authentication ---
                 var registerResult = await RegisterWithEmailPasswordAsync(email, password);
 
                 if (!registerResult.Success)
                 {
-
                     string thongBaoLoi = registerResult.ErrorMessage switch
                     {
                         "EMAIL_EXISTS" => "Email này đã tồn tại. Vui lòng sử dụng một email khác.",
@@ -72,56 +69,42 @@ namespace APP_DOAN
                     return;
                 }
 
-                // --- BƯỚC 3B: LƯU VAI TRÒ VÀO REALTIME DATABASE ---
                 string idToken = registerResult.IdToken;
-                string localId = registerResult.LocalId; // Đây là UID (CMND)
+                string localId = registerResult.LocalId;
 
-                var userToSave = new { Email = email, Role = role, CreatedDate = DateTime.UtcNow };
+                // *** XÓA PHẦN LƯU DỮ LIỆU SƠ BỘ - KHÔNG CẦN NỮA ***/
 
-                // *** PHẦN SỬA LỖI QUAN TRỌNG NHẤT ***
-                // Tạo một client MỚI, có "CMND" (idToken)
-                var authClient = new FirebaseClient(
-                    firebaseDatabaseUrl,
-                    new FirebaseOptions
-                    {
-                        // "Factory" này sẽ "gắn" idToken vào yêu cầu
-                        AuthTokenAsyncFactory = () => Task.FromResult(idToken)
-                    });
+                // --- BƯỚC 2: GỬI EMAIL XÁC MINH ---
+                string verificationCode = GenerateVerificationCode();
+                bool emailSent = await emailService.SendVerificationCodeAsync(email, verificationCode);
 
-                // Dùng client ĐÃ XÁC THỰC (authClient) để-ghi-dữ-liệu
-                await authClient
-                    .Child("Users")
-                    .Child(localId)
-                    .PutAsync(userToSave);
+                if (!emailSent)
+                {
+                    MessageBox.Show("Không thể gửi email xác minh. Vui lòng thử lại.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
 
-                // --- BƯỚC 4: HOÀN TẤT ---
-                await SendVerificationEmailAsync(idToken);
-                MessageBox.Show("Đăng ký thành công! Vui lòng nhập thông tin chi tiết.", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Đăng ký thành công! Email xác minh đã được gửi. Vui lòng nhập mã OTP.", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                // Mở form thông tin chi tiết dựa trên vai trò
+                // --- BƯỚC 3: MỞ FORM NHẬP OTP ---
                 this.Hide();
-                if (role == "SinhVien")
+                using (frmXacMinhOTP otpForm = new frmXacMinhOTP(verificationCode, idToken, localId, email, role, firebaseDatabaseUrl))
                 {
-                    using (frmDangKyThongTin formThongTinSV = new frmDangKyThongTin(idToken, localId, email, role, firebaseDatabaseUrl))
+                    DialogResult result = otpForm.ShowDialog();
+                    if (result == DialogResult.OK)
                     {
-                        formThongTinSV.ShowDialog();
+                        // Người dùng đã xác minh OTP và hoàn thành đăng ký thông tin
+                        this.Close();
+                    }
+                    else
+                    {
+                        // Người dùng hủy, hiển thị lại form đăng ký
+                        this.Show();
                     }
                 }
-                else if (role == "GiangVien")
-                {
-                    // Sửa dòng này: thêm 'email' vào constructor
-                    using (frmDangKyThongTinGV formThongTinGV = new frmDangKyThongTinGV(localId, idToken))
-                    {
-                        formThongTinGV.ShowDialog();
-                    }
-                }
-
-                this.Close(); // Đóng form đăng ký sau khi form thông tin đã đóng
-
             }
             catch (Exception ex)
             {
-                // Nếu bạn vẫn thấy "Permission Denied", nó sẽ bị bắt ở đây
                 MessageBox.Show($"Lỗi không xác định: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
@@ -180,6 +163,11 @@ namespace APP_DOAN
             }
         }
 
+        private string GenerateVerificationCode()
+        {
+            Random rnd = new Random();
+            return rnd.Next(100000, 999999).ToString();
+        }
 
         private async Task SendVerificationEmailAsync(string idToken)
         {
@@ -220,6 +208,11 @@ namespace APP_DOAN
         private void btnBack_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void lblTitle_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

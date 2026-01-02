@@ -30,87 +30,98 @@
         {
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges1 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges2 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges3 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             panelBubble = new Guna.UI2.WinForms.Guna2Panel();
-            lblStatus = new Label();
-            lblMessage = new Guna.UI2.WinForms.Guna2HtmlLabel();
-            lnkDownloadFile = new System.Windows.Forms.LinkLabel();
+            lblStatus = new Guna.UI2.WinForms.Guna2HtmlLabel();
+            lblMessage = new Label();
+            picAvatarStatus = new Guna.UI2.WinForms.Guna2CirclePictureBox();
             panelBubble.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)picAvatarStatus).BeginInit();
             SuspendLayout();
             // 
             // panelBubble
             // 
             panelBubble.BorderRadius = 15;
-            panelBubble.Controls.Add(lblStatus);
             panelBubble.Controls.Add(lblMessage);
-            panelBubble.Controls.Add(lnkDownloadFile);
             customizableEdges1.BottomLeft = false;
             customizableEdges1.BottomRight = false;
             customizableEdges1.TopLeft = false;
             customizableEdges1.TopRight = false;
             panelBubble.CustomizableEdges = customizableEdges1;
             panelBubble.FillColor = Color.FromArgb(33, 150, 243);
+            panelBubble.Font = new Font("Segoe UI Emoji", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             panelBubble.Location = new Point(3, 4);
             panelBubble.Margin = new Padding(3, 4, 3, 4);
             panelBubble.Name = "panelBubble";
             panelBubble.ShadowDecoration.CustomizableEdges = customizableEdges2;
-            panelBubble.Size = new Size(315, 89);
+            panelBubble.Size = new Size(315, 91);
             panelBubble.TabIndex = 0;
             panelBubble.Paint += panelBubble_Paint;
             // 
             // lblStatus
             // 
-            lblStatus.AutoSize = true;
-            lblStatus.ForeColor = Color.White;
+            lblStatus.BackColor = Color.Transparent;
+            lblStatus.ForeColor = Color.Gray;
             lblStatus.Location = new Point(252, 59);
             lblStatus.Name = "lblStatus";
-            lblStatus.Size = new Size(50, 20);
+            lblStatus.Size = new Size(80, 22);
             lblStatus.TabIndex = 1;
-            lblStatus.Text = "label1";
+            lblStatus.Text = "[Đã gửi]";
             lblStatus.Click += lblStatus_Click;
             // 
             // lblMessage
             // 
+            lblMessage.AutoSize = true;
             lblMessage.BackColor = Color.Transparent;
-            lblMessage.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblMessage.Font = new Font("Segoe UI Emoji", 11F, FontStyle.Regular, GraphicsUnit.Point, 163);
             lblMessage.ForeColor = Color.White;
             lblMessage.Location = new Point(10, 10);
             lblMessage.Margin = new Padding(3, 4, 3, 4);
             lblMessage.Name = "lblMessage";
-            lblMessage.Size = new Size(122, 22);
+            lblMessage.Size = new Size(161, 30);
             lblMessage.TabIndex = 0;
             lblMessage.Text = "Nội dung tin nhắn";
+            lblMessage.UseCompatibleTextRendering = true;
             // 
-            // lnkDownloadFile
+            // picAvatarStatus
             // 
-            lnkDownloadFile.AutoSize = true;
-            lnkDownloadFile.Location = new Point(15, 35);
-            lnkDownloadFile.Name = "lnkDownloadFile";
-            lnkDownloadFile.Size = new Size(80, 15);
-            lnkDownloadFile.TabIndex = 2;
-            lnkDownloadFile.TabStop = true;
-            lnkDownloadFile.Text = "📥 Tải file";
+            picAvatarStatus.BackColor = Color.Transparent;
+            picAvatarStatus.FillColor = Color.WhiteSmoke;
+            picAvatarStatus.ImageRotate = 0F;
+            picAvatarStatus.Location = new Point(320, 70);
+            picAvatarStatus.Name = "picAvatarStatus";
+            picAvatarStatus.ShadowDecoration.CustomizableEdges = customizableEdges3;
+            picAvatarStatus.ShadowDecoration.Mode = Guna.UI2.WinForms.Enums.ShadowMode.Circle;
+            picAvatarStatus.Size = new Size(24, 24);
+            picAvatarStatus.SizeMode = PictureBoxSizeMode.Zoom;
+            picAvatarStatus.TabIndex = 2;
+            picAvatarStatus.TabStop = false;
+            picAvatarStatus.Visible = false;
+            // 
             // UC_ChatItem
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSize = true;
             BackColor = Color.Transparent;
+            Controls.Add(picAvatarStatus);
+            Controls.Add(lblStatus);
             Controls.Add(panelBubble);
             Margin = new Padding(3, 4, 3, 4);
             Name = "UC_ChatItem";
-            Size = new Size(339, 97);
+            Size = new Size(339, 99);
             Load += UC_ChatItem_Load;
             panelBubble.ResumeLayout(false);
             panelBubble.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)picAvatarStatus).EndInit();
             ResumeLayout(false);
-
         }
 
         #endregion
 
         private Guna.UI2.WinForms.Guna2Panel panelBubble;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblMessage;
-        private Label lblStatus;
-        private System.Windows.Forms.LinkLabel lnkDownloadFile;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblStatus;
+        private Label lblMessage;
+        internal Guna.UI2.WinForms.Guna2CirclePictureBox picAvatarStatus;
     }
 }

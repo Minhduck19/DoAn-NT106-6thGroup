@@ -218,8 +218,7 @@ namespace APP_DOAN
 
                     _userLastMessageTime[partnerId] = latestMsg.Timestamp;
                 }
-            }
-            catch
+            } catch
             {
             }
         }
@@ -342,7 +341,7 @@ namespace APP_DOAN
                     {
                         DisplayMessageAsBubbleWithoutReorder(msg);
                     }
-
+                    UpdateLastMessageStatus();
                     if (cachedMessages.Any())
                     {
                         var latestMessage = cachedMessages.OrderByDescending(m => m.Timestamp).First();
@@ -359,6 +358,25 @@ namespace APP_DOAN
             }
         }
 
+        // Thay thế GetUserAvatarUrl và sửa cả DisplayMessageAsBubble
+        private string GetUserAvatarUrl(string uid)
+        {
+            try
+            {
+                var contactItem = flowUserListPanel.Controls.Cast<Control>()
+                    .OfType<UC_UserContactItem>()
+                    .FirstOrDefault(c => c.Tag?.ToString() == uid);
+                
+                // TODO: Update để lấy avatar riêng cho từng user sau
+                // Tạm thời trả về rỗng
+                return "";
+            }
+            catch
+            {
+                return "";
+            }
+        }
+
         // Hiển thị tin nhắn mà không sắp xếp lại danh sách contact
         private void DisplayMessageAsBubbleWithoutReorder(Message msg)
         {
@@ -371,19 +389,44 @@ namespace APP_DOAN
                 UC_ChatItem bubble = new UC_ChatItem();
                 bubble.Width = flowChatPanel.ClientSize.Width - 25;
                 bool isMe = (msg.SenderUid == _currentUserUid);
-                string trangThai = msg.Status ?? "sent";
-                string type = msg.Type ?? "text";
+                string rawStatus = msg.Status ?? "sent";
+                string trangThai = (rawStatus == "sent") ? "Đã gửi" : rawStatus;
+                // ----------------------------
 
+                string type = msg.Type ?? "text";
+                string avatarUrl = GetUserAvatarUrl(_currentPartnerUid);
                 bubble.MessageId = GenerateMessageId(msg);
 
-                bubble.SetMessage(msg.Text, isMe, trangThai, type, msg.Timestamp, _previousMessageTimestamp);
+
+                if (type == "file" || type == "image")
+                {
+                    bubble.SetMessage(
+                        text: msg.Text, 
+                        isMe: isMe, 
+                        status: trangThai, 
+                        type: type, 
+                        timestamp: msg.Timestamp, 
+                        previousTimestamp: _previousMessageTimestamp, 
+                        fileUrl: msg.FileUrl ?? "",     
+                        fileName: msg.FileName ?? "",
+                        avatarUrl: avatarUrl
+                    );
+                }
+                else
+                {
+                    bubble.SetMessage(msg.Text, isMe, trangThai, type, msg.Timestamp, _previousMessageTimestamp, avatarUrl: avatarUrl);
+                }
+                bubble.HideStatus();
+               
 
                 _previousMessageTimestamp = msg.Timestamp;
-
                 flowChatPanel.Controls.Add(bubble);
-                flowChatPanel.ScrollControlIntoView(bubble);
+                flowChatPanel.ScrollControlIntoView(bubble);      
             }
         }
+
+        // Thêm variable để track tin nhắn cuối cùng và avatar của nó
+        private UC_ChatItem _lastMessageBubble = null;
 
         // Hiển thị tin nhắn mới và cập nhật danh sách contact
         private void DisplayMessageAsBubble(Message msg)
@@ -402,7 +445,6 @@ namespace APP_DOAN
                 }
                 catch (ObjectDisposedException)
                 {
-                    // Control was disposed between the check and invoke, gracefully exit
                     return;
                 }
             }
@@ -420,16 +462,74 @@ namespace APP_DOAN
                 UC_ChatItem newBubble = new UC_ChatItem();
                 newBubble.Width = flowChatPanel.ClientSize.Width - 25;
                 bool isMe = (msg.SenderUid == _currentUserUid);
-                string trangThai = msg.Status ?? "sent";
-                string type = msg.Type ?? "text";
+                string rawStatus = msg.Status ?? "sent";
+                string trangThai = (rawStatus == "sent") ? "Đã gửi" : rawStatus;
+                // -----------------------------------------------------
 
+                string type = msg.Type ?? "text";
                 newBubble.MessageId = GenerateMessageId(msg);
-                newBubble.SetMessage(msg.Text, isMe, trangThai, type, msg.Timestamp, _previousMessageTimestamp);
+                string avatarUrl = GetUserAvatarUrl(_currentPartnerUid);
+                newBubble.MessageId = GenerateMessageId(msg);
+                
+            
+                
+                // Debug log
+                System.Diagnostics.Debug.WriteLine($"Message Type: {type}, FileUrl: {msg.FileUrl}, FileName: {msg.FileName}, AvatarUrl: {avatarUrl}");
+                
+                // Truyền avatarUrl cho ảnh/file
+                if (type == "file" || type == "image")
+                {
+                    newBubble.SetMessage(
+                        text: msg.Text, 
+                        isMe: isMe, 
+                        status: trangThai, 
+                        type: type, 
+                        timestamp: msg.Timestamp, 
+                        previousTimestamp: _previousMessageTimestamp, 
+                        fileUrl: msg.FileUrl ?? "",   
+                        fileName: msg.FileName ?? "",
+                        avatarUrl: avatarUrl
+                    );
+                }
+                else
+                {
+                    newBubble.SetMessage(msg.Text, isMe, trangThai, type, msg.Timestamp, _previousMessageTimestamp, avatarUrl: avatarUrl);
+                }
 
                 _previousMessageTimestamp = msg.Timestamp;
 
                 flowChatPanel.Controls.Add(newBubble);
                 flowChatPanel.ScrollControlIntoView(newBubble);
+
+                if (isMe)
+                {
+                    var myMessages = flowChatPanel.Controls.Cast<Control>()
+                        .OfType<UC_ChatItem>()
+                        .Where(b =>
+                        {
+                            var parts = b.MessageId.Split('_');
+                            return parts.Length > 0 && parts[0] == _currentUserUid;
+                        })
+                        .ToList();
+
+                    foreach (var msg_bubble in myMessages)
+                    {
+                        msg_bubble.HideStatus();
+                        msg_bubble.HideAvatar();
+                    }
+
+                    newBubble.ShowStatus();
+                }
+                else
+                {
+                    // Với tin nhắn của người khác, hiển thị avatar
+                    newBubble.ShowAvatarBelow();
+                }
+
+                // Hiển thị avatar dưới tin nhắn cuối cùng
+                newBubble.picAvatarStatus.Visible = true;
+                newBubble.picAvatarStatus.ImageLocation = avatarUrl;
+                newBubble.picAvatarStatus.Location = new Point(flowChatPanel.ClientSize.Width - 40, newBubble.Bottom - 30);
 
                 if (!string.IsNullOrEmpty(_currentPartnerUid))
                 {
@@ -619,8 +719,33 @@ namespace APP_DOAN
 
         private void button1_Click(object? sender, EventArgs e)
         {
-            txtMessage.Focus();
-            SendKeys.Send("^{.}");
+            Button btnEmoji = sender as Button;
+            Point buttonLocation = btnEmoji?.PointToScreen(new Point(0, btnEmoji.Height)) ?? Cursor.Position;
+
+            EmojiPickerForm emojiForm = new EmojiPickerForm();
+            emojiForm.Location = buttonLocation;
+
+            // Khi chọn emoji, thêm vào ô tin nhắn
+            emojiForm.EmojiSelected += (s, emoji) =>
+            {
+                if (txtMessage.InvokeRequired)
+                {
+                    txtMessage.Invoke(new Action(() =>
+                    {
+                        txtMessage.Text += emoji + " ";
+                        txtMessage.Focus();
+                        txtMessage.SelectionStart = txtMessage.Text.Length;
+                    }));
+                }
+                else
+                {
+                    txtMessage.Text += emoji + " ";
+                    txtMessage.Focus();
+                    txtMessage.SelectionStart = txtMessage.Text.Length;
+                }
+            };
+
+            emojiForm.ShowDialog();
         }
 
         // Tự động scroll khi có tin nhắn mới
@@ -674,11 +799,11 @@ namespace APP_DOAN
                                 {
                                     SenderUid = _currentUserUid,
                                     SenderName = _currentUserName,
-                                    Text = fileUrl,  // URL ảnh
+                                    Text = fileName,  // Chỉ tên file, không URL
                                     Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
                                     Status = "sent",
-                                    Type = "image",  // Loại ảnh
-                                    FileUrl = fileUrl,
+                                    Type = "image",
+                                    FileUrl = fileUrl,  // URL riêng
                                     FileName = fileName
                                 };
                             }
@@ -689,11 +814,11 @@ namespace APP_DOAN
                                 {
                                     SenderUid = _currentUserUid,
                                     SenderName = _currentUserName,
-                                    Text = $"📎 {fileName}",
+                                    Text = fileName,  // Chỉ tên file, không emoji lồng
                                     Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
                                     Status = "sent",
                                     Type = "file",
-                                    FileUrl = fileUrl,
+                                    FileUrl = fileUrl,  // URL riêng
                                     FileName = fileName
                                 };
                             }
@@ -723,6 +848,36 @@ namespace APP_DOAN
             // List of supported image file extensions
             string[] imageExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".bmp" };
             return imageExtensions.Contains(extension, StringComparer.OrdinalIgnoreCase);
+        }
+
+        /// <summary>
+        /// Updates the status display of the last message bubble in the chat panel.
+        /// </summary>
+        private void UpdateLastMessageStatus()
+        {
+            // Hide status for all message bubbles except the last one sent by the current user
+            var myMessages = flowChatPanel.Controls.Cast<Control>()
+                .OfType<UC_ChatItem>()
+                .Where(b =>
+                {
+                    var parts = b.MessageId.Split('_');
+                    return parts.Length > 0 && parts[0] == _currentUserUid;
+                })
+                .ToList();
+
+            foreach (var msg_bubble in myMessages)
+            {
+                msg_bubble.HideStatus();
+            }
+
+            // Show status for the last message sent by the current user
+            var lastMyMessage = myMessages.OrderByDescending(b =>
+            {
+                var parts = b.MessageId.Split('_');
+                return parts.Length > 1 && long.TryParse(parts[1], out var ts) ? ts : 0;
+            }).FirstOrDefault();
+
+            lastMyMessage?.ShowStatus();
         }
     }
 }

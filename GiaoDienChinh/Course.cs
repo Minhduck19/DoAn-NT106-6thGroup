@@ -8,11 +8,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace APP_DOAN.GiaoDienChinh
+namespace APP_DOAN.Môn_học
 {
-    public partial class SoLuongSinhVienTrongLop : Form
+    public partial class Course : Form
     {
-        public SoLuongSinhVienTrongLop()
+        public Course()
         {
             InitializeComponent();
         }

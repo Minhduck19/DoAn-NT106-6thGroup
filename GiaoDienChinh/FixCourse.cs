@@ -52,7 +52,7 @@ namespace APP_DOAN.GiaoDienChinh
             try
             {
                 // 1. Tạo object dữ liệu mới để cập nhật
-                var updatedCourse = new CourseInfo
+                var updatedCourse = new Course
                 {
                     MaLop = maLop,
                     TenLop = newName,

@@ -1,7 +1,11 @@
-﻿using System;
+﻿using Guna.UI2.WinForms;
+using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
@@ -12,6 +16,8 @@ namespace APP_DOAN
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         [Browsable(false)]
         public string MessageId { get; set; }
+        
+        public bool IsMe { get; private set; }
 
         public event EventHandler<string> RequestUnsend;
         private bool _isMe;
@@ -19,6 +25,7 @@ namespace APP_DOAN
 
         private PictureBox picImage = new PictureBox();
         private UC_FileMessage _fileMessage = null;
+        private string _avatarUrl = "";
 
         public UC_ChatItem()
         {
@@ -51,14 +58,17 @@ namespace APP_DOAN
 
         private string _currentImageUrl = "";
 
-        public void SetMessage(string text, bool isMe, string status, string type = "text")
+        public void SetMessage(string text, bool isMe, string status, string type)
         {
             SetMessage(text, isMe, status, type, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(), null);
         }
 
-        // Hiển thị tin nhắn với định dạng bubble (text hoặc image hoặc file)
-        public void SetMessage(string text, bool isMe, string status, string type, long timestamp, long? previousTimestamp, string fileUrl = null, string fileName = null)
+        public void SetMessage(string text, bool isMe, string status, string type, long timestamp, long? previousTimestamp, string fileUrl = null, string fileName = null, string avatarUrl = "")
         {
+            _avatarUrl = avatarUrl;
+            _isMe = isMe;
+            this.IsMe = isMe;  // Thêm dòng này
+            
             // Cấu hình
             int doCongGoc = 20;
             int padding = 12;
@@ -90,7 +100,7 @@ namespace APP_DOAN
                     lblTimeSeperator = new Label();
                     lblTimeSeperator.Name = "lblTimeSeparator";
                     lblTimeSeperator.AutoSize = true;
-                    lblTimeSeperator.Font = new Font("Segoe UI", 8, FontStyle.Regular);
+                    lblTimeSeperator.Font = new Font("Segoe UI Emoji", 9F, FontStyle.Regular, GraphicsUnit.Point, 163);
                     lblTimeSeperator.ForeColor = Color.Gray;
                     lblTimeSeperator.TextAlign = ContentAlignment.MiddleCenter;
 
@@ -106,11 +116,14 @@ namespace APP_DOAN
             if (type == "image")
             {
                 // --- XỬ LÝ ẢNH ---
-                _currentImageUrl = text;
                 panelBubble.Visible = false;
                 lblMessage.Visible = false;
                 picImage.Visible = true;
                 picImage.BringToFront();
+
+                // Sử dụng fileUrl nếu có, nếu không thì dùng text
+                string imageUrlToLoad = !string.IsNullOrEmpty(fileUrl) ? fileUrl : text;
+                _currentImageUrl = imageUrlToLoad;
 
                 // Tải lại ảnh từ URL
                 picImage.Image = null;
@@ -127,16 +140,28 @@ namespace APP_DOAN
                 }
 
                 picImage.BackColor = Color.LightGray;
+                picImage.ErrorImage = null;
+                picImage.WaitOnLoad = false;
 
-                // *** FIX: Load ảnh với error handling ***
+                // *** Load ảnh với error handling ***
                 try 
                 { 
-                    picImage.LoadAsync(text);
-                    System.Diagnostics.Debug.WriteLine($"Loading image: {text}");
+                    if (!string.IsNullOrEmpty(imageUrlToLoad))
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Loading image: {imageUrlToLoad}");
+                        picImage.LoadAsync(imageUrlToLoad);
+                    }
+                    else
+                    {
+                        picImage.Image = new Bitmap(picImage.Width, picImage.Height);
+                        picImage.BackColor = Color.DarkGray;
+                        System.Diagnostics.Debug.WriteLine("Image URL is empty");
+                    }
                 } 
                 catch (Exception ex) 
                 { 
                     System.Diagnostics.Debug.WriteLine($"Error loading image: {ex.Message}");
+                    picImage.BackColor = Color.Red;
                 }
             }
             else if (type == "file")
@@ -177,7 +202,22 @@ namespace APP_DOAN
                 if (_fileMessage != null)
                     _fileMessage.Visible = false;
 
+                lblMessage.UseCompatibleTextRendering = false;
+                lblMessage.AutoEllipsis = false;
+
+                // Font fallback: Segoe UI trước, nếu không được sẽ thử Segoe UI Emoji
+                try
+                {
+                    lblMessage.Font = new Font("Segoe UI Emoji", 10, FontStyle.Regular);
+                   
+                }
+                catch
+                {
+                    lblMessage.Font = new Font("Segoe UI", 10, FontStyle.Regular);
+                }
+
                 lblMessage.Text = text;
+
                 lblMessage.MaximumSize = new Size((int)(this.Width * 0.65), 0);
                 lblMessage.AutoSize = true;
 
@@ -202,7 +242,7 @@ namespace APP_DOAN
                 LamTronGoc(panelBubble, doCongGoc);
             }
 
-            // --- TÍNH CHIỀU CAO CONTROL ---
+            // --- TÍnh chiều cao control ---
             Control doiTuongCuoi;
             if (type == "image")
                 doiTuongCuoi = picImage;
@@ -213,20 +253,25 @@ namespace APP_DOAN
 
             int timeSeparatorHeight = showTimeSeparator ? 30 : 0;
 
-            // Status (Đã xem/Đã gửi)
-            if (isMe && lblStatus != null)
+            // Status và Avatar - quản lý bởi frmMainChat
+            // Mặc định ẩn status, để frmMainChat quyết định hiển thị
+            if (lblStatus != null) 
+                lblStatus.Visible = false;
+
+            picAvatarStatus.Visible = false;
+            
+            // Tính chiều cao: thêm khoảng cách cho avatar/status nếu cần
+            int extraHeight = 0;
+            if (!_isMe) // Có thể hiển thị avatar cho tin nhắn của người khác
             {
-                lblStatus.Visible = true;
-                lblStatus.Text = (status == "read") ? "Đã xem" : "Đã gửi";
-                lblStatus.ForeColor = Color.Gray;
-                lblStatus.Location = new Point(this.Width - lblStatus.Width - 15, doiTuongCuoi.Bottom + 3);
-                this.Height = lblStatus.Bottom + 10 + timeSeparatorHeight;
+                extraHeight = 35; // Khoảng cách cho avatar
             }
-            else
+            else // Có thể hiển thị status cho tin nhắn của mình
             {
-                if (lblStatus != null) lblStatus.Visible = false;
-                this.Height = doiTuongCuoi.Bottom + 10 + timeSeparatorHeight;
+                extraHeight = 25; // Khoảng cách cho status
             }
+            
+            this.Height = doiTuongCuoi.Bottom + 10 + timeSeparatorHeight + extraHeight;
         }
 
         private System.Drawing.Drawing2D.GraphicsPath GetRoundedPath(Rectangle rect, int radius)
@@ -326,6 +371,78 @@ namespace APP_DOAN
         private void UC_ChatItem_Load(object sender, EventArgs e)
         {
 
+        }
+
+        public void ShowStatus()
+        {
+            if (lblStatus != null)
+            {
+                lblStatus.Text = "[Đã gửi]";
+                lblStatus.ForeColor = Color.Gray;
+                lblStatus.Font = new Font("Segoe UI", 9, FontStyle.Regular);
+                lblStatus.AutoSize = true;
+                lblStatus.Visible = true;
+
+                // Đặt status dưới tin nhắn của mình
+                if (_isMe)
+                {
+                    // Tính vị trí dưới panelBubble
+                    lblStatus.Location = new Point(
+                        panelBubble.Right - lblStatus.Width,
+                        panelBubble.Bottom + 5
+                    );
+                }
+                
+                this.Invalidate();
+            }
+        }
+
+        /// <summary>
+        /// Hiển thị avatar dưới tin nhắn của người khác
+        /// </summary>
+        public void ShowAvatarBelow()
+        {
+            if (picAvatarStatus != null && !string.IsNullOrEmpty(_avatarUrl))
+            {
+                picAvatarStatus.Visible = true;
+                picAvatarStatus.ImageLocation = _avatarUrl;
+
+                // Đặt avatar dưới bubble, căn phải nếu là tin nhắn của mình, căn trái nếu là người khác
+                if (_isMe)
+                {
+                    // Avatar ở phía dưới bên phải cho tin nhắn của mình
+                    picAvatarStatus.Location = new Point(
+                        panelBubble.Right - picAvatarStatus.Width,
+                        panelBubble.Bottom + 5
+                    );
+                }
+                else
+                {
+                    // Avatar ở phía dưới bên trái cho tin nhắn của người khác
+                    picAvatarStatus.Location = new Point(
+                        10,
+                        panelBubble.Bottom + 5
+                    );
+                }
+            }
+        }
+        public void HideStatus()
+        {
+            if (lblStatus != null)
+            {
+                lblStatus.Visible = false;
+            }
+        }
+
+        /// <summary>
+        /// Ẩn avatar
+        /// </summary>
+        public void HideAvatar()
+        {
+            if (picAvatarStatus != null)
+            {
+                picAvatarStatus.Visible = false;
+            }
         }
     }
 }

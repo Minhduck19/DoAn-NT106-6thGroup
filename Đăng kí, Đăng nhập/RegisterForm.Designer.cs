@@ -66,14 +66,16 @@ namespace APP_DOAN
             // 
             // lblTitle
             // 
+            lblTitle.AutoSize = false;
             lblTitle.BackColor = Color.Transparent;
             lblTitle.Font = new Font("Segoe UI", 22F, FontStyle.Bold);
             lblTitle.ForeColor = Color.FromArgb(52, 152, 219);
-            lblTitle.Location = new Point(85, 40);
+            lblTitle.Location = new Point(50, 48);
             lblTitle.Name = "lblTitle";
-            lblTitle.Size = new Size(253, 52);
+            lblTitle.Size = new Size(327, 75);
             lblTitle.TabIndex = 0;
             lblTitle.Text = "ĐĂNG KÝ MỚI";
+            lblTitle.Click += lblTitle_Click;
             // 
             // txtNewEmail
             // 
@@ -190,7 +192,6 @@ namespace APP_DOAN
             StartPosition = FormStartPosition.CenterScreen;
             Text = "RegisterForm";
             pnlRegisterCard.ResumeLayout(false);
-            pnlRegisterCard.PerformLayout();
             gbRole.ResumeLayout(false);
             gbRole.PerformLayout();
             ResumeLayout(false);

@@ -11,7 +11,7 @@ namespace APP_DOAN.GiaoDienChinh
     public partial class MonHocDaDangKy : Form
     {
         private IDisposable _courseStudentListener;
-        private bool _isLoading = false; // 🔥 CHỐNG LOAD LẶP
+        private bool _isLoading = false;
 
         private readonly string _studentUid;
         private readonly string _idToken;
@@ -119,7 +119,6 @@ namespace APP_DOAN.GiaoDienChinh
 
                     lvCourses.Items.Add(item);
                 }
-
             }
             finally
             {
@@ -141,9 +140,7 @@ namespace APP_DOAN.GiaoDienChinh
 
             ChiTietLopHoc form = new ChiTietLopHoc(course, _studentUid, _idToken);
             form.ShowDialog();
-
         }
-
 
         private void btnThoat_Click(object sender, EventArgs e)
         {
@@ -172,8 +169,6 @@ namespace APP_DOAN.GiaoDienChinh
                 lvCourses.Items.Add(item);
             }
         }
-
-
     }
 
     public class CourseModel
