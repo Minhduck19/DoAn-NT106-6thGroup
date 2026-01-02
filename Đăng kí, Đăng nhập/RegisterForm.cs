@@ -27,7 +27,7 @@ namespace APP_DOAN
             InitializeComponent();
 
 
-            if (string.IsNullOrWhiteSpace(webApiKey) || webApiKey == "YOUR_FIREBASE_WEB_API_KEY")
+            if (string.IsNullOrWhiteSpace(webApiKey) || webApiKey == "AIzaSyA7fh7FLwmHFHrwchTX1gcATk1ulr45QLs")
             {
                 MessageBox.Show("Bạn chưa thiết lập Firebase Web API Key!", "Lỗi Cấu Hình", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 this.Load += (s, e) => this.Close();
@@ -72,9 +72,6 @@ namespace APP_DOAN
                 string idToken = registerResult.IdToken;
                 string localId = registerResult.LocalId;
 
-                // *** XÓA PHẦN LƯU DỮ LIỆU SƠ BỘ - KHÔNG CẦN NỮA ***/
-
-                // --- BƯỚC 2: GỬI EMAIL XÁC MINH ---
                 string verificationCode = GenerateVerificationCode();
                 bool emailSent = await emailService.SendVerificationCodeAsync(email, verificationCode);
 
