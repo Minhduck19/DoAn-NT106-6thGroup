@@ -52,7 +52,6 @@ namespace APP_DOAN
             SetupAutoScroll();
         }
 
-        // Load danh sách người dùng và cache tin nhắn khi form khởi động
         private async void frmMainChat_Load(object sender, EventArgs e)
         {
             flowUserListPanel.ControlAdded += (s, ev) =>
@@ -83,7 +82,8 @@ namespace APP_DOAN
                         role: user.Role,
                         lastMessage: "Nhấn để chat...",
                         timestamp: "",
-                        unreadCount: 0
+                        unreadCount: 0,
+                        avatarUrl: user.AvatarUrl
                     );
 
                     contactItem.UserClicked += ContactItem_Clicked;
@@ -213,12 +213,14 @@ namespace APP_DOAN
                         role: contactItem.Role,
                         lastMessage: latestMsg.Text,
                         timestamp: ConvertTimestampToTime(latestMsg.Timestamp),
-                        unreadCount: 0
+                        unreadCount: 0,
+                        avatarUrl: contactItem.AvatarUrl
                     );
 
                     _userLastMessageTime[partnerId] = latestMsg.Timestamp;
                 }
-            } catch
+            }
+            catch
             {
             }
         }
@@ -231,7 +233,6 @@ namespace APP_DOAN
             return localDateTime.ToString("HH:mm");
         }
 
-        // Xử lý sự kiện khi người dùng click vào một contact
         private void ContactItem_Clicked(object? sender, EventArgs e)
         {
             if (sender is not UC_UserContactItem clickedItem)
@@ -262,8 +263,25 @@ namespace APP_DOAN
             lblInfoEmail.Text = clickedItem.Email;
             lblInfoRole.Text = clickedItem.Role;
 
-            _previousMessageTimestamp = null;
+           
+            string avatarUrl = clickedItem.AvatarUrl;
+            if (!string.IsNullOrEmpty(avatarUrl))
+            {
+                try
+                {
+                    guna2CirclePictureBox1.LoadAsync(avatarUrl);
+                }
+                catch
+                {
+                    guna2CirclePictureBox1.Image = Properties.Resources.avatar_trang_1_cd729c335b1;
+                }
+            }
+            else
+            {
+                guna2CirclePictureBox1.Image = Properties.Resources.avatar_trang_1_cd729c335b1;
+            }
 
+            _previousMessageTimestamp = null;
             panelInput.Enabled = true;
 
             DisplayCachedMessagesAndListenForNew();
@@ -315,7 +333,8 @@ namespace APP_DOAN
                         role: contactItem.Role,
                         lastMessage: latestMsg.Text,
                         timestamp: ConvertTimestampToTime(latestMsg.Timestamp),
-                        unreadCount: 0
+                        unreadCount: 0,
+                        avatarUrl: contactItem.AvatarUrl
                     );
 
                     _userLastMessageTime[partnerId] = latestMsg.Timestamp;
@@ -358,7 +377,7 @@ namespace APP_DOAN
             }
         }
 
-        // Thay thế GetUserAvatarUrl và sửa cả DisplayMessageAsBubble
+   
         private string GetUserAvatarUrl(string uid)
         {
             try
@@ -366,9 +385,11 @@ namespace APP_DOAN
                 var contactItem = flowUserListPanel.Controls.Cast<Control>()
                     .OfType<UC_UserContactItem>()
                     .FirstOrDefault(c => c.Tag?.ToString() == uid);
-                
-                // TODO: Update để lấy avatar riêng cho từng user sau
-                // Tạm thời trả về rỗng
+
+                if (contactItem != null && !string.IsNullOrEmpty(contactItem.AvatarUrl))
+                {
+                    return contactItem.AvatarUrl;
+                }
                 return "";
             }
             catch
@@ -401,13 +422,13 @@ namespace APP_DOAN
                 if (type == "file" || type == "image")
                 {
                     bubble.SetMessage(
-                        text: msg.Text, 
-                        isMe: isMe, 
-                        status: trangThai, 
-                        type: type, 
-                        timestamp: msg.Timestamp, 
-                        previousTimestamp: _previousMessageTimestamp, 
-                        fileUrl: msg.FileUrl ?? "",     
+                        text: msg.Text,
+                        isMe: isMe,
+                        status: trangThai,
+                        type: type,
+                        timestamp: msg.Timestamp,
+                        previousTimestamp: _previousMessageTimestamp,
+                        fileUrl: msg.FileUrl ?? "",
                         fileName: msg.FileName ?? "",
                         avatarUrl: avatarUrl
                     );
@@ -417,21 +438,19 @@ namespace APP_DOAN
                     bubble.SetMessage(msg.Text, isMe, trangThai, type, msg.Timestamp, _previousMessageTimestamp, avatarUrl: avatarUrl);
                 }
                 bubble.HideStatus();
-               
+
 
                 _previousMessageTimestamp = msg.Timestamp;
                 flowChatPanel.Controls.Add(bubble);
-                flowChatPanel.ScrollControlIntoView(bubble);      
+                flowChatPanel.ScrollControlIntoView(bubble);
             }
         }
 
-        // Thêm variable để track tin nhắn cuối cùng và avatar của nó
         private UC_ChatItem _lastMessageBubble = null;
 
-        // Hiển thị tin nhắn mới và cập nhật danh sách contact
         private void DisplayMessageAsBubble(Message msg)
         {
-            // Safety check: Ensure control and form are not disposed
+          
             if (flowChatPanel.IsDisposed)
             {
                 return;
@@ -470,23 +489,22 @@ namespace APP_DOAN
                 newBubble.MessageId = GenerateMessageId(msg);
                 string avatarUrl = GetUserAvatarUrl(_currentPartnerUid);
                 newBubble.MessageId = GenerateMessageId(msg);
-                
-            
-                
-                // Debug log
+
+
+
+               
                 System.Diagnostics.Debug.WriteLine($"Message Type: {type}, FileUrl: {msg.FileUrl}, FileName: {msg.FileName}, AvatarUrl: {avatarUrl}");
-                
-                // Truyền avatarUrl cho ảnh/file
+
                 if (type == "file" || type == "image")
                 {
                     newBubble.SetMessage(
-                        text: msg.Text, 
-                        isMe: isMe, 
-                        status: trangThai, 
-                        type: type, 
-                        timestamp: msg.Timestamp, 
-                        previousTimestamp: _previousMessageTimestamp, 
-                        fileUrl: msg.FileUrl ?? "",   
+                        text: msg.Text,
+                        isMe: isMe,
+                        status: trangThai,
+                        type: type,
+                        timestamp: msg.Timestamp,
+                        previousTimestamp: _previousMessageTimestamp,
+                        fileUrl: msg.FileUrl ?? "",
                         fileName: msg.FileName ?? "",
                         avatarUrl: avatarUrl
                     );
@@ -522,14 +540,35 @@ namespace APP_DOAN
                 }
                 else
                 {
-                    // Với tin nhắn của người khác, hiển thị avatar
                     newBubble.ShowAvatarBelow();
                 }
 
-                // Hiển thị avatar dưới tin nhắn cuối cùng
                 newBubble.picAvatarStatus.Visible = true;
-                newBubble.picAvatarStatus.ImageLocation = avatarUrl;
-                newBubble.picAvatarStatus.Location = new Point(flowChatPanel.ClientSize.Width - 40, newBubble.Bottom - 30);
+                
+                if (!string.IsNullOrEmpty(avatarUrl) && (avatarUrl.StartsWith("http://") || avatarUrl.StartsWith("https://")))
+                {
+                    try
+                    {
+                        newBubble.picAvatarStatus.LoadAsync(avatarUrl);
+                    }
+                    catch
+                    {
+                        newBubble.picAvatarStatus.Image = Properties.Resources.avatar_trang_1_cd729c335b1;
+                    }
+                }
+                else
+                {
+                    newBubble.picAvatarStatus.Image = Properties.Resources.avatar_trang_1_cd729c335b1;
+                }
+                
+                if (isMe)
+                {
+                    newBubble.picAvatarStatus.Location = new Point(flowChatPanel.ClientSize.Width - 45, newBubble.Top + newBubble.Height - 35);
+                }
+                else
+                {
+                    newBubble.picAvatarStatus.Location = new Point(5, newBubble.Top + newBubble.Height - 35);
+                }
 
                 if (!string.IsNullOrEmpty(_currentPartnerUid))
                 {
@@ -551,8 +590,6 @@ namespace APP_DOAN
                 }
             }
         }
-
-        // Sắp xếp danh sách contact theo thời gian tin nhắn mới nhất
         private void ReorderContactList()
         {
             var sortedContacts = flowUserListPanel.Controls.Cast<Control>()
@@ -578,7 +615,6 @@ namespace APP_DOAN
             flowUserListPanel.ResumeLayout();
         }
 
-        // Cập nhật thông tin tin nhắn mới nhất của contact
         private void UpdateContactItemWithLatestMessage(string partnerId, Message msg)
         {
             var contactItem = flowUserListPanel.Controls.Cast<Control>()
@@ -596,14 +632,14 @@ namespace APP_DOAN
                     role: contactItem.Role,
                     lastMessage: msg.Text,
                     timestamp: timeStr,
-                    unreadCount: 0
+                    unreadCount: 0,
+                    avatarUrl: contactItem.AvatarUrl
                 );
 
                 contactItem.Invalidate();
             }
         }
 
-        // Gửi tin nhắn văn bản
         private async void btnSend_Click(object? sender, EventArgs e)
         {
             string text = txtMessage.Text.Trim();
@@ -638,7 +674,6 @@ namespace APP_DOAN
         {
         }
 
-        // Gửi tin nhắn khi nhấn Enter
         private void txtMessage_KeyDown(object? sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter && !e.Shift)
@@ -648,7 +683,6 @@ namespace APP_DOAN
             }
         }
 
-        // Tìm kiếm contact theo tên hoặc email
         private void guna2TextBox1_TextChanged(object? sender, EventArgs e)
         {
             string keyword = guna2TextBox1.Text.Trim().ToLower();
@@ -878,6 +912,11 @@ namespace APP_DOAN
             }).FirstOrDefault();
 
             lastMyMessage?.ShowStatus();
+        }
+
+        private void guna2CirclePictureBox1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

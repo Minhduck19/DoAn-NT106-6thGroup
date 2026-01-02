@@ -16,11 +16,11 @@ namespace APP_DOAN
         public event EventHandler<string> MuteNotification;
         private string _fileUrl;
         private string _fileName;
-
+        public string AvatarUrl { get; private set; }
         private Panel pnlOnlineStatus;
         private Label lblMessage;
         private LinkLabel lnkDownloadFile;
-        private Label lblName; 
+        private Label lblName;
 
         public UC_UserContactItem()
         {
@@ -79,28 +79,77 @@ namespace APP_DOAN
         }
 
         // Gán dữ liệu contact vào control
-        public void SetData(string uid, string hoTen, string email, string role, string lastMessage, string timestamp, int unreadCount)
+        public void SetData(string uid, string hoTen, string email, string role, string lastMessage, string timestamp, int unreadCount, string avatarUrl)
         {
             this.UserId = uid;
             this.HoTen = hoTen;
             this.Email = email;
             this.Role = role;
-
+            this.AvatarUrl = avatarUrl;
             lblHoTen.Text = hoTen;
             lblLastMessage.Text = lastMessage;
             lblTimestamp.Text = timestamp;
 
-            // Hiển thị số tin nhắn chưa đọc
-            if (unreadCount > 0)
+            picAvatar.Image = Properties.Resources.avatar_trang_1_cd729c335b1;
+            
+            if (!string.IsNullOrEmpty(avatarUrl) &&
+                (avatarUrl.StartsWith("http://") || avatarUrl.StartsWith("https://")))
             {
-                btnNotification.Text = unreadCount.ToString();
-                btnNotification.Visible = true;
-            }
-            else
-            {
-                btnNotification.Visible = false;
+                _ = LoadAvatarAsync(avatarUrl);
             }
         }
+
+        private async System.Threading.Tasks.Task LoadAvatarAsync(string url)
+        {
+            try
+            {
+                using (var client = new System.Net.Http.HttpClient())
+                {
+                    client.Timeout = System.TimeSpan.FromSeconds(5);
+                    
+                    var imageBytes = await client.GetByteArrayAsync(url);
+                    
+                    if (imageBytes == null || imageBytes.Length == 0)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Empty image from URL: {url}");
+                        return;
+                    }
+                    
+                    using (var ms = new System.IO.MemoryStream(imageBytes))
+                    {
+                        var image = Image.FromStream(ms);
+                        
+                        if (picAvatar.InvokeRequired)
+                        {
+                            picAvatar.Invoke(new Action(() =>
+                            {
+                                picAvatar.Image = image;
+                            }));
+                        }
+                        else
+                        {
+                            picAvatar.Image = image;
+                        }
+                    }
+                }
+            }
+            catch (System.Net.Http.HttpRequestException ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"HTTP Error loading avatar from {url}: {ex.Message}");
+               
+            }
+            catch (System.OperationCanceledException)
+            {
+                System.Diagnostics.Debug.WriteLine($"Timeout loading avatar from {url}");
+               
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error loading avatar from {url}: {ex.Message}");
+                
+            }
+        }
+
         private void LnkDownloadFile_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             try
@@ -140,7 +189,6 @@ namespace APP_DOAN
             lnkDownloadFile.Visible = true;
         }
 
-        // Cập nhật trạng thái online/offline
         public void SetOnlineStatus(bool isOnline)
         {
             pnlOnlineStatus.BackColor = isOnline ? Color.LimeGreen : Color.Gray;
@@ -151,7 +199,6 @@ namespace APP_DOAN
             UserClicked?.Invoke(this, e);
         }
 
-        // Đánh dấu contact được chọn
         public void SetSelected(bool isSelected)
         {
             if (isSelected)
@@ -169,7 +216,6 @@ namespace APP_DOAN
             this.BackColor = Color.Transparent;
         }
 
-        // Hiệu ứng hover
         private void UC_UserContactItem_MouseEnter(object sender, EventArgs e)
         {
             if (this.BackColor != Color.FromArgb(230, 240, 255))
@@ -182,34 +228,28 @@ namespace APP_DOAN
                 this.BackColor = Color.Transparent;
         }
 
-        // Hiển thị menu khi click nút 3 chấm
         private void BtnMenu_Click(object sender, EventArgs e)
         {
             ContextMenuStrip contextMenu = new ContextMenuStrip();
-            
-            // Thêm mục xóa cuộc trò chuyện
+
             var itemDelete = contextMenu.Items.Add("Xóa cuộc trò chuyện");
-            itemDelete.Click += (s, args) => 
+            itemDelete.Click += (s, args) =>
             {
-                if (MessageBox.Show($"Bạn có chắc chắn muốn xóa cuộc trò chuyện với {HoTen}?", 
+                if (MessageBox.Show($"Bạn có chắc chắn muốn xóa cuộc trò chuyện với {HoTen}?",
                     "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
                     DeleteConversation?.Invoke(this, UserId);
                 }
             };
-
-            // Thêm mục tắt thông báo
             var itemMute = contextMenu.Items.Add("Tắt thông báo");
-            itemMute.Click += (s, args) => 
+            itemMute.Click += (s, args) =>
             {
                 MuteNotification?.Invoke(this, UserId);
             };
 
-            // Hiển thị menu tại vị trí cursor
             contextMenu.Show(Cursor.Position);
         }
 
-        // Hiệu ứng hover cho button menu
         private void BtnMenu_MouseEnter(object sender, EventArgs e)
         {
             btnMenu.ForeColor = Color.FromArgb(33, 150, 243);
@@ -220,6 +260,11 @@ namespace APP_DOAN
         {
             btnMenu.ForeColor = Color.Gray;
             btnMenu.FillColor = Color.Transparent;
+        }
+
+        private void picAvatar_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
