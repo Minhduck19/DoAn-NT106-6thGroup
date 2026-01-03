@@ -1,21 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
+﻿using APP_DOAN;
+using System;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.IO;
-using System.Net.Http;
-
 
 namespace APP_DOAN.GiaoDienChinh
 {
     public partial class Assignment : Form
     {
         private readonly string _courseId;
+
+        public Assignment(string courseId)
+        {
+            InitializeComponent();
+            _courseId = courseId;
+        }
 
         private async void Assignment_Load(object sender, EventArgs e)
         {
@@ -24,32 +23,36 @@ namespace APP_DOAN.GiaoDienChinh
             lvCourses.GridLines = true;
 
             lvCourses.Columns.Clear();
-            lvCourses.Columns.Add("Lớp học", 150);
+            lvCourses.Columns.Add("Bài tập", 160);
+            lvCourses.Columns.Add("Sinh viên", 160);
             lvCourses.Columns.Add("Tên file", 200);
-            lvCourses.Columns.Add("Link bài nộp", 300);
-            lvCourses.Columns.Add("Thời gian nộp", 150);
+            lvCourses.Columns.Add("Thời gian nộp", 180);
 
-            // 🔥 LOAD BÀI NỘP TỪ FIREBASE
             await LoadAssignmentsFromFirebase();
         }
 
-
-        public Assignment(string courseId)
+        private async Task LoadAssignmentsFromFirebase()
         {
-            InitializeComponent();
-            _courseId = courseId;
-        }
+            lvCourses.Items.Clear();
 
+            var submissions =
+                await FirebaseService.Instance.GetAssignmentsByCourseAsync(_courseId);
 
+            foreach (var s in submissions)
+            {
+                var submitTime =
+                    DateTimeOffset.FromUnixTimeSeconds(s.ThoiGianNop)
+                                  .LocalDateTime
+                                  .ToString("dd/MM/yyyy HH:mm");
 
-        private void btnThoat_Click(object sender, EventArgs e)
-        {
+                ListViewItem item = new ListViewItem(s.AssignmentId);
+                item.SubItems.Add(s.StudentUid);
+                item.SubItems.Add(s.TenFile);
+                item.SubItems.Add(submitTime);
 
-        }
-
-        private void btnThoat_Click_1(object sender, EventArgs e)
-        {
-            this.Close();
+                item.Tag = s.FileUrl;
+                lvCourses.Items.Add(item);
+            }
         }
 
         private async void lvCourses_SelectedIndexChanged(object sender, EventArgs e)
@@ -57,71 +60,27 @@ namespace APP_DOAN.GiaoDienChinh
             if (lvCourses.SelectedItems.Count == 0) return;
 
             var item = lvCourses.SelectedItems[0];
+
             string fileUrl = item.Tag.ToString();
-            string fileName = item.SubItems[1].Text;
+            string fileName = item.SubItems[2].Text; // ✅ Tên file đúng
 
-            using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+            using (SaveFileDialog dlg = new SaveFileDialog())
             {
-                saveFileDialog.FileName = fileName;
-                saveFileDialog.Title = "Lưu bài tập";
+                dlg.FileName = fileName;
+                dlg.Title = "Lưu bài nộp";
 
-                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                if (dlg.ShowDialog() == DialogResult.OK)
                 {
-                    await DownloadFileAsync(fileUrl, saveFileDialog.FileName);
-
-                    MessageBox.Show(
-                        "Tải bài tập thành công!",
-                        "Hoàn tất",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information
-                    );
+                    await CloudinaryHelper.DownloadFileAsync(fileUrl, dlg.FileName);
+                    MessageBox.Show("✅ Tải file thành công!");
                 }
             }
         }
-        public void Frm_OnSubmitSuccess(AssignmentSubmitResult result)
+
+
+        private void btnThoat_Click(object sender, EventArgs e)
         {
-            ListViewItem item = new ListViewItem(result.TenLop);
-            item.SubItems.Add(result.TenFile);
-            item.SubItems.Add(result.FileUrl);
-            item.SubItems.Add(result.ThoiGianNop.ToString("dd/MM/yyyy HH:mm"));
-
-            // Lưu URL vào Tag để dùng tải file
-            item.Tag = result.FileUrl;
-
-            lvCourses.Items.Add(item);
+            this.Close();
         }
-
-        private async Task LoadAssignmentsFromFirebase()
-        {
-            var submissions =
-            await FirebaseService.Instance.GetAssignmentsByCourseAsync(_courseId);
-
-            lvCourses.Items.Clear();
-
-            foreach (var s in submissions)
-            {
-                ListViewItem item = new ListViewItem(s.TenLop);
-                item.SubItems.Add(s.TenFile);
-                item.SubItems.Add(s.FileUrl);
-                item.SubItems.Add(s.ThoiGianNop.ToString("dd/MM/yyyy HH:mm"));
-                item.Tag = s.FileUrl;
-
-                lvCourses.Items.Add(item);
-            }
-        }
-
-
-        private async Task DownloadFileAsync(string url, string savePath)
-        {
-            using (var client = new System.Net.Http.HttpClient())
-            {
-                var data = await client.GetByteArrayAsync(url);
-                await File.WriteAllBytesAsync(savePath, data);
-            }
-        }
-
-
     }
-
-   
 }

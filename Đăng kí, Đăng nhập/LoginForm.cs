@@ -72,7 +72,7 @@ namespace APP_DOAN
                 this.Hide();
                 if (userRole == "GiangVien")
                 {
-                    using (MainForm_GiangVien mainFormGV = new MainForm_GiangVien(uid, hoTen, idToken,email))
+                    using (MainForm_GiangVien mainFormGV = new MainForm_GiangVien(uid, hoTen, idToken, email))
                     {
                         mainFormGV.ShowDialog();
                     }
@@ -193,6 +193,24 @@ namespace APP_DOAN
             btnLogin.Enabled = enabled;
             txtEmail.Enabled = enabled;
             txtPassword.Enabled = enabled;
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void linkRegister_Click(object sender, EventArgs e)
+        {
+            RegisterForm registerForm = new RegisterForm();
+            registerForm.ShowDialog();
+
+        }
+
+        private void guna2HtmlLabel1_Click(object sender, EventArgs e)
+        {
+            ForgotPasswordForm forgotPasswordForm = new ForgotPasswordForm();
+            forgotPasswordForm.ShowDialog();
         }
     }
 }

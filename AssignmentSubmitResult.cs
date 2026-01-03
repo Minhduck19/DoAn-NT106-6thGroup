@@ -1,22 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace APP_DOAN
+﻿namespace APP_DOAN
 {
     public class AssignmentSubmitResult
     {
         public string TenLop { get; set; }
         public string TenFile { get; set; }
         public string FileUrl { get; set; }
-        public DateTime ThoiGianNop { get; set; }
 
-        public string StudentUid { get; set; } // optional
+        public long ThoiGianNop { get; set; }   // 🔥 UnixTime
 
-        public AssignmentSubmitResult() { } // 🔥 BẮT BUỘC
+        public string StudentUid { get; set; }
+        public string AssignmentId { get; set; }
+
+        public AssignmentSubmitResult() { }
     }
-
-
 }

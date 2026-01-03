@@ -1,16 +1,18 @@
 ﻿using APP_DOAN;
 using Firebase.Database;
 using Firebase.Database.Query;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 public class FirebaseService
 {
     private static FirebaseService _instance;
-    // Singleton không khởi tạo trực tiếp ở đây vì cần Token
-    public static FirebaseService Instance => _instance ?? throw new Exception("FirebaseService chưa được khởi tạo với Token!");
+    public static FirebaseService Instance =>
+        _instance ?? throw new Exception("FirebaseService chưa được khởi tạo!");
 
-    public  readonly FirebaseClient _client;
+    public readonly FirebaseClient _client;
 
-    // 1. Chuyển Constructor thành private để bảo vệ Singleton
     private FirebaseService(string idToken)
     {
         _client = new FirebaseClient(
@@ -21,41 +23,53 @@ public class FirebaseService
             });
     }
 
-    // 2. Hàm khởi tạo dùng sau khi Login thành công
     public static void Initialize(string idToken)
     {
         _instance = new FirebaseService(idToken);
     }
 
-    // 🔥 LẤY BÀI NỘP THEO MÔN (GV)
+    // 🔥 GIÁO VIÊN: LẤY TOÀN BỘ BÀI NỘP CỦA MÔN HỌC
     public async Task<List<AssignmentSubmitResult>> GetAssignmentsByCourseAsync(string courseId)
     {
-        var result = new List<AssignmentSubmitResult>();
+        var results = new List<AssignmentSubmitResult>();
+
         try
         {
-            var snapshot = await _client
+            // 1. Lấy danh sách bài tập
+            var assignments = await _client
                 .Child("Assignments")
                 .Child(courseId)
-                .OnceAsync<AssignmentSubmitResult>();
+                .OnceAsync<object>();
 
-            if (snapshot != null)
+            foreach (var assignment in assignments)
             {
-                foreach (var s in snapshot)
+                string assignmentId = assignment.Key;
+
+                // 2. Lấy bài nộp của sinh viên trong mỗi bài tập
+                var submissions = await _client
+                    .Child("Assignments")
+                    .Child(courseId)
+                    .Child(assignmentId)
+                    .Child("Submissions")
+                    .OnceAsync<AssignmentSubmitResult>();
+
+                foreach (var sub in submissions)
                 {
-                    if (s.Object != null)
+                    if (sub.Object != null)
                     {
-                        // Gán thêm Key (UID sinh viên) nếu cần quản lý
-                        result.Add(s.Object);
+                        sub.Object.StudentUid = sub.Key;
+                        sub.Object.AssignmentId = assignmentId;
+
+                        results.Add(sub.Object);
                     }
                 }
             }
         }
         catch (Exception ex)
         {
-            // Log lỗi tại đây (ví dụ: lỗi 403 Forbidden do Rules)
-            Console.WriteLine(ex.Message);
+            Console.WriteLine("Firebase error: " + ex.Message);
         }
-        return result;
+
+        return results;
     }
 }
-

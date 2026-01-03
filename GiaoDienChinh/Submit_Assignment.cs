@@ -16,5 +16,10 @@ namespace APP_DOAN.GiaoDienChinh
         {
             InitializeComponent();
         }
+
+        private void Submit_Assignment_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
