@@ -4,6 +4,8 @@ using System.Windows.Forms;
 using Firebase.Database;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using System.Linq;
+using System.Drawing; // Thêm để dùng Point, Color, Image
 
 namespace APP_DOAN
 {
@@ -24,9 +26,15 @@ namespace APP_DOAN
 
         private long? _previousMessageTimestamp = null;
 
+        // Các biến Cache và theo dõi trạng thái
         private Dictionary<string, long> _userLastMessageTime = new Dictionary<string, long>();
         private Dictionary<string, List<Message>> _messageCache = new Dictionary<string, List<Message>>();
         private Dictionary<string, long> _chatLastLoadTime = new Dictionary<string, long>();
+
+        private int _chatViewportWidth = 0;
+
+        // Biến quan trọng để tránh spam update seen liên tục
+        private readonly HashSet<string> _seenUpdatedKeys = new HashSet<string>();
 
         public frmMainChat(string uid, string hoTen, string idToken)
         {
@@ -39,14 +47,17 @@ namespace APP_DOAN
             _chatService = new FirebaseChatService(FIREBASE_URL, _idToken);
             _typingTimer = new System.Windows.Forms.Timer();
             _typingTimer.Interval = 1500;
-            _typingTimer.Tick += TypingTimer_Tick;
+            _typingTimer.Tick += typingTimer_Tick; // Sửa tên hàm cho khớp
             this.FormClosing += frmMainChat_FormClosing;
 
             btnSend.Click += btnSend_Click;
             btnUpload.Click += btnUpload_Click_1;
             txtMessage.KeyDown += txtMessage_KeyDown;
 
-            if (guna2TextBox1_TextChanged != null)
+            // Sự kiện gõ text để đổi trạng thái typing
+            txtMessage.TextChanged += txtMessage_TextChanged;
+
+            if (guna2TextBox1 != null)
                 guna2TextBox1.TextChanged += guna2TextBox1_TextChanged;
 
             SetupAutoScroll();
@@ -92,25 +103,22 @@ namespace APP_DOAN
 
                     _userLastMessageTime[uid] = 0;
 
-                    contactItem.DeleteConversation += async (s, uid) =>
+                    // Xử lý sự kiện xóa cuộc trò chuyện
+                    contactItem.DeleteConversation += async (s, targetUid) =>
                     {
                         try
                         {
-                            // Xóa toàn bộ cuộc trò chuyện từ Firebase
-                            string chatId = _chatService.GenerateChatId(_currentUserUid, (string)uid);
+                            string chatId = _chatService.GenerateChatId(_currentUserUid, (string)targetUid);
                             await _chatService.DeleteChatAsync(chatId);
 
-                            // Xóa từ cache
-                            if (_messageCache.ContainsKey((string)uid))
-                                _messageCache.Remove((string)uid);
-                            if (_chatLastLoadTime.ContainsKey((string)uid))
-                                _chatLastLoadTime.Remove((string)uid);
+                            if (_messageCache.ContainsKey((string)targetUid))
+                                _messageCache.Remove((string)targetUid);
+                            if (_chatLastLoadTime.ContainsKey((string)targetUid))
+                                _chatLastLoadTime.Remove((string)targetUid);
 
-                            // Xóa từ giao diện
                             flowUserListPanel.Controls.Remove(contactItem);
 
-                            // Nếu đang chat với người này thì reset
-                            if (_currentPartnerUid == (string)uid)
+                            if (_currentPartnerUid == (string)targetUid)
                             {
                                 _currentPartnerUid = null;
                                 _currentChatId = null;
@@ -123,21 +131,18 @@ namespace APP_DOAN
                         }
                         catch (Exception ex)
                         {
-                            MessageBox.Show($"Lỗi xóa cuộc trò chuyện: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            MessageBox.Show($"Lỗi xóa: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     };
 
-                    contactItem.MuteNotification += (s, uid) =>
+                    contactItem.MuteNotification += (s, targetUid) =>
                     {
-                        // Xử lý tắt thông báo cho contact này
                         MessageBox.Show("Đã tắt thông báo cho " + contactItem.HoTen);
                     };
                 }
 
-                var userList = flowUserListPanel.Controls.Cast<Control>()
-                    .OfType<UC_UserContactItem>()
-                    .ToList();
-
+                // Load tin nhắn sơ bộ để sắp xếp list
+                var userList = flowUserListPanel.Controls.Cast<Control>().OfType<UC_UserContactItem>().ToList();
                 foreach (var contactItem in userList)
                 {
                     string? uid = contactItem.Tag?.ToString();
@@ -152,7 +157,7 @@ namespace APP_DOAN
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Lỗi khi tải danh sách người dùng: " + ex.Message);
+                MessageBox.Show("Lỗi tải danh sách user: " + ex.Message);
             }
         }
 
@@ -162,92 +167,21 @@ namespace APP_DOAN
             contactItem.AutoSize = false;
         }
 
-        // Cập nhật dữ liệu chat từ Firebase
-        private async Task RefreshChatDataAsync()
-        {
-            try
-            {
-                foreach (Control control in flowUserListPanel.Controls)
-                {
-                    if (control is UC_UserContactItem contactItem)
-                    {
-                        string? uid = contactItem.UserId ?? contactItem.Tag?.ToString();
-                        if (!string.IsNullOrEmpty(uid))
-                        {
-                            await LoadLatestMessageAsync(uid, contactItem);
-                        }
-                    }
-                }
-
-                if (!string.IsNullOrEmpty(_currentChatId))
-                {
-                    _messageSubscription?.Dispose();
-                    flowChatPanel.Controls.Clear();
-                    _previousMessageTimestamp = null;
-                    _messageSubscription = _chatService.ListenForMessages(_currentChatId, DisplayMessageAsBubble);
-                }
-
-                ReorderContactList();
-            }
-            catch
-            {
-            }
-        }
-
-        // Lấy tin nhắn mới nhất cho một người dùng
-        private async Task LoadLatestMessageAsync(string partnerId, UC_UserContactItem contactItem)
-        {
-            try
-            {
-                string chatId = _chatService.GenerateChatId(_currentUserUid, partnerId);
-
-                var messages = await _chatService.GetMessagesAsync(chatId);
-
-                if (messages.Any())
-                {
-                    var latestMsg = messages.OrderByDescending(m => m.Timestamp).First();
-                    contactItem.SetData(
-                        uid: partnerId,
-                        hoTen: contactItem.HoTen,
-                        email: contactItem.Email,
-                        role: contactItem.Role,
-                        lastMessage: latestMsg.Text,
-                        timestamp: ConvertTimestampToTime(latestMsg.Timestamp),
-                        unreadCount: 0,
-                        avatarUrl: contactItem.AvatarUrl
-                    );
-
-                    _userLastMessageTime[partnerId] = latestMsg.Timestamp;
-                }
-            }
-            catch
-            {
-            }
-        }
-
-        // Chuyển đổi timestamp Unix sang định dạng giờ (HH:mm)
-        private string ConvertTimestampToTime(long timestamp)
-        {
-            var dateTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(timestamp);
-            var localDateTime = dateTime.ToLocalTime();
-            return localDateTime.ToString("HH:mm");
-        }
 
         private void ContactItem_Clicked(object? sender, EventArgs e)
         {
-            if (sender is not UC_UserContactItem clickedItem)
-                return;
+            if (sender is not UC_UserContactItem clickedItem) return;
 
+            _seenUpdatedKeys.Clear();
+
+            // UI selection
             foreach (Control ctrl in flowUserListPanel.Controls)
             {
-                if (ctrl is UC_UserContactItem item)
-                {
-                    item.SetSelected(false);
-                }
+                if (ctrl is UC_UserContactItem item) item.SetSelected(false);
             }
-
             clickedItem.SetSelected(true);
 
+            // Hủy lắng nghe cũ
             if (_messageSubscription != null)
             {
                 _messageSubscription.Dispose();
@@ -259,22 +193,16 @@ namespace APP_DOAN
             _currentPartnerUid = clickedItem.UserId;
             _currentChatId = _chatService.GenerateChatId(_currentUserUid, _currentPartnerUid);
 
+            // Cập nhật thông tin Header
             lblInfoName.Text = clickedItem.HoTen;
             lblInfoEmail.Text = clickedItem.Email;
             lblInfoRole.Text = clickedItem.Role;
 
-           
             string avatarUrl = clickedItem.AvatarUrl;
             if (!string.IsNullOrEmpty(avatarUrl))
             {
-                try
-                {
-                    guna2CirclePictureBox1.LoadAsync(avatarUrl);
-                }
-                catch
-                {
-                    guna2CirclePictureBox1.Image = Properties.Resources.avatar_trang_1_cd729c335b1;
-                }
+                try { guna2CirclePictureBox1.LoadAsync(avatarUrl); }
+                catch { guna2CirclePictureBox1.Image = Properties.Resources.avatar_trang_1_cd729c335b1; }
             }
             else
             {
@@ -287,72 +215,13 @@ namespace APP_DOAN
             DisplayCachedMessagesAndListenForNew();
         }
 
-        // Tự động chọn contact đầu tiên khi form load
-        private void AutoSelectFirstUser()
-        {
-            try
-            {
-                var firstContact = flowUserListPanel.Controls.Cast<Control>()
-                    .OfType<UC_UserContactItem>()
-                    .FirstOrDefault();
-
-                if (firstContact != null)
-                {
-                    ContactItem_Clicked(firstContact, EventArgs.Empty);
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Error auto-selecting first user: {ex.Message}");
-            }
-        }
-
-        // Cache tất cả tin nhắn cho một người dùng
-        private async Task LoadAndCacheAllMessagesAsync(string partnerId, UC_UserContactItem contactItem)
-        {
-            try
-            {
-                string chatId = _chatService.GenerateChatId(_currentUserUid, partnerId);
-
-                var messages = await _chatService.GetMessagesAsync(chatId);
-
-                if (!_messageCache.ContainsKey(chatId))
-                {
-                    _messageCache[chatId] = new List<Message>();
-                }
-                _messageCache[chatId] = messages.ToList();
-                _chatLastLoadTime[chatId] = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-
-                if (messages.Any())
-                {
-                    var latestMsg = messages.OrderByDescending(m => m.Timestamp).First();
-                    contactItem.SetData(
-                        uid: partnerId,
-                        hoTen: contactItem.HoTen,
-                        email: contactItem.Email,
-                        role: contactItem.Role,
-                        lastMessage: latestMsg.Text,
-                        timestamp: ConvertTimestampToTime(latestMsg.Timestamp),
-                        unreadCount: 0,
-                        avatarUrl: contactItem.AvatarUrl
-                    );
-
-                    _userLastMessageTime[partnerId] = latestMsg.Timestamp;
-                }
-            }
-            catch
-            {
-            }
-        }
-
-        // Hiển thị tin nhắn đã cache và nghe tin nhắn mới
         private void DisplayCachedMessagesAndListenForNew()
         {
             try
             {
-                if (string.IsNullOrEmpty(_currentChatId))
-                    return;
+                if (string.IsNullOrEmpty(_currentChatId)) return;
 
+                // 1. Hiển thị tin nhắn từ Cache trước (nếu có)
                 if (_messageCache.ContainsKey(_currentChatId))
                 {
                     var cachedMessages = _messageCache[_currentChatId];
@@ -361,6 +230,7 @@ namespace APP_DOAN
                         DisplayMessageAsBubbleWithoutReorder(msg);
                     }
                     UpdateLastMessageStatus();
+
                     if (cachedMessages.Any())
                     {
                         var latestMessage = cachedMessages.OrderByDescending(m => m.Timestamp).First();
@@ -369,227 +239,257 @@ namespace APP_DOAN
                     }
                 }
 
-                _messageSubscription = _chatService.ListenForMessages(_currentChatId, DisplayMessageAsBubble);
+                // 2. Bắt đầu lắng nghe tin nhắn mới từ Firebase (kèm Key để update status)
+                _messageSubscription?.Dispose();
+                _messageSubscription = _chatService.ListenForMessagesWithKey(_currentChatId, DisplayMessageAsBubbleWithKey);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Lỗi: " + ex.Message);
+                MessageBox.Show("Lỗi hiển thị chat: " + ex.Message);
             }
         }
 
-   
-        private string GetUserAvatarUrl(string uid)
+        // [FIX QUAN TRỌNG 2] Hàm nhận tin nhắn real-time và update status SEEN
+        private void DisplayMessageAsBubbleWithKey(string messageKey, Message msg)
         {
-            try
-            {
-                var contactItem = flowUserListPanel.Controls.Cast<Control>()
-                    .OfType<UC_UserContactItem>()
-                    .FirstOrDefault(c => c.Tag?.ToString() == uid);
+            if (flowChatPanel.IsDisposed) return;
 
-                if (contactItem != null && !string.IsNullOrEmpty(contactItem.AvatarUrl))
-                {
-                    return contactItem.AvatarUrl;
-                }
-                return "";
-            }
-            catch
+            if (flowChatPanel.InvokeRequired)
             {
-                return "";
+                try { flowChatPanel.Invoke(new Action(() => DisplayMessageAsBubbleWithKey(messageKey, msg))); }
+                catch (ObjectDisposedException) { }
+                return;
+            }
+
+            bool isMe = (msg.SenderUid == _currentUserUid);
+
+            if (!isMe && _currentChatId != null && msg.Status != "seen" && !_seenUpdatedKeys.Contains(messageKey))
+            {
+                _seenUpdatedKeys.Add(messageKey); 
+
+                Task.Run(async () =>
+                {
+                    try
+                    {
+                        await _chatService.UpdateMessageStatusAsync(_currentChatId, messageKey, "seen");
+                        Debug.WriteLine($"Đã update seen cho key: {messageKey}");
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine("Lỗi update seen: " + ex.Message);
+                    }
+                });
+
+                msg.Status = "seen";
+            }
+
+            DisplayMessageAsBubble(msg);
+        }
+
+        private void DisplayMessageAsBubble(Message msg)
+        {
+            if (flowChatPanel.IsDisposed) return;
+
+            if (flowChatPanel.InvokeRequired)
+            {
+                try { flowChatPanel.Invoke(new Action(() => DisplayMessageAsBubble(msg))); }
+                catch (ObjectDisposedException) { }
+                return;
+            }
+
+            string msgId = GenerateMessageId(msg);
+
+            if (!_messageCache.ContainsKey(_currentChatId)) _messageCache[_currentChatId] = new List<Message>();
+            var cachedMsg = _messageCache[_currentChatId].FirstOrDefault(m => GenerateMessageId(m) == msgId);
+
+            if (cachedMsg != null) cachedMsg.Status = msg.Status;
+            else _messageCache[_currentChatId].Add(msg);
+
+            var existingBubble = flowChatPanel.Controls.Cast<Control>()
+                .OfType<UC_ChatItem>()
+                .FirstOrDefault(b => b.MessageId == msgId);
+
+            if (existingBubble != null)
+            {
+                UpdateLastMessageStatus();
+                return;
+            }
+
+            UC_ChatItem newBubble = new UC_ChatItem();
+            UpdateChatViewportWidthCache();
+            newBubble.Width = _chatViewportWidth - 25;
+            newBubble.MessageId = msgId;
+
+            bool isMe = (msg.SenderUid == _currentUserUid);
+            string type = msg.Type ?? "text";
+            string avatarUrl = GetUserAvatarUrl(_currentPartnerUid);
+
+            if (type == "file" || type == "image")
+                newBubble.SetMessage(msg.Text, isMe, msg.Status, type, msg.Timestamp, _previousMessageTimestamp, msg.FileUrl, msg.FileName, avatarUrl);
+            else
+                newBubble.SetMessage(msg.Text, isMe, msg.Status, type, msg.Timestamp, _previousMessageTimestamp, null, null, avatarUrl);
+
+            _previousMessageTimestamp = msg.Timestamp;
+
+            newBubble.HideStatusAndSeen();
+
+            if (isMe)
+            {
+                newBubble.HideAvatar();
+            }
+            else
+            {
+                newBubble.ShowAvatarBelow();
+                newBubble.picAvatarStatus.ImageLocation = avatarUrl;
+            }
+
+            flowChatPanel.Controls.Add(newBubble);
+            flowChatPanel.ScrollControlIntoView(newBubble);
+
+            UpdateLastMessageStatus();
+
+            // Cập nhật lại list bên trái nếu có tin mới
+            if (!string.IsNullOrEmpty(_currentPartnerUid))
+            {
+                _userLastMessageTime[_currentPartnerUid] = msg.Timestamp;
+                UpdateContactItemWithLatestMessage(_currentPartnerUid, msg);
+                ReorderContactList();
             }
         }
 
-        // Hiển thị tin nhắn mà không sắp xếp lại danh sách contact
         private void DisplayMessageAsBubbleWithoutReorder(Message msg)
         {
             if (flowChatPanel.InvokeRequired)
             {
                 flowChatPanel.Invoke(new Action(() => DisplayMessageAsBubbleWithoutReorder(msg)));
-            }
-            else
-            {
-                UC_ChatItem bubble = new UC_ChatItem();
-                bubble.Width = flowChatPanel.ClientSize.Width - 25;
-                bool isMe = (msg.SenderUid == _currentUserUid);
-                string rawStatus = msg.Status ?? "sent";
-                string trangThai = (rawStatus == "sent") ? "Đã gửi" : rawStatus;
-                // ----------------------------
-
-                string type = msg.Type ?? "text";
-                string avatarUrl = GetUserAvatarUrl(_currentPartnerUid);
-                bubble.MessageId = GenerateMessageId(msg);
-
-
-                if (type == "file" || type == "image")
-                {
-                    bubble.SetMessage(
-                        text: msg.Text,
-                        isMe: isMe,
-                        status: trangThai,
-                        type: type,
-                        timestamp: msg.Timestamp,
-                        previousTimestamp: _previousMessageTimestamp,
-                        fileUrl: msg.FileUrl ?? "",
-                        fileName: msg.FileName ?? "",
-                        avatarUrl: avatarUrl
-                    );
-                }
-                else
-                {
-                    bubble.SetMessage(msg.Text, isMe, trangThai, type, msg.Timestamp, _previousMessageTimestamp, avatarUrl: avatarUrl);
-                }
-                bubble.HideStatus();
-
-
-                _previousMessageTimestamp = msg.Timestamp;
-                flowChatPanel.Controls.Add(bubble);
-                flowChatPanel.ScrollControlIntoView(bubble);
-            }
-        }
-
-        private UC_ChatItem _lastMessageBubble = null;
-
-        private void DisplayMessageAsBubble(Message msg)
-        {
-          
-            if (flowChatPanel.IsDisposed)
-            {
                 return;
             }
 
-            if (flowChatPanel.InvokeRequired)
+            UC_ChatItem bubble = new UC_ChatItem();
+            UpdateChatViewportWidthCache();
+            bubble.Width = _chatViewportWidth - 25;
+            bool isMe = (msg.SenderUid == _currentUserUid);
+            string rawStatus = msg.Status ?? "sent";
+            string trangThai = (rawStatus == "sent") ? "Đã gửi" : rawStatus;
+
+            string type = msg.Type ?? "text";
+            string avatarUrl = GetUserAvatarUrl(_currentPartnerUid);
+            bubble.MessageId = GenerateMessageId(msg);
+
+            if (type == "file" || type == "image")
             {
-                try
-                {
-                    flowChatPanel.Invoke(new Action(() => DisplayMessageAsBubble(msg)));
-                }
-                catch (ObjectDisposedException)
-                {
-                    return;
-                }
+                bubble.SetMessage(
+                    text: msg.Text,
+                    isMe: isMe,
+                    status: trangThai,
+                    type: type,
+                    timestamp: msg.Timestamp,
+                    previousTimestamp: _previousMessageTimestamp,
+                    fileUrl: msg.FileUrl ?? "",
+                    fileName: msg.FileName ?? "",
+                    avatarUrl: avatarUrl
+                );
             }
             else
             {
-                bool messageExists = flowChatPanel.Controls.Cast<Control>()
-                    .OfType<UC_ChatItem>()
-                    .Any(bubble => bubble.MessageId == GenerateMessageId(msg));
+                bubble.SetMessage(msg.Text, isMe, trangThai, type, msg.Timestamp, _previousMessageTimestamp, avatarUrl: avatarUrl);
+            }
+            bubble.HideStatus();
 
-                if (messageExists)
-                {
-                    return;
-                }
-
-                UC_ChatItem newBubble = new UC_ChatItem();
-                newBubble.Width = flowChatPanel.ClientSize.Width - 25;
-                bool isMe = (msg.SenderUid == _currentUserUid);
-                string rawStatus = msg.Status ?? "sent";
-                string trangThai = (rawStatus == "sent") ? "Đã gửi" : rawStatus;
-                // -----------------------------------------------------
-
-                string type = msg.Type ?? "text";
-                newBubble.MessageId = GenerateMessageId(msg);
-                string avatarUrl = GetUserAvatarUrl(_currentPartnerUid);
-                newBubble.MessageId = GenerateMessageId(msg);
+            _previousMessageTimestamp = msg.Timestamp;
+            flowChatPanel.Controls.Add(bubble);
+            flowChatPanel.ScrollControlIntoView(bubble);
+        }
 
 
+        private void UpdateLastMessageStatus()
+        {
+            var allBubbles = flowChatPanel.Controls.Cast<Control>().OfType<UC_ChatItem>().ToList();
 
-               
-                System.Diagnostics.Debug.WriteLine($"Message Type: {type}, FileUrl: {msg.FileUrl}, FileName: {msg.FileName}, AvatarUrl: {avatarUrl}");
+            foreach (var bubble in allBubbles)
+            {
+                bubble.HideStatusAndSeen();
+                if (!bubble.IsMe) bubble.ShowAvatarBelow();
+            }
 
-                if (type == "file" || type == "image")
-                {
-                    newBubble.SetMessage(
-                        text: msg.Text,
-                        isMe: isMe,
-                        status: trangThai,
-                        type: type,
-                        timestamp: msg.Timestamp,
-                        previousTimestamp: _previousMessageTimestamp,
-                        fileUrl: msg.FileUrl ?? "",
-                        fileName: msg.FileName ?? "",
-                        avatarUrl: avatarUrl
-                    );
-                }
-                else
-                {
-                    newBubble.SetMessage(msg.Text, isMe, trangThai, type, msg.Timestamp, _previousMessageTimestamp, avatarUrl: avatarUrl);
-                }
+            var myBubbles = allBubbles.Where(b => b.IsMe).ToList();
+            if (myBubbles.Count == 0) return;
 
-                _previousMessageTimestamp = msg.Timestamp;
+            if (_messageCache.ContainsKey(_currentChatId))
+            {
+                var chatMessages = _messageCache[_currentChatId];
 
-                flowChatPanel.Controls.Add(newBubble);
-                flowChatPanel.ScrollControlIntoView(newBubble);
-
-                if (isMe)
-                {
-                    var myMessages = flowChatPanel.Controls.Cast<Control>()
-                        .OfType<UC_ChatItem>()
-                        .Where(b =>
-                        {
-                            var parts = b.MessageId.Split('_');
-                            return parts.Length > 0 && parts[0] == _currentUserUid;
-                        })
-                        .ToList();
-
-                    foreach (var msg_bubble in myMessages)
+                // Tìm tin nhắn cuối cùng ĐÃ XEM
+                var lastSeenBubble = myBubbles
+                    .Where(b =>
                     {
-                        msg_bubble.HideStatus();
-                        msg_bubble.HideAvatar();
-                    }
+                        var msgObj = chatMessages.FirstOrDefault(m => GenerateMessageId(m) == b.MessageId);
+                        return msgObj != null && msgObj.Status == "seen";
+                    })
+                    .LastOrDefault();
 
-                    newBubble.ShowStatus();
-                }
-                else
-                {
-                    newBubble.ShowAvatarBelow();
-                }
+                // Tin nhắn cuối cùng bất kỳ
+                var absolutelyLastBubble = myBubbles.LastOrDefault();
+                string partnerAvatarUrl = GetUserAvatarUrl(_currentPartnerUid);
 
-                newBubble.picAvatarStatus.Visible = true;
-                
-                if (!string.IsNullOrEmpty(avatarUrl) && (avatarUrl.StartsWith("http://") || avatarUrl.StartsWith("https://")))
+                // Hiển thị avatar người xem
+                if (lastSeenBubble != null)
                 {
-                    try
-                    {
-                        newBubble.picAvatarStatus.LoadAsync(avatarUrl);
-                    }
-                    catch
-                    {
-                        newBubble.picAvatarStatus.Image = Properties.Resources.avatar_trang_1_cd729c335b1;
-                    }
-                }
-                else
-                {
-                    newBubble.picAvatarStatus.Image = Properties.Resources.avatar_trang_1_cd729c335b1;
-                }
-                
-                if (isMe)
-                {
-                    newBubble.picAvatarStatus.Location = new Point(flowChatPanel.ClientSize.Width - 45, newBubble.Top + newBubble.Height - 35);
-                }
-                else
-                {
-                    newBubble.picAvatarStatus.Location = new Point(5, newBubble.Top + newBubble.Height - 35);
+                    lastSeenBubble.SetStatusMode("seen", partnerAvatarUrl);
                 }
 
-                if (!string.IsNullOrEmpty(_currentPartnerUid))
+                // Nếu tin cuối chưa xem -> hiện "Đã gửi"
+                if (absolutelyLastBubble != null && absolutelyLastBubble != lastSeenBubble)
                 {
-                    _userLastMessageTime[_currentPartnerUid] = msg.Timestamp;
-
-                    if (flowUserListPanel.InvokeRequired)
-                    {
-                        flowUserListPanel.Invoke(new Action(() =>
-                        {
-                            UpdateContactItemWithLatestMessage(_currentPartnerUid, msg);
-                            ReorderContactList();
-                        }));
-                    }
-                    else
-                    {
-                        UpdateContactItemWithLatestMessage(_currentPartnerUid, msg);
-                        ReorderContactList();
-                    }
+                    absolutelyLastBubble.SetStatusMode("sent", "");
                 }
             }
         }
+
+        private async Task LoadAndCacheAllMessagesAsync(string partnerId, UC_UserContactItem contactItem)
+        {
+            try
+            {
+                string chatId = _chatService.GenerateChatId(_currentUserUid, partnerId);
+                var messages = await _chatService.GetMessagesAsync(chatId);
+
+                if (!_messageCache.ContainsKey(chatId)) _messageCache[chatId] = new List<Message>();
+                _messageCache[chatId] = messages.ToList();
+                _chatLastLoadTime[chatId] = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+                if (messages.Any())
+                {
+                    var latestMsg = messages.OrderByDescending(m => m.Timestamp).First();
+                    UpdateContactItemWithLatestMessage(partnerId, latestMsg);
+                    _userLastMessageTime[partnerId] = latestMsg.Timestamp;
+                }
+            }
+            catch { }
+        }
+
+        private void UpdateContactItemWithLatestMessage(string partnerId, Message msg)
+        {
+            var contactItem = flowUserListPanel.Controls.Cast<Control>()
+                .OfType<UC_UserContactItem>()
+                .FirstOrDefault(item => item.Tag?.ToString() == partnerId);
+
+            if (contactItem != null)
+            {
+                string timeStr = ConvertTimestampToTime(msg.Timestamp);
+                contactItem.SetData(
+                    uid: partnerId,
+                    hoTen: contactItem.HoTen,
+                    email: contactItem.Email,
+                    role: contactItem.Role,
+                    lastMessage: msg.Text,
+                    timestamp: timeStr,
+                    unreadCount: 0,
+                    avatarUrl: contactItem.AvatarUrl
+                );
+                contactItem.Invalidate();
+            }
+        }
+
         private void ReorderContactList()
         {
             var sortedContacts = flowUserListPanel.Controls.Cast<Control>()
@@ -603,50 +503,19 @@ namespace APP_DOAN
                 .ToList();
 
             flowUserListPanel.Controls.Clear();
-
             flowUserListPanel.SuspendLayout();
-
             foreach (var contact in sortedContacts)
             {
                 AdjustContactItemWidth(contact);
                 flowUserListPanel.Controls.Add(contact);
             }
-
             flowUserListPanel.ResumeLayout();
-        }
-
-        private void UpdateContactItemWithLatestMessage(string partnerId, Message msg)
-        {
-            var contactItem = flowUserListPanel.Controls.Cast<Control>()
-                .OfType<UC_UserContactItem>()
-                .FirstOrDefault(item => item.Tag?.ToString() == partnerId);
-
-            if (contactItem != null)
-            {
-                string timeStr = ConvertTimestampToTime(msg.Timestamp);
-
-                contactItem.SetData(
-                    uid: partnerId,
-                    hoTen: contactItem.HoTen,
-                    email: contactItem.Email,
-                    role: contactItem.Role,
-                    lastMessage: msg.Text,
-                    timestamp: timeStr,
-                    unreadCount: 0,
-                    avatarUrl: contactItem.AvatarUrl
-                );
-
-                contactItem.Invalidate();
-            }
         }
 
         private async void btnSend_Click(object? sender, EventArgs e)
         {
             string text = txtMessage.Text.Trim();
-            if (string.IsNullOrEmpty(text) || string.IsNullOrEmpty(_currentPartnerUid) || string.IsNullOrEmpty(_currentChatId))
-            {
-                return;
-            }
+            if (string.IsNullOrEmpty(text) || string.IsNullOrEmpty(_currentPartnerUid) || string.IsNullOrEmpty(_currentChatId)) return;
 
             var message = new Message
             {
@@ -666,12 +535,28 @@ namespace APP_DOAN
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Lỗi khi gửi tin nhắn: " + ex.Message);
+                MessageBox.Show("Lỗi gửi tin nhắn: " + ex.Message);
             }
         }
 
-        private void TypingTimer_Tick(object? sender, EventArgs e)
+
+        private void txtMessage_TextChanged(object? sender, EventArgs e)
         {
+            if (!string.IsNullOrEmpty(_currentChatId))
+            {
+                _chatService.SetTypingStatus(_currentChatId, _currentUserUid, true);
+            }
+            _typingTimer.Stop();
+            _typingTimer.Start();
+        }
+
+        private void typingTimer_Tick(object? sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(_currentChatId))
+            {
+                _chatService.SetTypingStatus(_currentChatId, _currentUserUid, false);
+            }
+            _typingTimer.Stop();
         }
 
         private void txtMessage_KeyDown(object? sender, KeyEventArgs e)
@@ -686,112 +571,19 @@ namespace APP_DOAN
         private void guna2TextBox1_TextChanged(object? sender, EventArgs e)
         {
             string keyword = guna2TextBox1.Text.Trim().ToLower();
-
             flowUserListPanel.SuspendLayout();
-
             foreach (Control control in flowUserListPanel.Controls)
             {
                 if (control is UC_UserContactItem item)
                 {
                     bool matchName = item.HoTen != null && item.HoTen.ToLower().Contains(keyword);
                     bool matchEmail = item.Email != null && item.Email.ToLower().Contains(keyword);
-
                     item.Visible = matchName || matchEmail;
                 }
             }
-
             flowUserListPanel.ResumeLayout();
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                _messageSubscription?.Dispose();
-                _typingTimer?.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-
-        private void frmMainChat_FormClosing(object? sender, FormClosingEventArgs e)
-        {
-            _messageSubscription?.Dispose();
-            _messageSubscription = null;
-        }
-
-        private void lblInfoEmail_Click(object? sender, EventArgs e)
-        {
-            lblInfoEmail.Text = _currentUserName;
-        }
-
-        private void lblInfoName_Click(object? sender, EventArgs e)
-        {
-            lblInfoName.Text = _currentUserName;
-        }
-
-        // Đặt trạng thái typing khi người dùng nhập tin nhắn
-        private void txtMessage_TextChanged(object? sender, EventArgs e)
-        {
-            if (!string.IsNullOrEmpty(_currentChatId))
-            {
-                _chatService.SetTypingStatus(_currentChatId, _currentUserUid, true);
-            }
-
-            _typingTimer.Stop();
-            _typingTimer.Start();
-        }
-
-        // Tắt trạng thái typing khi hết thời gian timeout
-        private void typingTimer_Tick(object? sender, EventArgs e)
-        {
-            if (!string.IsNullOrEmpty(_currentChatId))
-            {
-                _chatService.SetTypingStatus(_currentChatId, _currentUserUid, false);
-            }
-            _typingTimer.Stop();
-        }
-
-        private void button1_Click(object? sender, EventArgs e)
-        {
-            Button btnEmoji = sender as Button;
-            Point buttonLocation = btnEmoji?.PointToScreen(new Point(0, btnEmoji.Height)) ?? Cursor.Position;
-
-            EmojiPickerForm emojiForm = new EmojiPickerForm();
-            emojiForm.Location = buttonLocation;
-
-            // Khi chọn emoji, thêm vào ô tin nhắn
-            emojiForm.EmojiSelected += (s, emoji) =>
-            {
-                if (txtMessage.InvokeRequired)
-                {
-                    txtMessage.Invoke(new Action(() =>
-                    {
-                        txtMessage.Text += emoji + " ";
-                        txtMessage.Focus();
-                        txtMessage.SelectionStart = txtMessage.Text.Length;
-                    }));
-                }
-                else
-                {
-                    txtMessage.Text += emoji + " ";
-                    txtMessage.Focus();
-                    txtMessage.SelectionStart = txtMessage.Text.Length;
-                }
-            };
-
-            emojiForm.ShowDialog();
-        }
-
-        // Tự động scroll khi có tin nhắn mới
-        private void SetupAutoScroll()
-        {
-            flowChatPanel.ControlAdded += (s, ev) =>
-            {
-                flowChatPanel.ScrollControlIntoView(ev.Control);
-            };
-        }
-
-        // Gửi hình ảnh hoặc file qua chat
         private async void btnUpload_Click_1(object? sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(_currentPartnerUid))
@@ -812,55 +604,26 @@ namespace APP_DOAN
                         string filePath = openFileDialog.FileName;
                         string fileName = System.IO.Path.GetFileName(filePath);
                         string fileExtension = System.IO.Path.GetExtension(filePath).ToLower();
-
-                        // Xác định loại file (ảnh hay tài liệu)
                         bool isImage = IsImageFile(fileExtension);
 
-                        // Hiển thị thông báo đang upload
                         MessageBox.Show("Đang tải file...", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                         using (var fileStream = System.IO.File.OpenRead(filePath))
                         {
                             string fileUrl = await _chatService.UploadFile(fileStream, fileName);
-
-                            // Tạo tin nhắn phù hợp dựa trên loại file
-                            Message fileMessage;
-
-                            if (isImage)
+                            Message fileMessage = new Message
                             {
-                                // Tin nhắn ảnh
-                                fileMessage = new Message
-                                {
-                                    SenderUid = _currentUserUid,
-                                    SenderName = _currentUserName,
-                                    Text = fileName,  // Chỉ tên file, không URL
-                                    Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                                    Status = "sent",
-                                    Type = "image",
-                                    FileUrl = fileUrl,  // URL riêng
-                                    FileName = fileName
-                                };
-                            }
-                            else
-                            {
-                                // Tin nhắn file thường
-                                fileMessage = new Message
-                                {
-                                    SenderUid = _currentUserUid,
-                                    SenderName = _currentUserName,
-                                    Text = fileName,  // Chỉ tên file, không emoji lồng
-                                    Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                                    Status = "sent",
-                                    Type = "file",
-                                    FileUrl = fileUrl,  // URL riêng
-                                    FileName = fileName
-                                };
-                            }
+                                SenderUid = _currentUserUid,
+                                SenderName = _currentUserName,
+                                Text = fileName,
+                                Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                                Status = "sent",
+                                Type = isImage ? "image" : "file",
+                                FileUrl = fileUrl,
+                                FileName = fileName
+                            };
 
-                            // Gửi tin nhắn
                             await _chatService.SendMessageAsync(_currentChatId, fileMessage);
-
-                            MessageBox.Show("Gửi file thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         }
                     }
                     catch (Exception ex)
@@ -871,7 +634,30 @@ namespace APP_DOAN
             }
         }
 
-        // Tạo ID duy nhất cho mỗi tin nhắn
+        private void button1_Click(object? sender, EventArgs e)
+        {
+            Button btnEmoji = sender as Button;
+            Point buttonLocation = btnEmoji?.PointToScreen(new Point(0, btnEmoji.Height)) ?? Cursor.Position;
+            EmojiPickerForm emojiForm = new EmojiPickerForm();
+            emojiForm.Location = buttonLocation;
+            emojiForm.EmojiSelected += (s, emoji) =>
+            {
+                if (txtMessage.InvokeRequired)
+                    txtMessage.Invoke(new Action(() => { txtMessage.Text += emoji + " "; txtMessage.Focus(); txtMessage.SelectionStart = txtMessage.Text.Length; }));
+                else
+                {
+                    txtMessage.Text += emoji + " "; txtMessage.Focus(); txtMessage.SelectionStart = txtMessage.Text.Length;
+                }
+            };
+            emojiForm.ShowDialog();
+        }
+
+        private string ConvertTimestampToTime(long timestamp)
+        {
+            var dateTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(timestamp);
+            return dateTime.ToLocalTime().ToString("HH:mm");
+        }
+
         private string GenerateMessageId(Message msg)
         {
             return $"{msg.SenderUid}_{msg.Timestamp}";
@@ -879,44 +665,73 @@ namespace APP_DOAN
 
         private bool IsImageFile(string extension)
         {
-            // List of supported image file extensions
             string[] imageExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".bmp" };
             return imageExtensions.Contains(extension, StringComparer.OrdinalIgnoreCase);
         }
 
-        /// <summary>
-        /// Updates the status display of the last message bubble in the chat panel.
-        /// </summary>
-        private void UpdateLastMessageStatus()
+        private string GetUserAvatarUrl(string uid)
         {
-            // Hide status for all message bubbles except the last one sent by the current user
-            var myMessages = flowChatPanel.Controls.Cast<Control>()
-                .OfType<UC_ChatItem>()
-                .Where(b =>
-                {
-                    var parts = b.MessageId.Split('_');
-                    return parts.Length > 0 && parts[0] == _currentUserUid;
-                })
-                .ToList();
-
-            foreach (var msg_bubble in myMessages)
+            try
             {
-                msg_bubble.HideStatus();
+                var contactItem = flowUserListPanel.Controls.Cast<Control>()
+                    .OfType<UC_UserContactItem>()
+                    .FirstOrDefault(c => c.Tag?.ToString() == uid);
+                return contactItem != null && !string.IsNullOrEmpty(contactItem.AvatarUrl) ? contactItem.AvatarUrl : "";
             }
-
-            // Show status for the last message sent by the current user
-            var lastMyMessage = myMessages.OrderByDescending(b =>
-            {
-                var parts = b.MessageId.Split('_');
-                return parts.Length > 1 && long.TryParse(parts[1], out var ts) ? ts : 0;
-            }).FirstOrDefault();
-
-            lastMyMessage?.ShowStatus();
+            catch { return ""; }
         }
 
-        private void guna2CirclePictureBox1_Click(object sender, EventArgs e)
+        private void AutoSelectFirstUser()
         {
-
+            try
+            {
+                var firstContact = flowUserListPanel.Controls.Cast<Control>().OfType<UC_UserContactItem>().FirstOrDefault();
+                if (firstContact != null) ContactItem_Clicked(firstContact, EventArgs.Empty);
+            }
+            catch { }
         }
+
+        private void SetupAutoScroll()
+        {
+            flowChatPanel.ControlAdded += (s, ev) =>
+            {
+                UpdateChatViewportWidthCache();
+                flowChatPanel.ScrollControlIntoView(ev.Control);
+            };
+            flowChatPanel.SizeChanged += (s, e) => UpdateChatViewportWidthCache();
+            this.Shown += (s, e) => UpdateChatViewportWidthCache();
+        }
+
+        private int GetChatViewportWidth()
+        {
+            int w = flowChatPanel.DisplayRectangle.Width;
+            if (w <= 0) w = flowChatPanel.ClientSize.Width;
+            return w;
+        }
+
+        private void UpdateChatViewportWidthCache()
+        {
+            _chatViewportWidth = GetChatViewportWidth();
+        }
+
+        private void frmMainChat_FormClosing(object? sender, FormClosingEventArgs e)
+        {
+            _messageSubscription?.Dispose();
+            _messageSubscription = null;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _messageSubscription?.Dispose();
+                _typingTimer?.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        private void lblInfoEmail_Click(object? sender, EventArgs e) { }
+        private void lblInfoName_Click(object? sender, EventArgs e) { }
+        private void guna2CirclePictureBox1_Click(object sender, EventArgs e) { }
     }
 }

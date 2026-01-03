@@ -176,5 +176,32 @@ namespace APP_DOAN
         {
             await _firebaseClient.Child("Chats").Child(chatId).DeleteAsync();
         }
+
+        public async Task UpdateMessageStatusAsync(string chatId, string messageKey, string status)
+        {
+            await _firebaseClient
+                .Child("Chats")
+                .Child(chatId)
+                .Child("Messages") 
+                .Child(messageKey)
+                .Child("Status")
+                .PutAsync($"\"{status}\""); 
+        }
+
+        public IDisposable ListenForMessagesWithKey(string chatId, Action<string, Message> onMessageReceived)
+        {
+            return _firebaseClient
+                .Child("Chats")
+                .Child(chatId)
+                .Child("Messages")
+                .AsObservable<Message>()
+                .Subscribe(firebaseEvent =>
+                {
+                    if (firebaseEvent.Object != null && !string.IsNullOrEmpty(firebaseEvent.Key))
+                    {
+                        onMessageReceived?.Invoke(firebaseEvent.Key, firebaseEvent.Object);
+                    }
+                });
+        }
     }
 }
