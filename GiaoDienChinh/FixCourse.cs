@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using APP_DOAN.Services;
 
 namespace APP_DOAN.GiaoDienChinh
 {
@@ -36,28 +37,48 @@ namespace APP_DOAN.GiaoDienChinh
             this.siSo = siSo;
         }
 
-        private void btnCapNhat_Click(object sender, EventArgs e)
+        private async void btnCapNhat_Click(object sender, EventArgs e)
         {
+            string maLop = txtMaLop.Text.Trim();
             string newName = txtTenLop.Text.Trim();
             string newSiSoStr = txtSiSo.Text.Trim();
 
-            if (string.IsNullOrEmpty(newName) || string.IsNullOrEmpty(newSiSoStr))
+            if (string.IsNullOrEmpty(newName) || !int.TryParse(newSiSoStr, out int newSiSo))
             {
-                MessageBox.Show("Vui lòng điền đầy đủ thông tin.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Vui lòng nhập dữ liệu hợp lệ.");
                 return;
             }
 
-            if (!int.TryParse(newSiSoStr, out int newSiSo))
+            try
             {
-                MessageBox.Show("Sĩ số phải là số nguyên.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
+                // 1. Tạo object dữ liệu mới để cập nhật
+                var updatedCourse = new Course
+                {
+                    MaLop = maLop,
+                    TenLop = newName,
+                    SiSo = newSiSo,
+                    GiangVienUid = FirebaseApi.CurrentUid // Giữ nguyên định danh chủ sở hữu
+                };
+
+                // 2. Gửi lên Firebase (Sử dụng MaLop làm Key để ghi đè)
+                bool success = await FirebaseApi.Put($"Courses/{maLop}", updatedCourse);
+
+                if (success)
+                {
+                    // 3. Cập nhật giao diện thông qua delegate
+                    OnCourseUpdated?.Invoke(maLop, newName, newSiSo);
+                    MessageBox.Show("Cập nhật lên hệ thống thành công!", "Thông báo");
+                    this.Close();
+                }
+                else
+                {
+                    MessageBox.Show("Lỗi kết nối Firebase khi cập nhật.");
+                }
             }
-
-            // Gọi delegate cập nhật ListView
-            OnCourseUpdated?.Invoke(txtMaLop.Text, newName, newSiSo);
-
-            MessageBox.Show("Cập nhật lớp thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            this.Close();
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi: {ex.Message}");
+            }
         }
 
         private void btnDong_Click(object sender, EventArgs e)

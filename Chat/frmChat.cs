@@ -84,7 +84,7 @@ namespace APP_DOAN
             }
         }
 
-        // === HÀM HIỂN THỊ BONG BÓNG MỚI (Giữ nguyên) ===
+        // === HÀM HIỂN THỊ BONG BÓNG MỚI ===
         private void DisplayMessageAsBubble(Message msg)
         {
             if (flowChatPanel.InvokeRequired)
@@ -95,8 +95,14 @@ namespace APP_DOAN
             {
                 UC_ChatItem bubble = new UC_ChatItem();
                 bubble.Width = flowChatPanel.ClientSize.Width - 25;
+
                 bool isMe = (msg.SenderUid == _currentUserUid);
-                bubble.SetMessage(msg.Text, isMe);
+                string trangThai = msg.Status ?? "sent";
+                string type = msg.Type ?? "text";
+
+                // Gọi SetMessage với đủ tham số, avatarUrl để trống tạm thời
+                bubble.SetMessage(msg.Text, isMe, trangThai, type, msg.Timestamp, null, avatarUrl: "");
+
                 flowChatPanel.Controls.Add(bubble);
                 flowChatPanel.ScrollControlIntoView(bubble);
             }

@@ -10,24 +10,22 @@ namespace APP_DOAN
 {
     public partial class frmDangKyThongTinGV : Form
     {
-
         private readonly string _idToken;
         private readonly string _localId;
         private readonly string _email;
         private readonly string _role;
-        private readonly string _firebaseDatabaseUrl;
+        private readonly string _firebaseDatabaseUrl = "https://nt106-minhduc-default-rtdb.firebaseio.com/";
 
         public GiangVienData NewGiangVienInfo { get; private set; }
 
-
-        public frmDangKyThongTinGV(string idToken, string localId, string email, string role, string dbUrl)
+        // Constructor cập nhật - thêm email và role
+        public frmDangKyThongTinGV(string localId, string idToken, string email, string role)
         {
             InitializeComponent();
             _idToken = idToken;
             _localId = localId;
             _email = email;
             _role = role;
-            _firebaseDatabaseUrl = dbUrl;
         }
 
         private void frmDangKyThongTinGV_Load(object sender, EventArgs e)
@@ -41,16 +39,23 @@ namespace APP_DOAN
             string hoTen = txtHoTen.Text.Trim();
             string maGV = txtMaGiangVien.Text.Trim();
             string ngaySinh = dtpNgaySinh.Text;
+            DateTime birthDate = dtpNgaySinh.Value;
             string khoa = cboKhoa.Text;
             string chucVu = cboChucVu.Text;
-
             string bang = txtBang.Text.Trim();
 
-
             // 2. Kiểm tra dữ liệu
-            if (string.IsNullOrEmpty(hoTen) || string.IsNullOrEmpty(maGV))
+            if (string.IsNullOrEmpty(hoTen) || string.IsNullOrEmpty(maGV) || string.IsNullOrEmpty(khoa))
             {
-                MessageBox.Show("Vui lòng nhập đầy đủ Họ tên và Mã giảng viên.", "Thiếu thông tin", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Vui lòng nhập đầy đủ Họ tên, Mã giảng viên, và Khoa.", "Thiếu thông tin", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // 3. Kiểm tra tuổi >= 18
+            if (!IsAgeValid(birthDate))
+            {
+                MessageBox.Show("Giảng viên phải từ 18 tuổi trở lên.", "Tuổi không hợp lệ", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                dtpNgaySinh.Focus();
                 return;
             }
 
@@ -59,7 +64,7 @@ namespace APP_DOAN
 
             try
             {
-                // 3. Tạo đối tượng Giảng viên để lưu
+                // 4. Tạo đối tượng Giảng viên hoàn chỉnh để lưu
                 var giangVienProfile = new
                 {
                     Email = _email,
@@ -73,7 +78,7 @@ namespace APP_DOAN
                     CreatedDate = DateTime.UtcNow
                 };
 
-                // 4. Kết nối Firebase với quyền xác thực (idToken)
+                // 5. Kết nối Firebase với quyền xác thực (idToken)
                 var authClient = new FirebaseClient(
                     _firebaseDatabaseUrl,
                     new FirebaseOptions
@@ -81,10 +86,10 @@ namespace APP_DOAN
                         AuthTokenAsyncFactory = () => Task.FromResult(_idToken)
                     });
 
-                // 5. Lưu vào Realtime Database dùng UID (localId)
+                // 6. Lưu vào Realtime Database dùng UID (localId)
                 await authClient
                     .Child("Users")
-                    .Child(_localId) // Dùng UID làm key
+                    .Child(_localId)
                     .PutAsync(giangVienProfile);
 
                 NewGiangVienInfo = new GiangVienData
@@ -95,22 +100,41 @@ namespace APP_DOAN
                     Khoa = khoa,
                     MonHoc = chucVu,
                     Bang = bang,
-                    Email = _email,
+                    Email = _email
                 };
 
-
-
                 MessageBox.Show("Hoàn tất đăng ký thông tin giảng viên!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                this.DialogResult = DialogResult.OK; // Báo thành công
-                
+                this.DialogResult = DialogResult.OK;
                 this.Close();
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Lỗi khi lưu thông tin: " + ex.Message, "Lỗi Firebase", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
                 ToggleUi(true);
                 Cursor = Cursors.Default;
             }
+        }
+
+        /// <summary>
+        /// Kiểm tra xem tuổi của người dùng có >= 18 tuổi hay không
+        /// </summary>
+        /// <param name="birthDate">Ngày sinh</param>
+        /// <returns>true nếu tuổi >= 18, false nếu tuổi < 18</returns>
+        private bool IsAgeValid(DateTime birthDate)
+        {
+            DateTime today = DateTime.Today;
+            int age = today.Year - birthDate.Year;
+
+            // Nếu chưa qua sinh nhật trong năm nay thì trừ đi 1 tuổi
+            if (birthDate.Date > today.AddYears(-age))
+            {
+                age--;
+            }
+
+            return age >= 18;
         }
 
         private void ToggleUi(bool enabled)
@@ -120,6 +144,7 @@ namespace APP_DOAN
             dtpNgaySinh.Enabled = enabled;
             cboKhoa.Enabled = enabled;
             cboChucVu.Enabled = enabled;
+            txtBang.Enabled = enabled;
             btnHoanTat.Enabled = enabled;
         }
 
@@ -137,6 +162,11 @@ namespace APP_DOAN
                     this.DialogResult = DialogResult.Cancel;
                 }
             }
+        }
+
+        private void dtpNgaySinh_ValueChanged(object sender, EventArgs e)
+        {
+            
         }
     }
 }

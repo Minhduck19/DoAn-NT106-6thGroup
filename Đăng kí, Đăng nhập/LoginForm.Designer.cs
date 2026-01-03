@@ -156,7 +156,7 @@ namespace APP_DOAN
             btnCancel.Size = new Size(250, 45);
             btnCancel.TabIndex = 4;
             btnCancel.Text = "Hủy";
-            btnCancel.Click += btnCancel_Click_1;
+            btnCancel.Click += btnCancel_Click;
             // 
             // linkRegister
             // 
@@ -169,7 +169,7 @@ namespace APP_DOAN
             linkRegister.Size = new Size(259, 25);
             linkRegister.TabIndex = 5;
             linkRegister.Text = "<a href='#'>Chưa có tài khoản? Đăng ký ngay</a>";
-            linkRegister.Click += linkRegister_Click_1;
+            linkRegister.Click += linkRegister_Click;
             // 
             // label1
             // 

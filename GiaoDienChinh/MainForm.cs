@@ -1,16 +1,20 @@
-﻿using System;
+﻿using APP_DOAN.GiaoDienChinh;
+using APP_DOAN.Môn_học;
+using APP_DOAN.Services; // Namespace chứa FirebaseService
+using Firebase.Database;
+using Firebase.Database.Query;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
-using APP_DOAN.GiaoDienChinh;
-using Firebase.Database;
-using Firebase.Database.Query;
 
 namespace APP_DOAN
 {
     public partial class MainForm : Form
     {
+        private IDisposable _courseListener;
         private readonly string _currentUserUid;
         private readonly string _currentUserName;
         private readonly string _loggedInEmail;
@@ -19,6 +23,7 @@ namespace APP_DOAN
 
         private bool isLoggingOut = false;
         private List<Course> _allCourses = new();
+
         public MainForm(string uid, string hoTen, string email, string token)
         {
             InitializeComponent();
@@ -28,302 +33,311 @@ namespace APP_DOAN
             _loggedInEmail = email;
             _idToken = token;
 
-            //Tạo FireBase client với token xác thực
-            _firebaseClient = new FirebaseClient(
-                "https://nt106-minhduc-default-rtdb.firebaseio.com/",
-                new FirebaseOptions
-                {
-                    AuthTokenAsyncFactory = () => Task.FromResult(token)
-                }
-            );
+            // Dùng Singleton FirebaseService nếu đã có, hoặc tạo mới nếu chưa
+            // Ưu tiên dùng Singleton để đồng bộ
+            try
+            {
+                _firebaseClient = FirebaseService.Instance._client;
+            }
+            catch
+            {
+                // Fallback nếu chưa initialize (ít khi xảy ra nếu login đúng)
+                _firebaseClient = new FirebaseClient(
+                    "https://nt106-minhduc-default-rtdb.firebaseio.com/",
+                    new FirebaseOptions { AuthTokenAsyncFactory = () => Task.FromResult(token) }
+                );
+            }
         }
 
         private async void MainForm_Load(object sender, EventArgs e)
         {
+            // Đảm bảo Service đã chạy
+            try { FirebaseService.Initialize(_idToken); } catch { }
+
             lblWelcome.Text = $"Chào mừng,\n{_currentUserName} (Sinh viên)";
-            SetupJoinedListViewColumns();
+
             await LoadClassDataFromFirebase();
-            LoadMockClassData();
+            ListenCourseChanges();
         }
 
-        private void LoadMockClassData()
-        {
-            _allCourses.Clear(); // Đảm bảo danh sách trống trước khi thêm
-
-            // Dữ liệu lớp học cố định (MOCK DATA)
-            var testCourses = new List<Course>
-    {
-        // Lớp 1: Đã tham gia (IsJoined = true)
-        new Course("MOCK001", "Lập Trình Web Nâng Cao (TEST)", "TS. Nguyễn Văn Test", true)
-        {
-            // Quan trọng: Thêm UID hiện tại vào danh sách Students để giả lập đã tham gia
-            Students = new List<string> { _currentUserUid }
-        },
-        // Lớp 2: Đã tham gia (IsJoined = true)
-        new Course("MOCK002", "Phân Tích Thiết Kế Hệ Thống", "GS. Lê Thị Giả Lập", true)
-        {
-            Students = new List<string> { _currentUserUid }
-        },
-        // Lớp 3: CHƯA tham gia (IsJoined = false)
-        new Course("MOCK003", "Kinh Tế Vi Mô", "ThS. Phạm Mock Data", false)
-    };
-
-            _allCourses.AddRange(testCourses);
-
-            // Điền dữ liệu các lớp ĐÃ tham gia vào ListView
-            Test();
-        }
-
-        private void Test()
-        {
-            if (lvJoinedCourses == null) return;
-
-            lvJoinedCourses.Items.Clear();
-
-            // Lọc ra các lớp có IsJoined = true
-            var joined = _allCourses.Where(c => c.IsJoined).ToList();
-
-            if (joined.Count == 0)
-            {
-                var item = new ListViewItem("Không có lớp nào."); // Thay đổi nội dung hiển thị
-                item.SubItems.Add("-");
-                lvJoinedCourses.Items.Add(item);
-                return;
-            }
-
-            foreach (var c in joined)
-            {
-                var item = new ListViewItem(c.Name);
-                item.SubItems.Add(c.Instructor);
-                item.Tag = c.Id;
-                lvJoinedCourses.Items.Add(item);
-            }
-        }
-
-        private void SetupJoinedListViewColumns()
-        {
-            lvJoinedCourses.Columns.Clear();
-            lvJoinedCourses.Columns.Add("Tên môn", 380);
-            lvJoinedCourses.Columns.Add("Giảng viên", 200);
-        }
-
-        // Tải dữ liệu lớp học từ Firebase
+        // --- XỬ LÝ FIREBASE ---
         private async Task LoadClassDataFromFirebase()
         {
             try
             {
-                var firebaseCourses = await _firebaseClient
+                // 1. Hiển thị trạng thái "Đang tải..." để người dùng không thấy trống trơn
+                if (_allCourses.Count == 0) // Chỉ hiện khi chưa có dữ liệu
+                {
+                    flpCourses.Controls.Clear();
+                    Label lblLoading = new Label()
+                    {
+                        Text = "Đang tải dữ liệu...",
+                        AutoSize = true,
+                        Font = new Font("Segoe UI", 12, FontStyle.Italic),
+                        ForeColor = Color.Gray,
+                        Location = new Point(20, 20)
+                    };
+                    flpCourses.Controls.Add(lblLoading);
+                }
+
+                // 2. Tạo các Task để lấy dữ liệu song song (Chạy cùng lúc)
+                var taskAllCourses = _firebaseClient
                     .Child("Courses")
                     .OnceAsync<Course>();
+
+                var taskStudentMap = _firebaseClient
+                    .Child("CourseStudents")
+                    .OnceAsync<Dictionary<string, StudentInfo>>(); // Lưu ý: Dùng StudentInfo như đã sửa
+
+                // 3. Chờ cả 2 nhiệm vụ hoàn thành cùng lúc (Tốc độ nhanh gấp đôi)
+                await Task.WhenAll(taskAllCourses, taskStudentMap);
+
+                // 4. Lấy kết quả từ các Task đã hoàn thành
+                var firebaseCourses = taskAllCourses.Result;
+                var courseStudentsSnapshot = taskStudentMap.Result;
+
+                // 5. Xử lý logic ghép nối dữ liệu (Phần này giữ nguyên logic của bạn)
+                var joinedCourseIds = new HashSet<string>();
+
+                if (courseStudentsSnapshot != null)
+                {
+                    joinedCourseIds = new HashSet<string>(
+                        courseStudentsSnapshot
+                            .Where(cs => cs.Object != null &&
+                                         cs.Object.ContainsKey(_currentUserUid))
+                            .Select(cs => cs.Key)
+                    );
+                }
 
                 _allCourses.Clear();
 
                 foreach (var c in firebaseCourses)
                 {
-                    bool isJoined = false;
+                    if (c.Object == null) continue;
 
-                    //  Kiểm tra user có tham gia lớp hay chưa
-                    if (c.Object != null && c.Object.Students != null)
-                    {
-                        if (c.Object.Students.Contains(_currentUserUid))
-                            isJoined = true;
-                    }
+                    bool isJoined = joinedCourseIds.Contains(c.Key);
 
                     _allCourses.Add(new Course(
                         c.Key,
-                        c.Object.Name,
-                        c.Object.Instructor,
+                        c.Object.TenLop ?? "Chưa đặt tên",
+                        c.Object.Instructor ?? "N/A",
                         isJoined
                     ));
                 }
 
-                PopulateJoinedCourses();
+                // 6. Vẽ lại giao diện ngay lập tức
+                PopulateAllCourses();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Không thể tải dữ liệu từ Firebase!\n\n{ex.Message}",
-                    "Lỗi",
+                MessageBox.Show(
+                    "Lỗi tải lớp:\n" + ex.Message,
+                    "Firebase Error",
                     MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                    MessageBoxIcon.Error
+                );
             }
         }
 
-
-        private void PopulateJoinedCourses()
+        private void ListenCourseChanges()
         {
-            lvJoinedCourses.Items.Clear();
+            _courseListener = _firebaseClient
+                .Child("CourseStudents")
+                .AsObservable<object>()
+                .Subscribe(_ =>
+                {
+                    if (!IsHandleCreated) return;
+                    BeginInvoke(new Action(async () =>
+                    {
+                        await LoadClassDataFromFirebase();
+                    }));
+                });
+        }
 
-            var joined = _allCourses.Where(c => c.IsJoined).ToList();
+        // --- HÀM QUAN TRỌNG: VẼ GIAO DIỆN CARD (THAY THẾ LISTVIEW) ---
+        private void PopulateAllCourses(List<Course> listToDisplay = null)
+        {
+            // Nếu không truyền list cụ thể thì lấy tất cả các lớp đã join
+            var sourceList = listToDisplay ?? _allCourses;
 
-            if (joined.Count == 0)
+            // Lọc ra các lớp đã tham gia (IsJoined = true)
+            var joinedCourses = sourceList.Where(c => c.IsJoined).ToList();
+
+            // Xóa sạch các card cũ
+            flpCourses.Controls.Clear();
+
+            if (joinedCourses.Count == 0)
             {
-                var item = new ListViewItem(" ");
-                item.SubItems.Add("-");
-                lvJoinedCourses.Items.Add(item);
+                Label lblEmpty = new Label();
+                lblEmpty.Text = "Chưa tham gia khóa học nào.";
+                lblEmpty.Font = new Font("Segoe UI", 12, FontStyle.Italic);
+                lblEmpty.ForeColor = Color.DimGray;
+                lblEmpty.AutoSize = true;
+                lblEmpty.Margin = new Padding(20);
+                flpCourses.Controls.Add(lblEmpty);
                 return;
             }
 
-            foreach (var c in joined)
+            // Vòng lặp tạo từng thẻ
+            foreach (var c in joinedCourses)
             {
-                var item = new ListViewItem(c.Name);
-                item.SubItems.Add(c.Instructor);
-                item.Tag = c.Id;
-                lvJoinedCourses.Items.Add(item);
+                // 1. Tạo Panel chính (Cái thẻ)
+                Panel pnlCard = new Panel();
+                pnlCard.Size = new Size(flpCourses.Width - 40, 110); // Trừ hao thanh cuộn
+                pnlCard.BackColor = Color.White; // Màu nền trắng
+                pnlCard.Margin = new Padding(10, 5, 10, 15); // Khoảng cách giữa các thẻ
+                pnlCard.Cursor = Cursors.Hand;
+                pnlCard.Tag = c.Id; // Lưu ID để click
+
+                // Sự kiện click vào panel
+                pnlCard.Click += (s, e) => OpenCourseDetail(c.Id, c.TenLop);
+
+                // 2. Tạo Tên môn học (Màu xanh dương)
+                Label lblName = new Label();
+                lblName.Text = c.TenLop ?? "Chưa đặt tên";
+                lblName.Font = new Font("Segoe UI", 14, FontStyle.Bold);
+                lblName.ForeColor = Color.FromArgb(51, 153, 255); // Xanh dương sáng
+                lblName.Location = new Point(20, 15);
+                lblName.AutoSize = true;
+                lblName.Click += (s, e) => OpenCourseDetail(c.Id, c.TenLop); // Click chữ cũng mở
+                pnlCard.Controls.Add(lblName);
+
+                // 3. Tạo Tên giảng viên (Màu xám nhạt)
+                Label lblGV = new Label();
+                lblGV.Text = $"GV: {c.Instructor ?? "N/A"}";
+                lblGV.Font = new Font("Segoe UI", 10, FontStyle.Regular);
+                lblGV.ForeColor = Color.LightGray;
+                lblGV.Location = new Point(20, 50);
+                lblGV.AutoSize = true;
+                lblGV.Click += (s, e) => OpenCourseDetail(c.Id, c.TenLop);
+                pnlCard.Controls.Add(lblGV);
+
+                // 4. Trạng thái (Góc phải)
+                Label lblStatus = new Label();
+                lblStatus.Text = "✅ Đã tham gia";
+                lblStatus.ForeColor = Color.LightGreen;
+                lblStatus.Font = new Font("Segoe UI", 9, FontStyle.Italic);
+                lblStatus.AutoSize = true;
+                lblStatus.Location = new Point(pnlCard.Width - 120, 15);
+                lblStatus.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+                pnlCard.Controls.Add(lblStatus);
+
+                // Thêm thẻ vào FlowLayoutPanel
+                flpCourses.Controls.Add(pnlCard);
             }
         }
 
-
-
-
-        private void profileToolStripMenuItem_Click(object sender, EventArgs e)
+        // Hàm mở Form chi tiết khi click vào thẻ
+        private void OpenCourseDetail(string courseId, string courseName)
         {
-            this.Hide();
-            Student_Information profileForm = new Student_Information(this._loggedInEmail, "Student");
-            profileForm.ShowDialog();
-            this.Show();
+            CourseDetailForm frm = new CourseDetailForm(courseId, courseName, _currentUserUid, _firebaseClient);
+            frm.ShowDialog();
+
         }
 
-        private void scheduleToolStripMenuItem_Click_1(object sender, EventArgs e)
+        // --- TÌM KIẾM ---
+        private void Find_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Lịch học (chức năng mẫu).", "Lịch học", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            PerformSearch();
         }
 
-        private void gradesToolStripMenuItem_Click_1(object sender, EventArgs e)
+        private void txtNameClass_TextChanged(object sender, EventArgs e)
         {
-            MessageBox.Show("Điểm (chức năng mẫu).", "Điểm", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            // Có thể tìm kiếm ngay khi gõ (Realtime search)
+            // PerformSearch(); 
         }
 
-        private void changePasswordToolStripMenuItem_Click(object sender, EventArgs e)
+        private void PerformSearch()
         {
-            ChangePassword changePassForm = new ChangePassword(this._loggedInEmail, this._idToken);
-            this.Hide();
-            changePassForm.ShowDialog();
-            this.Show();
+            string keyword = txtNameClass.Text.ToLower().Trim();
+
+            if (string.IsNullOrEmpty(keyword))
+            {
+                PopulateAllCourses(); // Hiện lại tất cả
+                return;
+            }
+
+            // Lọc danh sách trong bộ nhớ (không gọi lại Firebase cho nhanh)
+            var filteredList = _allCourses
+                .Where(c => (c.TenLop != null && c.TenLop.ToLower().Contains(keyword)))
+                .ToList();
+
+            PopulateAllCourses(filteredList);
         }
 
+
+        // --- CÁC CHỨC NĂNG MENU KHÁC (GIỮ NGUYÊN) ---
         private void btnLogout_Click(object sender, EventArgs e)
         {
-            var result = MessageBox.Show("Bạn có chắc chắn muốn đăng xuất?", "Xác nhận Đăng xuất",
-                MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            var result = MessageBox.Show("Bạn có chắc chắn muốn đăng xuất?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.Yes)
             {
                 this.isLoggingOut = true;
                 this.Close();
+                // Nhớ mở lại Form Login ở Program.cs hoặc gọi ở đây
             }
         }
 
-        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        protected override void OnFormClosing(FormClosingEventArgs e)
         {
+            _courseListener?.Dispose();
+
             if (!isLoggingOut)
             {
-                var result = MessageBox.Show("Bạn có muốn thoát hoàn toàn ứng dụng?", "Xác nhận Thoát",
-                    MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                if (result == DialogResult.No)
-                {
-                    e.Cancel = true;
-                }
+                var result = MessageBox.Show("Thoát ứng dụng?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (result == DialogResult.No) e.Cancel = true;
             }
+            base.OnFormClosing(e);
         }
 
-        
-
-        private void lvJoinedCourses_SelectedIndexChanged(object sender, EventArgs e)
+        // Các event click menu
+        private void lblWelcome_Click(object sender, EventArgs e) => cmsUserOptions.Show(lblWelcome, new Point(0, lblWelcome.Height));
+        private void cmsUserOptions_Opening_1(object sender, System.ComponentModel.CancelEventArgs e) { }
+        private void profileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (lvJoinedCourses.SelectedItems.Count == 0)
-            {
-                return;
-            }
-
-            ListViewItem selectedItem = lvJoinedCourses.SelectedItems[0];
-
-            // 1. Kiểm tra dòng placeholder trống
-            if (selectedItem.Text == " ") return;
-
-            // 2. Lấy ID và tìm Course
-            // Đảm bảo Tag không phải là null trước khi gọi ToString()
-            if (selectedItem.Tag == null) return;
-
-            var id = selectedItem.Tag.ToString();
-            var course = _allCourses.FirstOrDefault(c => c.Id == id);
-
-            if (course == null) return;
-
-            // 3. Mở Form chi tiết
-            ChiTietLopHoc form = new ChiTietLopHoc(course);
-            form.ShowDialog();
+            this.Hide();
+            Student_Information frm = new Student_Information(_currentUserUid, _idToken, _loggedInEmail);
+            frm.ShowDialog();
+            this.Show();
         }
+        private void scheduleToolStripMenuItem_Click_1(object sender, EventArgs e) => MessageBox.Show("Chức năng Lịch học đang phát triển.");
+        private void gradesToolStripMenuItem_Click_1(object sender, EventArgs e) => MessageBox.Show("Chức năng Điểm đang phát triển.");
 
-        private void cmsUserOptions_Opening(object sender, System.ComponentModel.CancelEventArgs e) { }
-        private void grpJoinedCourses_Click(object sender, EventArgs e) { }
-        private void panelLeft_Paint(object sender, PaintEventArgs e) { }
-
+        private void changePasswordToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            ChangePassword frm = new ChangePassword(_loggedInEmail, _idToken);
+            frm.ShowDialog();
+            this.Show();
+        }
 
         private void đăngKýMônHọcToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.Hide();
-            DangKyMonHoc frm = new DangKyMonHoc(_currentUserUid, _idToken);
+            MonHocDaDangKy frm = new MonHocDaDangKy(_currentUserUid, _idToken);
             frm.ShowDialog();
             this.Show();
-            _ = LoadClassDataFromFirebase();
-        }
-
-        private void lblWelcome_Click(object sender, EventArgs e)
-        {
-            cmsUserOptions.Show(lblWelcome, new Point(0, lblWelcome.Height));
-        }
-
-        private void cmsUserOptions_Opening_1(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-
-        }
-
-        private void grpJoinedCourses_Click_1(object sender, EventArgs e)
-        {
-
+            _ = LoadClassDataFromFirebase(); // Load lại data khi quay về
         }
 
         private void guna2Button1_Click(object sender, EventArgs e)
         {
-
-            frmMainChat chatLobby = new frmMainChat(
-         _currentUserUid,
-         _currentUserName,
-         this._idToken
-        );
-
-            chatLobby.Show();
+            frmMainChat chat = new frmMainChat(_currentUserUid, _currentUserName, _idToken);
+            chat.Show();
         }
 
-        private void lvJoinedCourses_ItemActivate(object sender, MouseEventArgs e)
-        {
-            if (lvJoinedCourses.SelectedItems.Count > 0)
-            {
-                ListViewItem selectedItem = lvJoinedCourses.SelectedItems[0];
-                string tenLop = selectedItem.Text; // Lấy tên lớp
+        private void grpJoinedCourses_Click_1(object sender, EventArgs e) { }
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e) { }
 
-                // Mở Form nộp bài, truyền tên lớp vào
-                Submit_Agsignment submitForm = new Submit_Agsignment(tenLop);
-                submitForm.ShowDialog();
-            }
+        private void flpCourses_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
-
-    public class Course
+    public class StudentInfo
     {
-        public string Id { get; init; }
-        public string Name { get; set; }
-        public string Instructor { get; set; }
-        public bool IsJoined { get; set; }
-        public List<string> Students { get; set; } = new List<string>();
-
-        public Course() { }
-
-        public Course(string id, string name, string instructor, bool joined)
-        {
-            Id = id;
-            Name = name;
-            Instructor = instructor;
-            IsJoined = joined;
-        }
+        public string Email { get; set; }
+        public string HoTen { get; set; }
+        public string MSSV { get; set; }
     }
 }

@@ -1,16 +1,22 @@
-﻿namespace APP_DOAN
+﻿using System;
+using System.Windows.Forms;
+
+namespace APP_DOAN
 {
     internal static class Program
     {
         /// <summary>
-        ///  The main entry point for the application.
+        /// The main entry point for the application.
         /// </summary>
         [STAThread]
         static void Main()
         {
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
-            ApplicationConfiguration.Initialize();
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
+            Application.EnableVisualStyles();
+
+            Application.SetCompatibleTextRenderingDefault(false);
+
             Application.Run(new LoginForm());
         }
     }

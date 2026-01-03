@@ -1,80 +1,114 @@
-﻿using System;
-using System.Drawing;
-using System.Windows.Forms;
+﻿using Firebase.Database;
+using Firebase.Database.Query;
 using Guna.UI2.WinForms;
 using Guna.UI2.WinForms.Enums;
-using System.IO; // Để dùng Path.GetFileName
-using System.ComponentModel;
+using System;
+using System.Drawing;
+using System.IO;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace APP_DOAN.GiaoDienChinh
 {
-    // Form logic
-    public partial class Submit_Agsignment
+    public partial class Submit_Agsignment : Form
     {
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public string TenLopHoc { get; set; }
+        public event Action OnSubmitSuccess;
 
-        public Submit_Agsignment(string tenLop = "Bài tập chung")
+        private readonly FirebaseClient _client;
+        private readonly string _courseId;
+        private readonly string _assignmentId;
+        private readonly string _studentUid;
+
+        public Submit_Agsignment(
+            string assignmentTitle,
+            string assignmentId,
+            FirebaseClient client,
+            string courseId,
+            string studentUid)
         {
             InitializeComponent();
-            this.TenLopHoc = tenLop;
 
-            // Cập nhật các control đã tạo trong Designer
-            if (lblAssignmentName != null)
-            {
-                lblAssignmentName.Text = $"NỘP BÀI TẬP LỚP: {this.TenLopHoc.ToUpper()}";
-            }
-            // Gán giá trị cho thuộc tính Text được thừa kế từ Form
-            this.Text = "Nộp Bài Tập: " + TenLopHoc;
+            lblAssignmentName.Text = assignmentTitle.ToUpper();
+
+            _assignmentId = assignmentId;
+            _client = client;
+            _courseId = courseId;
+            _studentUid = studentUid;
         }
-
-
-        
 
         private void btnBrowse_Click_1(object sender, EventArgs e)
         {
-            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            using OpenFileDialog dlg = new OpenFileDialog
             {
-                openFileDialog.Title = "Chọn tệp bài tập để nộp";
-                openFileDialog.Filter = "Tệp Bài Tập (*.doc;*.docx;*.pdf;*.zip;*.rar)|*.doc;*.docx;*.pdf;*.zip;*.rar|Tất cả tệp (*.*)|*.*";
-                openFileDialog.RestoreDirectory = true;
+                Title = "Chọn file bài tập",
+                Filter = "All files|*.*"
+            };
 
-                if (openFileDialog.ShowDialog() == DialogResult.OK)
-                {
-                    txtFilePath.Text = openFileDialog.FileName;
-                }
+            if (dlg.ShowDialog() == DialogResult.OK)
+            {
+                txtFilePath.Text = dlg.FileName;
             }
-
         }
 
-        private void btnSubmit_Click_1(object sender, EventArgs e)
+        private async void btnSubmit_Click_1(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(txtFilePath.Text) || txtFilePath.Text.Contains("chưa chọn tệp"))
+            if (!File.Exists(txtFilePath.Text))
             {
-                Guna2MessageDialog errorDialog = new Guna2MessageDialog
+                new Guna2MessageDialog
                 {
                     Caption = "Lỗi",
-                    Text = "Vui lòng chọn một tệp bài tập hợp lệ trước khi nộp.",
+                    Text = "Vui lòng chọn file hợp lệ",
                     Icon = MessageDialogIcon.Error,
                     Buttons = MessageDialogButtons.OK,
                     Parent = this
-                };
-                errorDialog.Show();
+                }.Show();
                 return;
             }
 
-            // Giả lập xử lý nộp bài
-            Guna2MessageDialog successDialog = new Guna2MessageDialog
+            try
             {
-                Caption = "Thành Công!",
-                Text = $"Đã nộp tệp: \n{Path.GetFileName(txtFilePath.Text)}\n\n cho lớp {this.TenLopHoc}.",
-                Icon = MessageDialogIcon.Information,
-                Buttons = MessageDialogButtons.OK,
-                Parent = this
-            };
-            successDialog.Show();
+                Cursor = Cursors.WaitCursor;
 
-            this.Close();
+                string fileUrl = await Task.Run(() =>
+                    CloudinaryHelper.UploadFile(txtFilePath.Text)
+                );
+
+                Cursor = Cursors.Default;
+
+                if (string.IsNullOrEmpty(fileUrl))
+                    throw new Exception("Upload thất bại");
+
+                // ✅ GHI ĐÚNG FIREBASE PATH
+                await _client
+                    .Child("Assignments")
+                    .Child(_courseId)
+                    .Child(_assignmentId)
+                    .Child("Submissions")
+                    .Child(_studentUid)
+                    .PutAsync(new
+                    {
+                        TenFile = Path.GetFileName(txtFilePath.Text),
+                        FileUrl = fileUrl,
+                        ThoiGianNop = DateTimeOffset.UtcNow.ToUnixTimeSeconds()
+                    });
+
+                new Guna2MessageDialog
+                {
+                    Caption = "🎉 Thành công",
+                    Text = "Nộp bài thành công!",
+                    Icon = MessageDialogIcon.Information,
+                    Buttons = MessageDialogButtons.OK,
+                    Parent = this
+                }.Show();
+
+                OnSubmitSuccess?.Invoke();
+                Close();
+            }
+            catch (Exception ex)
+            {
+                Cursor = Cursors.Default;
+                MessageBox.Show("Lỗi nộp bài:\n" + ex.Message);
+            }
         }
     }
 }

@@ -1,79 +1,207 @@
-﻿using Firebase.Database;
+using Firebase.Database;
 using Firebase.Database.Query;
+using Firebase.Database.Streaming;
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
+using System.Drawing;
+using System.Windows.Forms;
 
 namespace APP_DOAN
 {
     public class FirebaseChatService
     {
-        private readonly FirebaseClient _client;
-        private readonly string _firebaseDatabaseUrl;
-
+        private readonly FirebaseClient _firebaseClient;
 
         public FirebaseChatService(string dbUrl, string idToken)
         {
-            _firebaseDatabaseUrl = dbUrl;
-            _client = new FirebaseClient(
-                _firebaseDatabaseUrl,
-                new FirebaseOptions
-                {
-                    AuthTokenAsyncFactory = () => Task.FromResult(idToken)
-                });
+            var jsonSettings = new Newtonsoft.Json.JsonSerializerSettings
+            {
+                StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeNonAscii,
+                ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            };
+
+            _firebaseClient = new FirebaseClient(dbUrl, new FirebaseOptions
+            {
+                AuthTokenAsyncFactory = () => Task.FromResult(idToken),
+                JsonSerializerSettings = jsonSettings
+            });
         }
 
-        // Hàm tạo ID phòng chat
+        public async Task<string> UploadImage(System.IO.Stream imageStream, string fileName)
+        {
+            string tempFilePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), fileName);
+
+            try
+            {
+                using (var fileStream = System.IO.File.Create(tempFilePath))
+                {
+                    await imageStream.CopyToAsync(fileStream);
+                }
+
+                string imageUrl = CloudinaryHelper.UploadImage(tempFilePath);
+                return imageUrl;
+            }
+            finally
+            {
+                if (System.IO.File.Exists(tempFilePath))
+                {
+                    System.IO.File.Delete(tempFilePath);
+                }
+            }
+        }
+
+        public async Task<string> UploadFile(System.IO.Stream fileStream, string fileName)
+        {
+            string tempFilePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), fileName);
+
+            try
+            {
+                using (var file = System.IO.File.Create(tempFilePath))
+                {
+                    await fileStream.CopyToAsync(file);
+                }
+
+                string fileUrl = CloudinaryHelper.UploadFile(tempFilePath);
+                return fileUrl;
+            }
+            finally
+            {
+                if (System.IO.File.Exists(tempFilePath))
+                {
+                    System.IO.File.Delete(tempFilePath);
+                }
+            }
+        }
+
         public string GenerateChatId(string uid1, string uid2)
         {
-            if (string.Compare(uid1, uid2) > 0)
-                return $"{uid2}_{uid1}";
-            return $"{uid1}_{uid2}";
+            return string.Compare(uid1, uid2) > 0 ? $"{uid2}_{uid1}" : $"{uid1}_{uid2}";
         }
 
-        // Hàm Gửi tin nhắn
         public async Task SendMessageAsync(string chatId, Message message)
         {
-            await _client
+            await _firebaseClient.Child("Chats").Child(chatId).Child("Messages").PostAsync(message);
+        }
+
+        public async Task DeleteMessageAsync(string chatId, string messageId)
+        {
+            await _firebaseClient
                 .Child("Chats")
                 .Child(chatId)
                 .Child("Messages")
-                .PostAsync(message);
+                .Child(messageId)
+                .DeleteAsync();
         }
 
-        // Hàm Lắng nghe (Real-time)
+        public async Task<List<Message>> GetMessagesAsync(string chatId)
+        {
+            try
+            {
+                var messages = await _firebaseClient
+                    .Child("Chats")
+                    .Child(chatId)
+                    .Child("Messages")
+                    .OnceAsync<Message>();
+
+                return messages.Select(m => m.Object).OrderBy(m => m.Timestamp).ToList();
+            }
+            catch
+            {
+                return new List<Message>();
+            }
+        }
+
         public IDisposable ListenForMessages(string chatId, Action<Message> onMessageReceived)
         {
-            var subscription = _client
+            return _firebaseClient
                 .Child("Chats")
                 .Child(chatId)
                 .Child("Messages")
                 .AsObservable<Message>()
-                .Where(e => e.EventType == Firebase.Database.Streaming.FirebaseEventType.InsertOrUpdate)
                 .Subscribe(firebaseEvent =>
                 {
                     if (firebaseEvent.Object != null)
                     {
-                        onMessageReceived?.Invoke(firebaseEvent.Object);
+                        var msg = firebaseEvent.Object;
+                        onMessageReceived?.Invoke(msg);
                     }
                 });
-
-            return subscription;
         }
-        /// <summary>
-        /// Tải tất cả người dùng từ Firebase
-        /// </summary>
-        /// <returns>Một Dictionary<string, User> 
-        ///          trong đó Key là UID, Value là thông tin User
-        /// </returns>
+
         public async Task<Dictionary<string, User>> GetAllUsersAsync()
         {
-            var users = await _client
-                .Child("Users")
-                .OnceAsync<User>();
-
+            var users = await _firebaseClient.Child("Users").OnceAsync<User>();
             return users.ToDictionary(item => item.Key, item => item.Object);
+        }
+
+        public async Task UpdateUserOnlineStatus(string uid, bool isOnline)
+        {
+            await _firebaseClient.Child("Users").Child(uid).Child("IsOnline").PutAsync(isOnline);
+        }
+
+        public IDisposable ListenForUserStatus(Action<string, bool> onStatusChanged)
+        {
+            return _firebaseClient.Child("Users").AsObservable<User>()
+                .Subscribe(userEvent =>
+                {
+                    if (userEvent.Object != null)
+                    {
+                        var userObj = userEvent.Object;
+                        string uid = userEvent.Key;
+
+                        if (userEvent.EventType != Firebase.Database.Streaming.FirebaseEventType.Delete)
+                        {
+                            onStatusChanged?.Invoke(uid, userObj.IsOnline);
+                        }
+                    }
+                });
+        }
+
+        public async Task SetTypingStatus(string chatId, string uid, bool isTyping)
+        {
+            await _firebaseClient.Child("Chats").Child(chatId).Child("Typing").Child(uid).PutAsync(isTyping);
+        }
+
+        public IDisposable ListenForTyping(string chatId, string partnerUid, Action<bool> onTypingChanged)
+        {
+            return _firebaseClient.Child("Chats").Child(chatId).Child("Typing").Child(partnerUid)
+                .AsObservable<bool>()
+                .Subscribe(evt => onTypingChanged?.Invoke(evt.Object));
+        }
+
+        public async Task DeleteChatAsync(string chatId)
+        {
+            await _firebaseClient.Child("Chats").Child(chatId).DeleteAsync();
+        }
+
+        public async Task UpdateMessageStatusAsync(string chatId, string messageKey, string status)
+        {
+            await _firebaseClient
+                .Child("Chats")
+                .Child(chatId)
+                .Child("Messages") 
+                .Child(messageKey)
+                .Child("Status")
+                .PutAsync($"\"{status}\""); 
+        }
+
+        public IDisposable ListenForMessagesWithKey(string chatId, Action<string, Message> onMessageReceived)
+        {
+            return _firebaseClient
+                .Child("Chats")
+                .Child(chatId)
+                .Child("Messages")
+                .AsObservable<Message>()
+                .Subscribe(firebaseEvent =>
+                {
+                    if (firebaseEvent.Object != null && !string.IsNullOrEmpty(firebaseEvent.Key))
+                    {
+                        onMessageReceived?.Invoke(firebaseEvent.Key, firebaseEvent.Object);
+                    }
+                });
         }
     }
 }
