@@ -56,7 +56,6 @@
             panelBubble.ShadowDecoration.CustomizableEdges = customizableEdges2;
             panelBubble.Size = new Size(315, 91);
             panelBubble.TabIndex = 0;
-            panelBubble.Paint += panelBubble_Paint;
             // 
             // lblStatus
             // 
@@ -67,7 +66,6 @@
             lblStatus.Size = new Size(80, 22);
             lblStatus.TabIndex = 1;
             lblStatus.Text = "[Đã gửi]";
-            lblStatus.Click += lblStatus_Click;
             // 
             // lblMessage
             // 
@@ -110,7 +108,6 @@
             Margin = new Padding(3, 4, 3, 4);
             Name = "UC_ChatItem";
             Size = new Size(339, 99);
-            Load += UC_ChatItem_Load;
             panelBubble.ResumeLayout(false);
             panelBubble.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)picAvatarStatus).EndInit();

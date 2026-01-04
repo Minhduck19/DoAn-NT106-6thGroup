@@ -32,7 +32,8 @@
             // picAvatar
             // 
             picAvatar.BackgroundImageLayout = ImageLayout.Stretch;
-            picAvatar.Image = Properties.Resources.avatar_trang_1_cd729c335b;
+            picAvatar.Image = Properties.Resources.avatar_trang_1_cd729c335b1;
+                ;
             picAvatar.ImageRotate = 0F;
             picAvatar.Location = new Point(15, 15);
             picAvatar.Margin = new Padding(3, 4, 3, 4);
@@ -43,6 +44,7 @@
             picAvatar.SizeMode = PictureBoxSizeMode.Zoom;
             picAvatar.TabIndex = 0;
             picAvatar.TabStop = false;
+            picAvatar.Click += picAvatar_Click;
             // 
             // lblHoTen
             // 
