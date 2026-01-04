@@ -208,6 +208,7 @@
             btnChange.Size = new Size(120, 56);
             btnChange.TabIndex = 5;
             btnChange.Text = "Đổi";
+            btnChange.Click += btnChange_Click;
             // 
             // txtEmail
             // 
