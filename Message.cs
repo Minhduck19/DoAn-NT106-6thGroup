@@ -10,5 +10,7 @@
         public string Type { get; set; } = "text";  // "text", "image", "file"
         public string FileUrl { get; set; }      // URL của file
         public string FileName { get; set; }     // Tên file
+        public string SenderId { get; set; }
+
     }
 }

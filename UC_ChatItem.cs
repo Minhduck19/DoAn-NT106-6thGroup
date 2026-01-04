@@ -64,145 +64,179 @@ namespace APP_DOAN
 
         private string _currentImageUrl = "";
 
-        public void SetMessage(string text, bool isMe, string status, string type, long timestamp, long? previousTimestamp, string fileUrl = null, string fileName = null, string avatarUrl = "")
+        public void SetMessage(
+                string text,
+                bool isMe,
+                string status,
+                string type,
+                long timestamp,
+                long? previousTimestamp,
+                string fileUrl = null,
+                string fileName = null,
+                string avatarUrl = "",
+                string senderName = "")
+{
+    this.SuspendLayout();
+
+    _avatarUrl = avatarUrl;
+    _isMe = isMe;
+    this.IsMe = isMe;
+
+    int radius = 20;
+    int padding = 12;
+    int rightPadding = 10;
+    int currentY = 5;
+
+    // Reset anchor tránh lỗi layout
+    panelBubble.Anchor = AnchorStyles.None;
+    picImage.Anchor = AnchorStyles.None;
+    if (_fileMessage != null) _fileMessage.Anchor = AnchorStyles.None;
+
+    // ================= TIME SEPARATOR =================
+    if (previousTimestamp.HasValue)
+    {
+        long diffMinutes = (timestamp - previousTimestamp.Value) / (1000 * 60);
+        if (diffMinutes >= 10)
         {
-            _avatarUrl = avatarUrl;
-            _isMe = isMe;
-            this.IsMe = isMe;
+            Label lblTime = new Label();
+            lblTime.Name = "lblTimeSeparator";
+            lblTime.AutoSize = true;
+            lblTime.Font = new Font("Segoe UI", 8);
+            lblTime.ForeColor = Color.Gray;
+            lblTime.Text = ConvertTimestampToTime(timestamp);
 
-            int doCongGoc = 20;
-            int padding = 12;
-            int rightPadding = 10;
+            this.Controls.Add(lblTime);
+            lblTime.Location = new Point(
+                (this.Width - lblTime.PreferredWidth) / 2,
+                currentY
+            );
 
-            if (lblMessage.Parent != panelBubble)
-            {
-                panelBubble.Controls.Add(lblMessage);
-                lblMessage.BackColor = Color.Transparent;
-                lblMessage.Dock = DockStyle.None;
-            }
-
-            Label lblTimeSeperator = null;
-            bool showTimeSeparator = false;
-
-            if (previousTimestamp.HasValue)
-            {
-                long timeDifferenceMs = timestamp - previousTimestamp.Value;
-                long timeDifferenceMinutes = timeDifferenceMs / (1000 * 60);
-
-                if (timeDifferenceMinutes >= 10)
-                {
-                    showTimeSeparator = true;
-                    lblTimeSeperator = new Label();
-                    lblTimeSeperator.Name = "lblTimeSeparator";
-                    lblTimeSeperator.AutoSize = true;
-                    lblTimeSeperator.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
-                    lblTimeSeperator.ForeColor = Color.Gray;
-                    lblTimeSeperator.TextAlign = ContentAlignment.MiddleCenter;
-                    lblTimeSeperator.Text = ConvertTimestampToTime(timestamp);
-                    this.Controls.Add(lblTimeSeperator);
-                    lblTimeSeperator.Location = new Point((this.Width - lblTimeSeperator.Width) / 2, 5);
-                    lblTimeSeperator.Anchor = AnchorStyles.Top;
-                }
-            }
-
-            // --- XỬ LÝ LOẠI TIN NHẮN ---
-            if (type == "image")
-            {
-                panelBubble.Visible = false;
-                lblMessage.Visible = false;
-                picImage.Visible = true;
-                picImage.BringToFront();
-
-                string imageUrlToLoad = !string.IsNullOrEmpty(fileUrl) ? fileUrl : text;
-                _currentImageUrl = imageUrlToLoad;
-
-                picImage.Image = null;
-                picImage.SizeMode = PictureBoxSizeMode.Zoom;
-                picImage.Size = new Size(200, 150);
-
-                if (isMe)
-                {
-                    picImage.Location = new Point(this.Width - 300 - rightPadding, showTimeSeparator ? 35 : 5);
-                    picImage.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-                }
-                else
-                {
-                    picImage.Location = new Point(rightPadding, showTimeSeparator ? 35 : 5);
-                    picImage.Anchor = AnchorStyles.Top | AnchorStyles.Left;
-                }
-
-                picImage.BackColor = Color.LightGray;
-                picImage.WaitOnLoad = false;
-                try { if (!string.IsNullOrEmpty(imageUrlToLoad)) picImage.LoadAsync(imageUrlToLoad); } catch { picImage.BackColor = Color.Red; }
-            }
-            else if (type == "file")
-            {
-                picImage.Visible = false;
-                panelBubble.Visible = false;
-                lblMessage.Visible = false;
-
-                if (_fileMessage == null) { _fileMessage = new UC_FileMessage(); this.Controls.Add(_fileMessage); }
-                _fileMessage.Visible = true;
-                _fileMessage.SetFileData(fileUrl, fileName);
-
-                if (isMe)
-                {
-                    _fileMessage.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-                    _fileMessage.Top = showTimeSeparator ? 35 : 5;
-                    _fileMessage.Left = this.ClientSize.Width - _fileMessage.Width - rightPadding;
-                }
-                else
-                {
-                    _fileMessage.Location = new Point(rightPadding, showTimeSeparator ? 35 : 5);
-                    _fileMessage.Anchor = AnchorStyles.Top | AnchorStyles.Left;
-                }
-                _fileMessage.BringToFront();
-            }
-            else
-            {
-                picImage.Visible = false;
-                panelBubble.Visible = true;
-                lblMessage.Visible = true;
-                if (_fileMessage != null) _fileMessage.Visible = false;
-
-                lblMessage.Text = text;
-                lblMessage.MaximumSize = new Size((int)(this.Width * 0.65), 0);
-                lblMessage.AutoSize = true;
-
-                panelBubble.Width = lblMessage.Width + (padding * 2);
-                panelBubble.Height = lblMessage.Height + (padding * 2);
-                lblMessage.Location = new Point(padding, padding);
-
-                if (isMe)
-                {
-                    panelBubble.FillColor = Color.FromArgb(0, 118, 212);
-                    lblMessage.ForeColor = Color.White;
-                    panelBubble.Location = new Point(0, showTimeSeparator ? 35 : 5);
-                    panelBubble.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-                    panelBubble.Left = 0;
-                    panelBubble.Top = showTimeSeparator ? 35 : 5;
-                    panelBubble.Width = lblMessage.Width + (padding * 2);
-                    panelBubble.Left = this.ClientSize.Width - panelBubble.Width - rightPadding;
-                }
-                else
-                {
-                    panelBubble.FillColor = Color.FromArgb(229, 229, 234);
-                    lblMessage.ForeColor = Color.Black;
-                    panelBubble.Location = new Point(rightPadding, showTimeSeparator ? 35 : 5);
-                    panelBubble.Anchor = AnchorStyles.Top | AnchorStyles.Left;
-                }
-                LamTronGoc(panelBubble, doCongGoc);
-            }
-            Control doiTuongCuoi;
-            if (type == "image") doiTuongCuoi = picImage;
-            else if (type == "file") doiTuongCuoi = _fileMessage;
-            else doiTuongCuoi = panelBubble;
-
-            int timeSeparatorHeight = showTimeSeparator ? 30 : 0;
-            int extraHeight = 25;
-
-            this.Height = doiTuongCuoi.Bottom + 10 + timeSeparatorHeight + extraHeight;
+            currentY = lblTime.Bottom + 5;
         }
+    }
+
+    // ================= SENDER NAME =================
+    if (!isMe && !string.IsNullOrEmpty(senderName))
+    {
+        lblSenderName.Text = senderName;
+        lblSenderName.Visible = true;
+        lblSenderName.AutoSize = true;
+        lblSenderName.ForeColor = Color.Gray;
+        lblSenderName.Location = new Point(rightPadding, currentY);
+
+        currentY = lblSenderName.Bottom + 2;
+    }
+    else
+    {
+        lblSenderName.Visible = false;
+    }
+
+    Control mainControl = null;
+
+    // ================= IMAGE =================
+    if (type == "image")
+    {
+        panelBubble.Visible = false;
+        lblMessage.Visible = false;
+        if (_fileMessage != null) _fileMessage.Visible = false;
+
+        picImage.Visible = true;
+        picImage.Tag = currentY;
+        picImage.Image = null;
+
+        _currentImageUrl = !string.IsNullOrEmpty(fileUrl) ? fileUrl : text;
+
+        picImage.Location = isMe
+            ? new Point(this.Width - 120, currentY)
+            : new Point(rightPadding, currentY);
+
+        picImage.Anchor = isMe
+            ? AnchorStyles.Top | AnchorStyles.Right
+            : AnchorStyles.Top | AnchorStyles.Left;
+
+        try
+        {
+            if (!string.IsNullOrEmpty(_currentImageUrl))
+                picImage.LoadAsync(_currentImageUrl);
+        }
+        catch { }
+
+        mainControl = picImage;
+    }
+
+    // ================= FILE =================
+    else if (type == "file")
+    {
+        picImage.Visible = false;
+        panelBubble.Visible = false;
+        lblMessage.Visible = false;
+
+        if (_fileMessage == null)
+        {
+            _fileMessage = new UC_FileMessage();
+            this.Controls.Add(_fileMessage);
+        }
+
+        _fileMessage.Visible = true;
+        _fileMessage.SetFileData(fileUrl, fileName);
+
+        _fileMessage.Location = isMe
+            ? new Point(this.Width - _fileMessage.Width - rightPadding, currentY)
+            : new Point(rightPadding, currentY);
+
+        _fileMessage.Anchor = isMe
+            ? AnchorStyles.Top | AnchorStyles.Right
+            : AnchorStyles.Top | AnchorStyles.Left;
+
+        mainControl = _fileMessage;
+    }
+
+    // ================= TEXT =================
+    else
+    {
+        picImage.Visible = false;
+        if (_fileMessage != null) _fileMessage.Visible = false;
+
+        panelBubble.Visible = true;
+        lblMessage.Visible = true;
+
+        lblMessage.Text = text;
+        lblMessage.MaximumSize = new Size((int)(this.Width * 0.65), 0); // FIX QUAN TRỌNG
+        lblMessage.AutoSize = true;
+        lblMessage.PerformLayout();
+
+        panelBubble.Width = lblMessage.Width + padding * 2;
+        panelBubble.Height = lblMessage.Height + padding * 2;
+        lblMessage.Location = new Point(padding, padding);
+
+        panelBubble.Location = isMe
+            ? new Point(this.Width - panelBubble.Width - rightPadding, currentY)
+            : new Point(rightPadding, currentY);
+
+        panelBubble.Anchor = isMe
+            ? AnchorStyles.Top | AnchorStyles.Right
+            : AnchorStyles.Top | AnchorStyles.Left;
+
+        panelBubble.FillColor = isMe
+            ? Color.FromArgb(0, 118, 212)
+            : Color.FromArgb(229, 229, 234);
+
+        lblMessage.ForeColor = isMe ? Color.White : Color.Black;
+
+        LamTronGoc(panelBubble, radius);
+
+        mainControl = panelBubble;
+    }
+
+    // ================= SET HEIGHT UC (KHÔNG set cho IMAGE) =================
+    if (mainControl != null && type != "image")
+    {
+        this.Height = mainControl.Bottom + 10;
+    }
+
+    this.ResumeLayout(true);
+}
+
 
         public void SetStatusMode(string status, string partnerAvatarUrl)
         {
@@ -316,5 +350,24 @@ namespace APP_DOAN
         }
 
         public void HideAvatar() { if (picAvatarStatus != null) picAvatarStatus.Visible = false; }
+
+        public void ShowSenderName(string senderName)
+        {
+            if (lblSenderName != null)
+            {
+                lblSenderName.Text = senderName;
+                lblSenderName.Visible = true;
+            }
+        }
+
+        private void UC_ChatItem_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void panelBubble_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 }
