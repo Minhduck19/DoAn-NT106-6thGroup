@@ -62,6 +62,38 @@ namespace APP_DOAN
                 );
             }
         }
+        private async Task LoadNotifications()
+        {
+            try
+            {
+                var data = await _client
+                    .Child("Notifications")
+                    .Child(_courseId)
+                    .OnceAsync<NotificationModel>();
+
+                if (data == null || data.Count == 0)
+                {
+                    guna2DataGridView1.DataSource = null;
+                    return;
+                }
+
+                guna2DataGridView1.AutoGenerateColumns = false;
+                guna2DataGridView1.DataSource = data
+                    .OrderByDescending(x => x.Object.CreatedAt) // 🔥 mới nhất lên trên
+                    .Select(x => new
+                    {
+                        TieuDe = x.Object.Title,
+                        NoiDung = x.Object.Content,
+                        Ngay = x.Object.DueDate
+                    })
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Lỗi load thông báo: " + ex.Message);
+            }
+        }
+
 
         private void FormQuanLyKhoaHoc_Load(object sender, EventArgs e)
         {
@@ -74,6 +106,8 @@ namespace APP_DOAN
             LoadAssignments();
             SubscribeStudents();
             SubscribeRequests();
+
+            _ = LoadNotifications();
         }
 
         private void SetupGunaColumns()
@@ -135,6 +169,26 @@ namespace APP_DOAN
             dgvAssignments.Columns.Clear();
             dgvAssignments.Columns.Add(new DataGridViewTextBoxColumn { Name = "TieuDe", DataPropertyName = "TieuDe", HeaderText = "TIÊU ĐỀ BÀI TẬP" });
             dgvAssignments.Columns.Add(new DataGridViewTextBoxColumn { Name = "HanNop", DataPropertyName = "HanNop", HeaderText = "HẠN NỘP" });
+
+            // --- Bảng Thông Báo ---
+            guna2DataGridView1.AutoGenerateColumns = false;
+            guna2DataGridView1.Columns.Clear();
+
+            guna2DataGridView1.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "NoiDung",
+                DataPropertyName = "NoiDung",
+                HeaderText = "NỘI DUNG",
+                FillWeight = 200
+            });
+
+            guna2DataGridView1.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "Ngay",
+                DataPropertyName = "Ngay",
+                HeaderText = "NGÀY"
+            });
+
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
@@ -356,6 +410,23 @@ namespace APP_DOAN
         {
             Assignment frm = new Assignment(_courseId);
             frm.ShowDialog();
+        }
+
+        private void guna2Button1_Click(object sender, EventArgs e)
+        {
+            Notyfi frm = new Notyfi(_courseId, _client);
+
+            frm.FormClosed += async (s, args) =>
+            {
+                await LoadNotifications(); // 🔥 load lại khi đóng form
+            };
+
+            frm.ShowDialog();
+        }
+
+        private void guna2DataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
         }
     }
 }
