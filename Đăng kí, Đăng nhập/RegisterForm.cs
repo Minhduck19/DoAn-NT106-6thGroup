@@ -27,7 +27,7 @@ namespace APP_DOAN
             InitializeComponent();
 
 
-            if (string.IsNullOrWhiteSpace(webApiKey) || webApiKey == "AIzaSyA7fh7FLwmHFHrwchTX1gcATk1ulr45QLs")
+            if (string.IsNullOrWhiteSpace(webApiKey) || webApiKey != "AIzaSyA7fh7FLwmHFHrwchTX1gcATk1ulr45QLs")
             {
                 MessageBox.Show("Bạn chưa thiết lập Firebase Web API Key!", "Lỗi Cấu Hình", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 this.Load += (s, e) => this.Close();
