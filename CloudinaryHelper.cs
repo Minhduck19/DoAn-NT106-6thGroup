@@ -54,26 +54,30 @@ public static class CloudinaryHelper
     {
         try
         {
-            if (!File.Exists(filePath))
-            {
-                MessageBox.Show("File không tồn tại!");
-                return null;
-            }
+            if (!File.Exists(filePath)) return null;
 
             var uploadParams = new RawUploadParams
             {
                 File = new FileDescription(filePath),
                 Folder = "WinForms_App_Uploads",
-                PublicId = $"file_{DateTime.Now.Ticks}",
+                // Sử dụng định dạng ticks để tránh trùng lặp nhưng giữ lại phần mở rộng file gốc
+                PublicId = $"file_{DateTime.Now.Ticks}{Path.GetExtension(filePath)}",
                 Overwrite = true
             };
 
             var result = _cloudinary.Upload(uploadParams);
+
+            // Kiểm tra lỗi từ phía Cloudinary trả về
+            if (result.Error != null)
+            {
+                throw new Exception(result.Error.Message);
+            }
+
             return result.SecureUrl?.ToString();
         }
         catch (Exception ex)
         {
-            MessageBox.Show("Upload file lỗi:\n" + ex.Message);
+            MessageBox.Show("Lỗi tải lên Cloudinary:\n" + ex.Message);
             return null;
         }
     }

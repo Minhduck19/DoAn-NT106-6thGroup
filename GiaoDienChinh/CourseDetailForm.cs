@@ -1,8 +1,10 @@
-﻿using APP_DOAN.GiaoDienChinh; // Namespace chứa form nộp bài (Submit_Agsignment)
+﻿using APP_DOAN.GiaoDienChinh;
+using APP_DOAN.Môn_học;
 using Firebase.Database;
 using Firebase.Database.Query;
 using System;
 using System.Drawing;
+using System.Linq; // Cần thêm thư viện này để sắp xếp ngày tháng
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -10,25 +12,26 @@ namespace APP_DOAN
 {
     public partial class CourseDetailForm : Form
     {
-        // 1. Các biến dữ liệu
         private readonly string _courseId;
         private readonly string _courseName;
         private readonly string _studentId;
         private readonly FirebaseClient _client;
 
-        // 2. Constructor nhận dữ liệu từ MainForm
         public CourseDetailForm(string courseId, string courseName, string studentId, FirebaseClient client)
         {
             InitializeComponent();
-
             _courseId = courseId;
             _courseName = courseName;
             _studentId = studentId;
             _client = client;
 
-            // Setup cơ bản cho Form (Nền tối)
             this.StartPosition = FormStartPosition.CenterScreen;
             this.BackColor = Color.FromArgb(20, 20, 20);
+
+            // Bật tính năng cuộn cho FlowLayoutPanel
+            flpContent.AutoScroll = true;
+            flpContent.FlowDirection = FlowDirection.TopDown;
+            flpContent.WrapContents = false;
         }
 
         private async void CourseDetailForm_Load(object sender, EventArgs e)
@@ -39,34 +42,138 @@ namespace APP_DOAN
             Label lblHeader = new Label();
             lblHeader.Text = _courseName.ToUpper();
             lblHeader.Font = new Font("Segoe UI", 22, FontStyle.Bold);
-            lblHeader.ForeColor = Color.FromArgb(51, 153, 255); // Xanh dương sáng
+            lblHeader.ForeColor = Color.FromArgb(51, 153, 255);
             lblHeader.AutoSize = true;
             lblHeader.Margin = new Padding(20, 10, 0, 20);
             flpContent.Controls.Add(lblHeader);
 
-            // --- B. Vẽ Mục "General" ---
-            RenderSectionHeader("General / Thông tin chung");
+            // --- B. Vẽ Mục "General" (Thông báo) ---
+            RenderSectionHeader("General / Thông báo");
 
-            // Thẻ thông báo mẫu (Loại "announcement")
-            RenderCard("Thông báo từ giảng viên", "Chào mừng các em đến với lớp học.", "announcement");
+            // Tạo Label Loading cho thông báo
+            Label lblLoadingNotify = CreateLoadingLabel();
+            flpContent.Controls.Add(lblLoadingNotify);
+
+            // 🔥 TẢI THÔNG BÁO TỪ FIREBASE
+            await LoadNotificationsFromFirebase(lblLoadingNotify);
 
             // --- C. Vẽ Mục "Bài tập" ---
             RenderSectionHeader("Bài tập & Kiểm tra");
 
-            // Tạo Label Loading
-            Label lblLoading = new Label();
-            lblLoading.Text = "⏳ Đang tải dữ liệu từ Firebase...";
-            lblLoading.ForeColor = Color.Gray;
-            lblLoading.Font = new Font("Segoe UI", 12, FontStyle.Italic);
-            lblLoading.AutoSize = true;
-            lblLoading.Margin = new Padding(40);
-            flpContent.Controls.Add(lblLoading);
+            // Tạo Label Loading cho bài tập
+            Label lblLoadingAssign = CreateLoadingLabel();
+            flpContent.Controls.Add(lblLoadingAssign);
 
-            // Gọi hàm tải dữ liệu
-            await LoadAssignmentsFromFirebase(lblLoading);
+            // Tải bài tập
+            await LoadAssignmentsFromFirebase(lblLoadingAssign);
         }
 
-        // --- HÀM 1: Vẽ tiêu đề từng phần (Section Header) ---
+        // Hàm tạo Label Loading nhanh
+        private Label CreateLoadingLabel()
+        {
+            return new Label
+            {
+                Text = "⏳ Đang tải dữ liệu...",
+                ForeColor = Color.Gray,
+                Font = new Font("Segoe UI", 12, FontStyle.Italic),
+                AutoSize = true,
+                Margin = new Padding(40, 5, 0, 20)
+            };
+        }
+
+        // --- HÀM MỚI: Tải Thông Báo ---
+        private async Task LoadNotificationsFromFirebase(Label lblLoading)
+        {
+            try
+            {
+                var notifies = await _client
+                    .Child("Notifications")
+                    .Child(_courseId)
+                    .OnceAsync<NotificationModel>();
+
+                flpContent.Controls.Remove(lblLoading);
+
+                if (notifies.Count == 0)
+                {
+                    RenderEmptyLabel("Chưa có thông báo nào.");
+                    return;
+                }
+
+                // Sắp xếp: Mới nhất lên đầu (OrderByDescending theo CreatedAt)
+                var sortedList = notifies.OrderByDescending(x => x.Object.CreatedAt).ToList();
+
+                foreach (var item in sortedList)
+                {
+                    RenderCard(
+                        item.Object.Title,
+                        item.Object.Content,
+                        "announcement", // Loại thông báo
+                        "",             // Không cần ID bài tập
+                        item.Object.FileUrl // 🔥 Truyền thêm FileUrl (nếu có)
+                    );
+                }
+            }
+            catch (Exception ex)
+            {
+                lblLoading.Text = "❌ Lỗi tải thông báo: " + ex.Message;
+                lblLoading.ForeColor = Color.Red;
+            }
+        }
+
+        private async Task LoadAssignmentsFromFirebase(Label lblLoading)
+        {
+            try
+            {
+                var assignments = await _client
+                    .Child("Assignments")
+                    .Child(_courseId)
+                    .OnceAsync<AssignmentModel>();
+
+                flpContent.Controls.Remove(lblLoading);
+
+                if (assignments.Count == 0)
+                {
+                    RenderEmptyLabel("Chưa có bài tập nào.");
+                    return;
+                }
+
+                var sortedList = assignments.OrderByDescending(x => x.Object.CreatedAt).ToList();
+
+                foreach (var item in sortedList)
+                {
+                    RenderCard(
+                        item.Object.Title,
+                        item.Object.Description,
+                        "assignment",
+                        item.Key,
+                        "",
+                        item.Object.DueDate // 🔥 LẤY GIÁ TRỊ TỪ MODEL FIREBASE
+                    );
+                }
+            }
+            catch (Exception ex)
+            {
+                lblLoading.Text = "❌ Lỗi: " + ex.Message;
+            }
+        }
+
+        // Thêm sự kiện Resize cho Form hoặc FlowLayoutPanel
+        private void flpContent_Resize(object sender, EventArgs e)
+        {
+            foreach (Control ctrl in flpContent.Controls)
+            {
+                if (ctrl is Panel pnl)
+                {
+                    pnl.Width = flpContent.ClientSize.Width - 60;
+                    // Cập nhật lại các Label bên trong Panel nếu cần
+                    foreach (Control subCtrl in pnl.Controls)
+                    {
+                        if (subCtrl is Label) subCtrl.Width = pnl.Width - 80;
+                    }
+                }
+            }
+        }
+
         private void RenderSectionHeader(string title)
         {
             Label lbl = new Label();
@@ -74,143 +181,176 @@ namespace APP_DOAN
             lbl.Font = new Font("Segoe UI", 16, FontStyle.Bold);
             lbl.ForeColor = Color.WhiteSmoke;
             lbl.AutoSize = true;
-            lbl.Margin = new Padding(20, 20, 0, 10);
+            // 🔥 Tăng Margin trên (Top) lên 40 và Margin dưới (Bottom) lên 20
+            lbl.Margin = new Padding(20, 40, 0, 20);
             flpContent.Controls.Add(lbl);
         }
 
-        // --- HÀM 2: Tải bài tập từ Firebase ---
-        private async Task LoadAssignmentsFromFirebase(Label lblLoading)
+        private void RenderEmptyLabel(string text)
         {
-            try
+            Label lbl = new Label
             {
-                // Gọi data dùng Class Model riêng của bạn
-                var assignments = await _client
-                    .Child("Assignments")
-                    .Child(_courseId)
-                    .OnceAsync<AssignmentModel>();
-
-                // Xóa chữ Loading
-                flpContent.Controls.Remove(lblLoading);
-
-                if (assignments.Count == 0)
-                {
-                    Label lblEmpty = new Label { Text = "Chưa có bài tập nào.", ForeColor = Color.DimGray, AutoSize = true, Margin = new Padding(40, 0, 0, 0) };
-                    flpContent.Controls.Add(lblEmpty);
-                    return;
-                }
-
-                foreach (var item in assignments)
-                {
-                    // Truyền "assignment" để code nhận biết đây là bài tập
-                    RenderCard(
-                        item.Object.Title,
-                        item.Object.Description ?? "Không có mô tả",
-                        "assignment",
-                        item.Key
-                    );
-                }
-            }
-            catch (Exception ex)
-            {
-                lblLoading.Text = "❌ Lỗi tải: " + ex.Message;
-                lblLoading.ForeColor = Color.Red;
-            }
+                Text = text,
+                ForeColor = Color.DimGray,
+                AutoSize = true,
+                Margin = new Padding(40, 0, 0, 20)
+            };
+            flpContent.Controls.Add(lbl);
         }
 
-        // --- HÀM 3: Vẽ Thẻ (Render Card UI) ---
-        private void RenderCard(string title, string description, string type, string assignmentId = "")
+        // --- HÀM 3: Vẽ Thẻ (CẬP NHẬT THÊM fileUrl) ---
+        private void RenderCard(string title, string description, string type, string assignmentId = "", string fileUrl = "", string dueDate = "")
         {
-            // 1. Tạo Panel bao ngoài (Card)
             Panel pnlCard = new Panel();
-            pnlCard.Width = flpContent.ClientSize.Width - 60; // Tự co giãn
+            pnlCard.Width = flpContent.ClientSize.Width - 60;
             pnlCard.Height = 90;
             pnlCard.BackColor = Color.FromArgb(35, 35, 38);
             pnlCard.Margin = new Padding(30, 5, 30, 10);
             pnlCard.Cursor = Cursors.Hand;
 
-            // Vẽ viền
             pnlCard.Paint += (s, e) =>
             {
                 ControlPaint.DrawBorder(e.Graphics, pnlCard.ClientRectangle,
                     Color.FromArgb(60, 60, 60), ButtonBorderStyle.Solid);
             };
 
-            // 2. Icon
             Label lblIcon = new Label();
             lblIcon.AutoSize = true;
             lblIcon.Font = new Font("Segoe UI Emoji", 24, FontStyle.Regular);
             lblIcon.Location = new Point(15, 20);
 
+            // Icon khác nhau tùy loại
             if (type == "announcement")
             {
                 lblIcon.Text = "📢";
                 lblIcon.ForeColor = Color.Orange;
             }
-            else // Trường hợp là "assignment"
+            else
             {
                 lblIcon.Text = "📝";
                 lblIcon.ForeColor = Color.HotPink;
             }
 
-            // 3. Tiêu đề
+            // 3. Tiêu đề (Sửa để không đè lên Icon)
             Label lblTitle = new Label();
-            lblTitle.Text = title ?? "Bài tập không tên";
+            lblTitle.Text = title ?? "Không tiêu đề";
             lblTitle.Font = new Font("Segoe UI", 12, FontStyle.Bold);
             lblTitle.ForeColor = Color.White;
-            lblTitle.Location = new Point(70, 15);
-            lblTitle.AutoSize = true;
+            lblTitle.Location = new Point(75, 15); // Đẩy sang phải một chút để tránh Icon (tọa độ x=75)
+            lblTitle.Width = pnlCard.Width - 90;    // Giới hạn chiều rộng (trừ đi phần Icon và lề phải)
+            lblTitle.Height = 25;                  // Cố định chiều cao
+            lblTitle.AutoSize = false;             // TẮT AutoSize để kiểm soát Width
+            lblTitle.AutoEllipsis = true;          // Nếu tên quá dài sẽ tự có dấu "..."
 
-            // 4. Mô tả
+            // Cập nhật phần hiển thị mô tả để kèm hạn nộp nếu là bài tập
             Label lblDesc = new Label();
-            lblDesc.Text = description ?? "Nhấn để xem chi tiết...";
+            string infoText = description ?? "";
+            if (type == "assignment" && !string.IsNullOrEmpty(dueDate))
+            {
+                infoText += $" (Hạn: {dueDate})";
+            }
+            if (!string.IsNullOrEmpty(fileUrl)) infoText += " [📎 File]";
+
+            lblDesc.Text = infoText;
+            // 4. Mô tả
+            string fileIndicator = !string.IsNullOrEmpty(fileUrl) ? " [📎 Có tệp đính kèm]" : "";
+            lblDesc.Text = (description ?? "") + fileIndicator;
             lblDesc.Font = new Font("Segoe UI", 10, FontStyle.Regular);
             lblDesc.ForeColor = Color.Gray;
-            lblDesc.Location = new Point(70, 45);
-            lblDesc.AutoSize = true;
+            lblDesc.Location = new Point(75, 45); // Căn lề x=75 giống tiêu đề
+            lblDesc.Width = pnlCard.Width - 90;    // Giới hạn chiều rộng
+            lblDesc.Height = 35;                  // Cố định chiều cao (đủ cho khoảng 1-2 dòng)
+            lblDesc.AutoSize = false;             // TẮT AutoSize
+            lblDesc.AutoEllipsis = true;          // Tự động rút gọn nếu mô tả quá dài
 
-            // 5. Sự kiện Click
-            EventHandler clickAction = (s, e) =>
+            // --- XỬ LÝ CLICK ---
+            EventHandler clickAction = async (s, e) =>
             {
-                // Kiểm tra đúng loại "assignment" để mở Form
                 if (type == "assignment")
                 {
-                    // Mở Form Nộp Bài
+                    // TRUYỀN THÊM dueDate VÀO ĐÂY
                     Submit_Agsignment submitForm = new Submit_Agsignment(
-     title,          // Tên bài tập
-     assignmentId,   // 🔥 ID bài tập
-     _client,
-     _courseId,
-     _studentId
- );
-
-
+                        title,
+                        description,
+                        dueDate, // Truyền biến dueDate đã nhận từ Firebase
+                        assignmentId,
+                        _client,
+                        _courseId,
+                        _studentId
+                    );
                     submitForm.ShowDialog();
                 }
-                else
+                else if (type == "announcement")
                 {
-                    // Nếu là thông báo thì chỉ hiện lên xem
-                    MessageBox.Show(description, "Thông báo chung", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    if (!string.IsNullOrEmpty(fileUrl))
+                    {
+                        // Hiển thị lựa chọn cho người dùng
+                        DialogResult result = MessageBox.Show(
+                            description + "\n\nBạn có muốn TẢI VỀ tệp đính kèm này không?",
+                            "Thông báo",
+                            MessageBoxButtons.YesNo,
+                            MessageBoxIcon.Question);
+
+                        if (result == DialogResult.Yes)
+                        {
+                            try
+                            {
+                                // Lấy tên file gốc từ URL hoặc đặt tên mặc định
+                                string fileName = "TaiLieu_" + DateTime.Now.ToString("yyyyMMdd_HHmmss");
+
+                                // Cố gắng lấy phần mở rộng file từ URL (ví dụ: .pdf, .docx)
+                                string extension = Path.GetExtension(fileUrl).Split('?')[0];
+                                if (string.IsNullOrEmpty(extension)) extension = ".pdf"; // Mặc định nếu không thấy
+
+                                using (SaveFileDialog dlg = new SaveFileDialog())
+                                {
+                                    dlg.FileName = fileName + extension;
+                                    dlg.Filter = "All files (*.*)|*.*";
+                                    dlg.Title = "Lưu tài liệu đính kèm";
+
+                                    if (dlg.ShowDialog() == DialogResult.OK)
+                                    {
+                                        // Hiển thị trạng thái đang tải (tùy chọn)
+                                        this.Cursor = Cursors.WaitCursor;
+
+                                        // Gọi hàm tải file đã viết trong CloudinaryHelper
+                                        await CloudinaryHelper.DownloadFileAsync(fileUrl, dlg.FileName);
+
+                                        this.Cursor = Cursors.Default;
+                                        MessageBox.Show("✅ Tải file thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                    }
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                this.Cursor = Cursors.Default;
+                                MessageBox.Show("Lỗi khi tải file: " + ex.Message, "Lỗi hệ thống");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show(description, "Chi tiết thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
                 }
             };
 
-            // Gán sự kiện click cho toàn bộ thành phần trong thẻ
+
+            lblDesc.Click += clickAction;
+            pnlCard.Controls.Add(lblDesc);
+
             pnlCard.Click += clickAction;
             lblTitle.Click += clickAction;
             lblIcon.Click += clickAction;
             lblDesc.Click += clickAction;
 
-            // Add vào Panel
             pnlCard.Controls.Add(lblIcon);
             pnlCard.Controls.Add(lblTitle);
             pnlCard.Controls.Add(lblDesc);
 
-            // Add vào FlowLayout
             flpContent.Controls.Add(pnlCard);
         }
 
-        private void flpContent_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
+        private void flpContent_Paint(object sender, PaintEventArgs e) { }
     }
 }

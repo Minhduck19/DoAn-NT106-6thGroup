@@ -2,6 +2,7 @@
 using Firebase.Database.Query;
 using Guna.UI2.WinForms;
 using Guna.UI2.WinForms.Enums;
+using Guna.UI2.WinForms.Suite;
 using System;
 using System.Drawing;
 using System.IO;
@@ -18,9 +19,14 @@ namespace APP_DOAN.GiaoDienChinh
         private readonly string _courseId;
         private readonly string _assignmentId;
         private readonly string _studentUid;
+        private string title;
+        private string studentId;
 
+        // Sửa Constructor chính để nhận thêm tham số dueDate
         public Submit_Agsignment(
             string assignmentTitle,
+            string assignmentDescription,
+            string assignmentDueDate, // Thêm tham số này
             string assignmentId,
             FirebaseClient client,
             string courseId,
@@ -28,12 +34,26 @@ namespace APP_DOAN.GiaoDienChinh
         {
             InitializeComponent();
 
-            lblAssignmentName.Text = assignmentTitle.ToUpper();
+            lblAssignmentName.Text = "Nộp bài tập: " + assignmentTitle.ToUpper();
 
             _assignmentId = assignmentId;
             _client = client;
             _courseId = courseId;
             _studentUid = studentUid;
+
+            txtTitle.Text = assignmentTitle;
+            txtDesc.Text = assignmentDescription;
+
+            // Gán dữ liệu vào Label hạn nộp
+            lbDl.Text = "Hạn nộp: " + assignmentDueDate;
+        }
+        public Submit_Agsignment(string title, string assignmentId, FirebaseClient client, string courseId, string studentId)
+        {
+            this.title = title;
+            _assignmentId = assignmentId;
+            _client = client;
+            _courseId = courseId;
+            this.studentId = studentId;
         }
 
         private void btnBrowse_Click_1(object sender, EventArgs e)
@@ -109,6 +129,11 @@ namespace APP_DOAN.GiaoDienChinh
                 Cursor = Cursors.Default;
                 MessageBox.Show("Lỗi nộp bài:\n" + ex.Message);
             }
+        }
+
+        private void lblAssignmentName_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
