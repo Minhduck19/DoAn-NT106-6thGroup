@@ -13,6 +13,7 @@ namespace APP_DOAN
     public partial class MainForm_GiangVien : Form
     {
         // Biến lưu thông tin User
+        private string currentId;
         private string loggedInEmail;
         private string idToken;
         private string currentUid;
@@ -21,7 +22,7 @@ namespace APP_DOAN
         private FirebaseClient _client;
         private List<Course> _allMyCourses = new List<Course>();
 
-        public MainForm_GiangVien(string uid, string displayName, string token, string email)
+        public MainForm_GiangVien(string uid,string MaSo, string displayName, string token, string email)
         {
             InitializeComponent();
             this.WindowState = FormWindowState.Maximized;
@@ -29,6 +30,7 @@ namespace APP_DOAN
             this.currentUid = uid;
             this.currentDisplayName = displayName;
             this.loggedInEmail = email;
+            this.currentId = MaSo;
 
             // --- KẾT NỐI FIREBASE ---
             try
@@ -101,7 +103,7 @@ namespace APP_DOAN
             }
 
             // Mở form chat mới
-            frmMainChat chat = new frmMainChat(currentUid, currentDisplayName, idToken);
+            frmMainChat chat = new frmMainChat(currentUid, currentId, currentDisplayName, idToken);
             chat.Show();
         }
 

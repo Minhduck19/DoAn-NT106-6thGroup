@@ -141,19 +141,16 @@ namespace APP_DOAN.GiaoDienChinh
                     HoTen = txtFullName.Text.Trim(),
                     Sex = txtSex.Text.Trim(),
                     // Lưu vào trường MaSinhVien (hoặc MaGiangVien nếu dùng chung model)
-                    MaGiangVien = txtStudentID.Text.Trim(),
+                    MSSV = txtStudentID.Text.Trim(),
                     NgaySinh = txtBirthday.Text.Trim(),
                     Khoa = txtFaculty.Text.Trim(),
-                    ChucVu = txtClass.Text.Trim(), // Lưu Lớp vào trường ChucVu hoặc Lop
+                    Lop = txtClass.Text.Trim(), // Lưu Lớp vào trường ChucVu hoặc Lop
 
                     AvatarUrl = _currentAvatarUrl, // Lưu Link Avatar
 
                     IsOnline = oldData?.IsOnline ?? false,
                     CreatedDate = oldData?.CreatedDate ?? DateTime.UtcNow.ToString("o")
                 };
-
-                // Lưu ý: Nếu Model User của bạn có trường riêng "MaSinhVien" và "Lop", hãy gán vào đó.
-                // Ở đây mình gán vào MaGiangVien/ChucVu giả định bạn dùng chung 1 Class User.
 
                 bool success = await FirebaseApi.Put($"Users/{_uid}", updatedUser);
 
