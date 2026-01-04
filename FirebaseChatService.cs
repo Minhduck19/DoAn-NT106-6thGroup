@@ -1,12 +1,14 @@
-using Firebase.Database;
+﻿using Firebase.Database;
 using Firebase.Database.Query;
 using Firebase.Database.Streaming;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
-using System.Drawing;
 using System.Windows.Forms;
 
 namespace APP_DOAN
@@ -202,6 +204,161 @@ namespace APP_DOAN
                         onMessageReceived?.Invoke(firebaseEvent.Key, firebaseEvent.Object);
                     }
                 });
+        }
+        public async Task<List<Message>> GetGroupMessagesAsync(string classId)
+        {
+            try
+            {
+                var messages = await _firebaseClient
+                    .Child("Groups")
+                    .Child(classId)
+                    .Child("Messages")
+                    .OnceAsync<Message>();
+
+                return messages.Select(m => m.Object).ToList();
+            }
+            catch
+            {
+                return new List<Message>();
+            }
+        }
+
+       
+        public async Task SendGroupMessageAsync(string classId, Message message)
+        {
+            await _firebaseClient
+                .Child("Groups")
+                .Child(classId)
+                .Child("Messages")
+                .PostAsync(message);
+        }
+
+      
+        public IDisposable ListenForGroupMessages(string classId, Action<Message> onMessageReceived)
+        {
+            return _firebaseClient
+                .Child("Groups")
+                .Child(classId)
+                .Child("Messages")
+                .AsObservable<Message>()
+                .Subscribe(d =>
+                {
+                    // Chỉ nhận tin nhắn mới thêm vào (EventType.InsertOrUpdate)
+                    if (d.EventType == Firebase.Database.Streaming.FirebaseEventType.InsertOrUpdate && d.Object != null)
+                    {
+                        onMessageReceived(d.Object);
+                    }
+                });
+        }
+
+        public async Task<Dictionary<string, string>> GetMyCoursesAsync(string userUid, string userRole)
+        {
+            var myCourses = new Dictionary<string, string>(); // Key: ClassID, Value: Tên Lớp
+
+            try
+            {
+                if (userRole == "GiangVien")
+                {
+                    var courses = await _firebaseClient
+                        .Child("Courses")
+                        .OrderBy("GiangVienUid")
+                        .EqualTo(userUid)
+                        .OnceAsync<object>();
+
+                    foreach (var c in courses)
+                    {
+                        string name = $"Lớp {c.Key}";
+
+                        try
+                        {
+                            var data = JsonConvert.DeserializeObject<Dictionary<string, object>>(c.Object?.ToString() ?? string.Empty)
+                                       ?? new Dictionary<string, object>();
+
+                            if (data.TryGetValue("TenLop", out var tenLopObj) && tenLopObj != null)
+                                name = tenLopObj.ToString();
+                            else if (data.TryGetValue("CourseName", out var courseNameObj) && courseNameObj != null)
+                                name = courseNameObj.ToString();
+                            else if (data.TryGetValue("Name", out var nameObj) && nameObj != null)
+                                name = nameObj.ToString();
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine("Parse course name error: " + ex.Message);
+                        }
+
+                        if (!myCourses.ContainsKey(c.Key))
+                            myCourses.Add(c.Key, name);
+                    }
+                }
+                else
+                {
+                    var allCourseStudents = await _firebaseClient.Child("CourseStudents").OnceAsync<object>();
+
+                    foreach (var courseNode in allCourseStudents)
+                    {
+                        string courseId = courseNode.Key;
+
+                        var isEnrolled = await _firebaseClient
+                            .Child("CourseStudents")
+                            .Child(courseId)
+                            .Child(userUid)
+                            .OnceSingleAsync<object>();
+
+                        if (isEnrolled == null)
+                            continue;
+
+                        string className = $"Lớp {courseId}";
+
+                        try
+                        {
+                            var courseObj = await _firebaseClient
+                                .Child("Courses")
+                                .Child(courseId)
+                                .OnceSingleAsync<object>();
+
+                            var data = JsonConvert.DeserializeObject<Dictionary<string, object>>(courseObj?.ToString() ?? string.Empty)
+                                       ?? new Dictionary<string, object>();
+
+                            if (data.TryGetValue("TenLop", out var tenLopObj) && tenLopObj != null)
+                                className = tenLopObj.ToString();
+                            else if (data.TryGetValue("CourseName", out var courseNameObj) && courseNameObj != null)
+                                className = courseNameObj.ToString();
+                            else if (data.TryGetValue("Name", out var nameObj) && nameObj != null)
+                                className = nameObj.ToString();
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine("Load course name error: " + ex.Message);
+                        }
+
+                        if (!myCourses.ContainsKey(courseId))
+                            myCourses.Add(courseId, className);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Lỗi load lớp: " + ex.Message);
+            }
+
+            return myCourses;
+        }
+        public async Task<bool> IsTeacherOfClassAsync(string classId, string userUid)
+        {
+            try
+            {
+                var teacherId = await _firebaseClient
+                    .Child("Courses")
+                    .Child(classId)
+                    .Child("GiangVienUid") // Lấy GiangVienUid để so sánh
+                    .OnceSingleAsync<string>();
+
+                return teacherId == userUid;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

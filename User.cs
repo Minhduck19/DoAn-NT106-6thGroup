@@ -10,8 +10,11 @@ namespace APP_DOAN
         [JsonProperty("HoTen")] // Trong ảnh là "HoTen"
         public string HoTen { get; set; }
 
-        [JsonProperty("MaGiangVien")] // Trong ảnh là "MaGiangVien"
+        [JsonProperty("MaGiangVien")]
         public string MaGiangVien { get; set; }
+
+        [JsonProperty("MSSV")]
+        public string MSSV { get; set; }
 
         [JsonProperty("NgaySinh")] // Trong ảnh là "NgaySinh"
         public string NgaySinh { get; set; }
@@ -24,6 +27,9 @@ namespace APP_DOAN
 
         [JsonProperty("ChucVu")] // Trong ảnh là "ChucVu"
         public string ChucVu { get; set; }
+
+        [JsonProperty("Lop")] // Trong ảnh là "ChucVu"
+        public string Lop { get; set; }
 
         [JsonProperty("Bang")] // Trong ảnh là "Bang"
         public string Bang { get; set; }
