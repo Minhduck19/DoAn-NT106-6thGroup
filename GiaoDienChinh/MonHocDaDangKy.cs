@@ -158,6 +158,8 @@ namespace APP_DOAN.GiaoDienChinh
                 // Hiển thị: Sĩ số hiện tại / Sĩ số tối đa
                 item.SubItems.Add($"{course.SiSoHienTai}/{course.SiSo}");
 
+                item.Tag = course.Id;
+
                 // Logic màu sắc
                 if (course.IsJoined)
                 {
@@ -184,7 +186,7 @@ namespace APP_DOAN.GiaoDienChinh
             if (course == null) return;
 
             // Chặn ngay lập tức nếu đầy và chưa tham gia
-            if (!course.IsJoined && course.SiSo >= course.SiSoToiDa)
+            if (!course.IsJoined && course.SiSoHienTai >= course.SiSo)
             {
                 MessageBox.Show(
                     $"❌ Lớp học đã đủ sĩ số ({course.SiSoHienTai}/{course.SiSo}).\nBạn không thể đăng ký lớp này.",
@@ -192,10 +194,10 @@ namespace APP_DOAN.GiaoDienChinh
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Warning
                 );
-                // Bỏ chọn dòng đó để người dùng không nhầm lẫn
                 item.Selected = false;
                 return;
             }
+
 
             // Mở form chi tiết
             ChiTietLopHoc form = new ChiTietLopHoc(course, _studentUid, _idToken);
