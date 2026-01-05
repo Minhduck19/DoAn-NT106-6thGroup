@@ -14,6 +14,7 @@ namespace APP_DOAN
         public string MaLop { get; set; }
         public int SiSo { get; set; }
         public int SiSoHienTai { get; set; }
+        public int SiSoToiDa { get; set; }
 
         // Để mapping dữ liệu nếu trên Firebase bạn lưu là "GiangVien" thay vì "Instructor"
         public string GiangVien

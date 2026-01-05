@@ -11,6 +11,7 @@ namespace APP_DOAN
 {
     public partial class frmMainChat : Form
     {
+        private NotifyIcon _notificationIcon;
         private FirebaseChatService _chatService;
         private const string FIREBASE_URL = "https://nt106-minhduc-default-rtdb.firebaseio.com/";
 
@@ -65,7 +66,13 @@ namespace APP_DOAN
             if (btnTabClass != null) btnTabClass.Click += (s, e) => SwitchTab(true);
 
             SetupAutoScroll();
+            _notificationIcon = new NotifyIcon();
+            _notificationIcon.Icon = SystemIcons.Information; // Hoặc dùng Icon riêng của bạn
+            _notificationIcon.Visible = true;
+            _notificationIcon.Text = "App Chat Thông Báo";
         }
+
+
 
         private async void frmMainChat_Load(object sender, EventArgs e)
         {
@@ -314,10 +321,21 @@ namespace APP_DOAN
             }
             DisplayMessageAsBubble(msg);
         }
-
+        private void ShowDesktopNotification(string senderName, string messageText)
+        {
+            // Kiểm tra nếu form đang không được focus (người dùng đang dùng app khác)
+            // thì mới hiện thông báo để tránh làm phiền
+            if (Form.ActiveForm != this)
+            {
+                _notificationIcon.BalloonTipTitle = $"Tin nhắn mới từ {senderName}";
+                _notificationIcon.BalloonTipText = messageText.Length > 50 ? messageText.Substring(0, 47) + "..." : messageText;
+                _notificationIcon.ShowBalloonTip(3000); // Hiển thị trong 3 giây
+            }
+        }
         private void DisplayMessageAsBubble(Message msg)
         {
             if (flowChatPanel.IsDisposed) return;
+
             if (flowChatPanel.InvokeRequired)
             {
                 flowChatPanel.Invoke(new Action(() => DisplayMessageAsBubble(msg)));
@@ -408,7 +426,18 @@ namespace APP_DOAN
                     ReorderContactList();
                 }
             }
+            
+            if (!isMe)
+            {
+                // Chỉ thông báo nếu tin nhắn mới hơn thời điểm hiện tại (tránh thông báo loạt tin nhắn cũ khi vừa load)
+                long now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                if (msg.Timestamp > now - 5000) // Tin nhắn trong vòng 5 giây trở lại
+                {
+                    ShowDesktopNotification(msg.SenderName, msg.Text);
+                }
+            }
         }
+
         private void DisplayMessageAsBubbleWithoutReorder(Message msg)
         {
             if (flowChatPanel.InvokeRequired) { flowChatPanel.Invoke(new Action(() => DisplayMessageAsBubbleWithoutReorder(msg))); return; }
@@ -579,7 +608,7 @@ namespace APP_DOAN
         private void UpdateChatViewportWidthCache() { int w = flowChatPanel.DisplayRectangle.Width; if (w <= 0) w = flowChatPanel.ClientSize.Width; _chatViewportWidth = w; }
         private int GetChatViewportWidth() { return _chatViewportWidth; }
         private void frmMainChat_FormClosing(object? sender, FormClosingEventArgs e) { _messageSubscription?.Dispose(); _messageSubscription = null; }
-        protected override void Dispose(bool disposing) { if (disposing) { _messageSubscription?.Dispose(); _typingTimer?.Dispose(); } base.Dispose(disposing); }
+        protected override void Dispose(bool disposing) { if (disposing) { _messageSubscription?.Dispose(); _typingTimer?.Dispose(); } base.Dispose(disposing); _notificationIcon?.Dispose(); }
         private void lblInfoEmail_Click(object? sender, EventArgs e) { }
         private void lblInfoName_Click(object? sender, EventArgs e) { }
         private void guna2CirclePictureBox1_Click(object sender, EventArgs e) { }
@@ -628,5 +657,9 @@ namespace APP_DOAN
             _emojiForm.Show(this);
         }
 
+        private void flowChatPanel_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 }

@@ -13,6 +13,8 @@ namespace APP_DOAN.GiaoDienChinh
 {
     public partial class Submit_Agsignment : Form
     {
+        private const long MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
+
         public event Action OnSubmitSuccess;
 
         private readonly FirebaseClient _client;
@@ -58,15 +60,41 @@ namespace APP_DOAN.GiaoDienChinh
 
         private void btnBrowse_Click_1(object sender, EventArgs e)
         {
+            
             using OpenFileDialog dlg = new OpenFileDialog
             {
                 Title = "Chọn file bài tập",
                 Filter = "All files|*.*"
             };
 
+            
+
+
             if (dlg.ShowDialog() == DialogResult.OK)
             {
+                FileInfo fileInfo = new FileInfo(dlg.FileName);
+
+                if (fileInfo.Length > MAX_FILE_SIZE)
+                {
+                    new Guna2MessageDialog
+                    {
+                        Caption = "File quá lớn",
+                        Text = "Dung lượng file không được vượt quá 10 MB",
+                        Icon = MessageDialogIcon.Warning,
+                        Buttons = MessageDialogButtons.OK,
+                        Parent = this
+                    }.Show();
+                    return;
+                }
+
                 txtFilePath.Text = dlg.FileName;
+                string ext = Path.GetExtension(txtFilePath.Text).ToLower();
+                string[] allowed = { ".pdf", ".docx", ".zip" };
+                if (!allowed.Contains(ext))
+                {
+                    MessageBox.Show("Chỉ cho phép file PDF, DOCX hoặc ZIP");
+                    return;
+                }
             }
         }
 
@@ -87,6 +115,29 @@ namespace APP_DOAN.GiaoDienChinh
 
             try
             {
+                string ext = Path.GetExtension(txtFilePath.Text).ToLower();
+                string[] allowed = { ".pdf", ".docx", ".zip" };
+                if (!allowed.Contains(ext))
+                {
+                    MessageBox.Show("Chỉ cho phép file PDF, DOCX hoặc ZIP");
+                    return;
+                }
+                FileInfo fileInfo = new FileInfo(txtFilePath.Text);
+
+                if (fileInfo.Length > MAX_FILE_SIZE)
+                {
+                    new Guna2MessageDialog
+                    {
+                        Caption = "File quá lớn",
+                        Text = "Dung lượng file vượt quá 10 MB. Vui lòng chọn file khác.",
+                        Icon = MessageDialogIcon.Error,
+                        Buttons = MessageDialogButtons.OK,
+                        Parent = this
+                    }.Show();
+                    return;
+                }
+
+
                 Cursor = Cursors.WaitCursor;
 
                 string fileUrl = await Task.Run(() =>
