@@ -28,34 +28,35 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.flpContent = new System.Windows.Forms.FlowLayoutPanel();
-            this.SuspendLayout();
+            flpContent = new FlowLayoutPanel();
+            SuspendLayout();
             // 
             // flpContent
             // 
-            this.flpContent.AutoScroll = true;
-            this.flpContent.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flpContent.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(20)))), ((int)(((byte)(20))))); // Nền tối
-            this.flpContent.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flpContent.Location = new System.Drawing.Point(0, 0);
-            this.flpContent.Name = "flpContent";
-            this.flpContent.Padding = new System.Windows.Forms.Padding(10);
-            this.flpContent.Size = new System.Drawing.Size(1182, 753);
-            this.flpContent.TabIndex = 0;
-            this.flpContent.WrapContents = false;
+            flpContent.AutoScroll = true;
+            flpContent.BackColor = Color.FromArgb(20, 20, 20);
+            flpContent.Dock = DockStyle.Fill;
+            flpContent.FlowDirection = FlowDirection.TopDown;
+            flpContent.Location = new Point(0, 0);
+            flpContent.Name = "flpContent";
+            flpContent.Padding = new Padding(10);
+            flpContent.Size = new Size(1182, 753);
+            flpContent.TabIndex = 0;
+            flpContent.WrapContents = false;
+            flpContent.Paint += flpContent_Paint;
             // 
             // CourseDetailForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(20)))), ((int)(((byte)(20)))));
-            this.ClientSize = new System.Drawing.Size(1182, 753);
-            this.Controls.Add(this.flpContent);
-            this.Name = "CourseDetailForm";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Chi tiết khóa học";
-            this.Load += new System.EventHandler(this.CourseDetailForm_Load);
-            this.ResumeLayout(false);
+            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleMode = AutoScaleMode.Font;
+            BackColor = Color.FromArgb(20, 20, 20);
+            ClientSize = new Size(1182, 753);
+            Controls.Add(flpContent);
+            Name = "CourseDetailForm";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "Chi tiết khóa học";
+            Load += CourseDetailForm_Load;
+            ResumeLayout(false);
 
         }
 

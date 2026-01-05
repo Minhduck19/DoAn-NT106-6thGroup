@@ -14,6 +14,7 @@ namespace APP_DOAN
         public string MaLop { get; set; }
         public int SiSo { get; set; }
         public int SiSoHienTai { get; set; }
+        public int SiSoToiDa { get; set; }
 
         // Để mapping dữ liệu nếu trên Firebase bạn lưu là "GiangVien" thay vì "Instructor"
         public string GiangVien
@@ -40,6 +41,13 @@ namespace APP_DOAN
 
             // Mặc định mấy cái này để tránh null
             Students = new List<string>();
+        }
+        public class CourseModel
+        {
+            public string TenLop { get; set; }
+            public string InstructorName { get; set; }
+            public string MaLop { get; set; }
+            public int MaxStudents { get; set; } // Giới hạn tối đa (VD: 50)
         }
     }
 }

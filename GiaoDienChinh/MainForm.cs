@@ -1,6 +1,6 @@
 ﻿using APP_DOAN.GiaoDienChinh;
 using APP_DOAN.Môn_học;
-using APP_DOAN.Services; // Namespace chứa FirebaseService
+using APP_DOAN.Services;
 using Firebase.Database;
 using Firebase.Database.Query;
 using System;
@@ -16,6 +16,7 @@ namespace APP_DOAN
     {
         private IDisposable _courseListener;
         private readonly string _currentUserUid;
+        private readonly string _currentMaSo;
         private readonly string _currentUserName;
         private readonly string _loggedInEmail;
         private readonly string _idToken;
@@ -24,24 +25,21 @@ namespace APP_DOAN
         private bool isLoggingOut = false;
         private List<Course> _allCourses = new();
 
-        public MainForm(string uid, string hoTen, string email, string token)
+        public MainForm(string uid, string MSSV, string hoTen, string email, string token)
         {
             InitializeComponent();
-
+            _currentMaSo = MSSV;
             _currentUserUid = uid;
             _currentUserName = hoTen;
             _loggedInEmail = email;
             _idToken = token;
 
-            // Dùng Singleton FirebaseService nếu đã có, hoặc tạo mới nếu chưa
-            // Ưu tiên dùng Singleton để đồng bộ
             try
             {
-                _firebaseClient = FirebaseService.Instance._client; 
+                _firebaseClient = FirebaseService.Instance._client;
             }
             catch
             {
-                // Fallback nếu chưa initialize (ít khi xảy ra nếu login đúng)
                 _firebaseClient = new FirebaseClient(
                     "https://nt106-minhduc-default-rtdb.firebaseio.com/",
                     new FirebaseOptions { AuthTokenAsyncFactory = () => Task.FromResult(token) }
@@ -51,7 +49,6 @@ namespace APP_DOAN
 
         private async void MainForm_Load(object sender, EventArgs e)
         {
-            // Đảm bảo Service đã chạy
             try { FirebaseService.Initialize(_idToken); } catch { }
 
             lblWelcome.Text = $"Chào mừng,\n{_currentUserName} (Sinh viên)";
@@ -60,39 +57,75 @@ namespace APP_DOAN
             ListenCourseChanges();
         }
 
-        // --- XỬ LÝ FIREBASE ---
         private async Task LoadClassDataFromFirebase()
         {
             try
             {
-                var firebaseCourses = await _firebaseClient
+                if (_allCourses.Count == 0)
+                {
+                    flpCourses.Controls.Clear();
+                    Label lblLoading = new Label()
+                    {
+                        Text = "Đang tải dữ liệu...",
+                        AutoSize = true,
+                        Font = new Font("Segoe UI", 12, FontStyle.Italic),
+                        ForeColor = Color.Gray,
+                        Location = new Point(20, 20)
+                    };
+                    flpCourses.Controls.Add(lblLoading);
+                }
+
+                var taskAllCourses = _firebaseClient
                     .Child("Courses")
                     .OnceAsync<Course>();
 
-                var courseStudents = await _firebaseClient
+                var taskStudentMap = _firebaseClient
                     .Child("CourseStudents")
-                    .OnceAsync<Dictionary<string, bool>>();
+                    .OnceAsync<Dictionary<string, StudentInfo>>();
+
+                await Task.WhenAll(taskAllCourses, taskStudentMap);
+
+                var firebaseCourses = taskAllCourses.Result;
+                var courseStudentsSnapshot = taskStudentMap.Result;
+
+                var joinedCourseIds = new HashSet<string>();
+
+                if (courseStudentsSnapshot != null)
+                {
+                    joinedCourseIds = new HashSet<string>(
+                        courseStudentsSnapshot
+                            .Where(cs => cs.Object != null &&
+                                         cs.Object.ContainsKey(_currentUserUid))
+                            .Select(cs => cs.Key)
+                    );
+                }
 
                 _allCourses.Clear();
 
                 foreach (var c in firebaseCourses)
                 {
-                    bool isJoined = courseStudents.Any(cs =>
-                        cs.Key == c.Key && cs.Object.ContainsKey(_currentUserUid));
+                    if (c.Object == null) continue;
+
+                    bool isJoined = joinedCourseIds.Contains(c.Key);
 
                     _allCourses.Add(new Course(
                         c.Key,
-                        c.Object.TenLop,
-                        c.Object.Instructor,
+                        c.Object.TenLop ?? "Chưa đặt tên",
+                        c.Object.Instructor ?? "N/A",
                         isJoined
                     ));
                 }
 
-                PopulateAllCourses(); // Gọi hàm vẽ giao diện mới
+                PopulateAllCourses();
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Lỗi tải lớp: " + ex.Message);
+                MessageBox.Show(
+                    "Lỗi tải lớp:\n" + ex.Message,
+                    "Firebase Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
             }
         }
 
@@ -111,16 +144,11 @@ namespace APP_DOAN
                 });
         }
 
-        // --- HÀM QUAN TRỌNG: VẼ GIAO DIỆN CARD (THAY THẾ LISTVIEW) ---
         private void PopulateAllCourses(List<Course> listToDisplay = null)
         {
-            // Nếu không truyền list cụ thể thì lấy tất cả các lớp đã join
             var sourceList = listToDisplay ?? _allCourses;
-
-            // Lọc ra các lớp đã tham gia (IsJoined = true)
             var joinedCourses = sourceList.Where(c => c.IsJoined).ToList();
 
-            // Xóa sạch các card cũ
             flpCourses.Controls.Clear();
 
             if (joinedCourses.Count == 0)
@@ -135,31 +163,26 @@ namespace APP_DOAN
                 return;
             }
 
-            // Vòng lặp tạo từng thẻ
             foreach (var c in joinedCourses)
             {
-                // 1. Tạo Panel chính (Cái thẻ)
                 Panel pnlCard = new Panel();
-                pnlCard.Size = new Size(flpCourses.Width - 40, 110); // Trừ hao thanh cuộn
-                pnlCard.BackColor = Color.White; // Màu nền trắng
-                pnlCard.Margin = new Padding(10, 5, 10, 15); // Khoảng cách giữa các thẻ
+                pnlCard.Size = new Size(flpCourses.Width - 40, 110);
+                pnlCard.BackColor = Color.White;
+                pnlCard.Margin = new Padding(10, 5, 10, 15);
                 pnlCard.Cursor = Cursors.Hand;
-                pnlCard.Tag = c.Id; // Lưu ID để click
+                pnlCard.Tag = c.Id;
 
-                // Sự kiện click vào panel
                 pnlCard.Click += (s, e) => OpenCourseDetail(c.Id, c.TenLop);
 
-                // 2. Tạo Tên môn học (Màu xanh dương)
                 Label lblName = new Label();
                 lblName.Text = c.TenLop ?? "Chưa đặt tên";
                 lblName.Font = new Font("Segoe UI", 14, FontStyle.Bold);
-                lblName.ForeColor = Color.FromArgb(51, 153, 255); // Xanh dương sáng
+                lblName.ForeColor = Color.FromArgb(51, 153, 255);
                 lblName.Location = new Point(20, 15);
                 lblName.AutoSize = true;
-                lblName.Click += (s, e) => OpenCourseDetail(c.Id, c.TenLop); // Click chữ cũng mở
+                lblName.Click += (s, e) => OpenCourseDetail(c.Id, c.TenLop);
                 pnlCard.Controls.Add(lblName);
 
-                // 3. Tạo Tên giảng viên (Màu xám nhạt)
                 Label lblGV = new Label();
                 lblGV.Text = $"GV: {c.Instructor ?? "N/A"}";
                 lblGV.Font = new Font("Segoe UI", 10, FontStyle.Regular);
@@ -169,7 +192,6 @@ namespace APP_DOAN
                 lblGV.Click += (s, e) => OpenCourseDetail(c.Id, c.TenLop);
                 pnlCard.Controls.Add(lblGV);
 
-                // 4. Trạng thái (Góc phải)
                 Label lblStatus = new Label();
                 lblStatus.Text = "✅ Đã tham gia";
                 lblStatus.ForeColor = Color.LightGreen;
@@ -179,20 +201,16 @@ namespace APP_DOAN
                 lblStatus.Anchor = AnchorStyles.Top | AnchorStyles.Right;
                 pnlCard.Controls.Add(lblStatus);
 
-                // Thêm thẻ vào FlowLayoutPanel
                 flpCourses.Controls.Add(pnlCard);
             }
         }
 
-        // Hàm mở Form chi tiết khi click vào thẻ
         private void OpenCourseDetail(string courseId, string courseName)
         {
             CourseDetailForm frm = new CourseDetailForm(courseId, courseName, _currentUserUid, _firebaseClient);
             frm.ShowDialog();
-
         }
 
-        // --- TÌM KIẾM ---
         private void Find_Click(object sender, EventArgs e)
         {
             PerformSearch();
@@ -200,8 +218,6 @@ namespace APP_DOAN
 
         private void txtNameClass_TextChanged(object sender, EventArgs e)
         {
-            // Có thể tìm kiếm ngay khi gõ (Realtime search)
-            // PerformSearch(); 
         }
 
         private void PerformSearch()
@@ -210,11 +226,10 @@ namespace APP_DOAN
 
             if (string.IsNullOrEmpty(keyword))
             {
-                PopulateAllCourses(); // Hiện lại tất cả
+                PopulateAllCourses();
                 return;
             }
 
-            // Lọc danh sách trong bộ nhớ (không gọi lại Firebase cho nhanh)
             var filteredList = _allCourses
                 .Where(c => (c.TenLop != null && c.TenLop.ToLower().Contains(keyword)))
                 .ToList();
@@ -222,8 +237,6 @@ namespace APP_DOAN
             PopulateAllCourses(filteredList);
         }
 
-
-        // --- CÁC CHỨC NĂNG MENU KHÁC (GIỮ NGUYÊN) ---
         private void btnLogout_Click(object sender, EventArgs e)
         {
             var result = MessageBox.Show("Bạn có chắc chắn muốn đăng xuất?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
@@ -231,7 +244,6 @@ namespace APP_DOAN
             {
                 this.isLoggingOut = true;
                 this.Close();
-                // Nhớ mở lại Form Login ở Program.cs hoặc gọi ở đây
             }
         }
 
@@ -247,7 +259,6 @@ namespace APP_DOAN
             base.OnFormClosing(e);
         }
 
-        // Các event click menu
         private void lblWelcome_Click(object sender, EventArgs e) => cmsUserOptions.Show(lblWelcome, new Point(0, lblWelcome.Height));
         private void cmsUserOptions_Opening_1(object sender, System.ComponentModel.CancelEventArgs e) { }
         private void profileToolStripMenuItem_Click(object sender, EventArgs e)
@@ -274,16 +285,27 @@ namespace APP_DOAN
             MonHocDaDangKy frm = new MonHocDaDangKy(_currentUserUid, _idToken);
             frm.ShowDialog();
             this.Show();
-            _ = LoadClassDataFromFirebase(); // Load lại data khi quay về
+            _ = LoadClassDataFromFirebase();
         }
 
         private void guna2Button1_Click(object sender, EventArgs e)
         {
-            frmMainChat chat = new frmMainChat(_currentUserUid, _currentUserName, _idToken);
+            frmMainChat chat = new frmMainChat(_currentUserUid, _currentMaSo, _currentUserName, _idToken);
             chat.Show();
         }
 
         private void grpJoinedCourses_Click_1(object sender, EventArgs e) { }
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e) { }
+
+        private void flpCourses_Paint(object sender, PaintEventArgs e)
+        {
+        }
+    }
+
+    public class StudentInfo
+    {
+        public string Email { get; set; }
+        public string HoTen { get; set; }
+        public string MSSV { get; set; }
     }
 }

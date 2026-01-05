@@ -51,11 +51,19 @@ namespace APP_DOAN.GiaoDienChinh
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges4 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges5 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges6 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges7 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges8 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges9 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges10 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             lblAssignmentName = new Guna.UI2.WinForms.Guna2HtmlLabel();
             txtFilePath = new Guna.UI2.WinForms.Guna2TextBox();
             btnBrowse = new Guna.UI2.WinForms.Guna2Button();
             btnSubmit = new Guna.UI2.WinForms.Guna2Button();
             guna2DragControl1 = new Guna.UI2.WinForms.Guna2DragControl(components);
+            txtTitle = new Guna.UI2.WinForms.Guna2TextBox();
+            txtDesc = new Guna.UI2.WinForms.Guna2TextBox();
+            lbDl = new Label();
+            label1 = new Label();
             SuspendLayout();
             // 
             // lblAssignmentName
@@ -63,11 +71,12 @@ namespace APP_DOAN.GiaoDienChinh
             lblAssignmentName.BackColor = Color.Transparent;
             lblAssignmentName.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
             lblAssignmentName.ForeColor = Color.FromArgb(25, 118, 210);
-            lblAssignmentName.Location = new Point(30, 30);
+            lblAssignmentName.Location = new Point(166, 25);
             lblAssignmentName.Name = "lblAssignmentName";
             lblAssignmentName.Size = new Size(466, 43);
             lblAssignmentName.TabIndex = 3;
             lblAssignmentName.Text = "NỘP BÀI TẬP LỚP: TÊN LỚP HỌC";
+            lblAssignmentName.Click += lblAssignmentName_Click;
             // 
             // txtFilePath
             // 
@@ -77,14 +86,14 @@ namespace APP_DOAN.GiaoDienChinh
             txtFilePath.FillColor = Color.FromArgb(240, 240, 240);
             txtFilePath.Font = new Font("Segoe UI", 9F);
             txtFilePath.ForeColor = Color.Black;
-            txtFilePath.Location = new Point(30, 100);
+            txtFilePath.Location = new Point(49, 440);
             txtFilePath.Margin = new Padding(3, 4, 3, 4);
             txtFilePath.Name = "txtFilePath";
             txtFilePath.PlaceholderText = "Đường dẫn tệp bài tập (chưa chọn tệp)";
             txtFilePath.ReadOnly = true;
             txtFilePath.SelectedText = "";
             txtFilePath.ShadowDecoration.CustomizableEdges = customizableEdges2;
-            txtFilePath.Size = new Size(400, 40);
+            txtFilePath.Size = new Size(542, 40);
             txtFilePath.TabIndex = 2;
             txtFilePath.TextOffset = new Point(10, 0);
             // 
@@ -95,7 +104,7 @@ namespace APP_DOAN.GiaoDienChinh
             btnBrowse.FillColor = Color.FromArgb(66, 165, 245);
             btnBrowse.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             btnBrowse.ForeColor = Color.White;
-            btnBrowse.Location = new Point(450, 100);
+            btnBrowse.Location = new Point(614, 440);
             btnBrowse.Name = "btnBrowse";
             btnBrowse.ShadowDecoration.CustomizableEdges = customizableEdges4;
             btnBrowse.Size = new Size(120, 40);
@@ -111,7 +120,7 @@ namespace APP_DOAN.GiaoDienChinh
             btnSubmit.FillColor = Color.FromArgb(25, 118, 210);
             btnSubmit.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             btnSubmit.ForeColor = Color.White;
-            btnSubmit.Location = new Point(30, 220);
+            btnSubmit.Location = new Point(255, 496);
             btnSubmit.Name = "btnSubmit";
             btnSubmit.ShadowDecoration.CustomizableEdges = customizableEdges6;
             btnSubmit.ShadowDecoration.Enabled = true;
@@ -127,12 +136,63 @@ namespace APP_DOAN.GiaoDienChinh
             guna2DragControl1.TargetControl = this;
             guna2DragControl1.UseTransparentDrag = true;
             // 
+            // txtTitle
+            // 
+            txtTitle.CustomizableEdges = customizableEdges7;
+            txtTitle.DefaultText = "";
+            txtTitle.Font = new Font("Segoe UI", 11F);
+            txtTitle.Location = new Point(49, 99);
+            txtTitle.Margin = new Padding(3, 4, 3, 4);
+            txtTitle.Name = "txtTitle";
+            txtTitle.PlaceholderText = "Tiêu đề bài tập";
+            txtTitle.SelectedText = "";
+            txtTitle.ShadowDecoration.CustomizableEdges = customizableEdges8;
+            txtTitle.Size = new Size(668, 40);
+            txtTitle.TabIndex = 4;
+            // 
+            // txtDesc
+            // 
+            txtDesc.CustomizableEdges = customizableEdges9;
+            txtDesc.DefaultText = "";
+            txtDesc.Font = new Font("Segoe UI", 11F);
+            txtDesc.Location = new Point(49, 159);
+            txtDesc.Margin = new Padding(3, 4, 3, 4);
+            txtDesc.Multiline = true;
+            txtDesc.Name = "txtDesc";
+            txtDesc.PlaceholderText = "Mô tả / yêu cầu bài tập";
+            txtDesc.SelectedText = "";
+            txtDesc.ShadowDecoration.CustomizableEdges = customizableEdges10;
+            txtDesc.Size = new Size(668, 148);
+            txtDesc.TabIndex = 5;
+            // 
+            // lbDl
+            // 
+            lbDl.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lbDl.Location = new Point(49, 323);
+            lbDl.Name = "lbDl";
+            lbDl.Size = new Size(180, 34);
+            lbDl.TabIndex = 6;
+            lbDl.Text = "label1";
+            // 
+            // label1
+            // 
+            label1.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label1.Location = new Point(49, 378);
+            label1.Name = "label1";
+            label1.Size = new Size(487, 58);
+            label1.TabIndex = 7;
+            label1.Text = "Chỉ cho phép file PDF, DOCX hoặc ZIP và chỉ được phép nộp file có dung lượng không quá 10MB:";
+            // 
             // Submit_Agsignment
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.White;
-            ClientSize = new Size(600, 350);
+            ClientSize = new Size(757, 569);
+            Controls.Add(label1);
+            Controls.Add(lbDl);
+            Controls.Add(txtTitle);
+            Controls.Add(txtDesc);
             Controls.Add(btnSubmit);
             Controls.Add(btnBrowse);
             Controls.Add(txtFilePath);
@@ -148,5 +208,10 @@ namespace APP_DOAN.GiaoDienChinh
         }
 
         #endregion
+
+        private Guna.UI2.WinForms.Guna2TextBox txtTitle;
+        private Guna.UI2.WinForms.Guna2TextBox txtDesc;
+        private Label lbDl;
+        private Label label1;
     }
 }

@@ -58,6 +58,8 @@ namespace APP_DOAN
 
                 string idToken = loginResult.IdToken;
                 string uid = loginResult.LocalId;
+                string Maso;
+                
 
                 User userProfile = await GetUserProfileAsync(uid, idToken);
                 if (userProfile == null)
@@ -69,17 +71,20 @@ namespace APP_DOAN
                 string hoTen = userProfile.HoTen;
                 string userRole = userProfile.Role;
 
+
                 this.Hide();
                 if (userRole == "GiangVien")
                 {
-                    using (MainForm_GiangVien mainFormGV = new MainForm_GiangVien(uid, hoTen, idToken))
+                    Maso = userProfile.MaGiangVien;
+                    using (MainForm_GiangVien mainFormGV = new MainForm_GiangVien(uid,Maso, hoTen, idToken, email))
                     {
                         mainFormGV.ShowDialog();
                     }
                 }
-                else if (userRole == "SinhVien")
+                else if (userRole == "SinhVien")    
                 {
-                    using (MainForm mainFormSV = new MainForm(uid, hoTen, email, idToken))
+                    Maso = userProfile.MSSV;
+                    using (MainForm mainFormSV = new MainForm(uid,Maso, hoTen, email, idToken))
                     {
                         mainFormSV.ShowDialog();
                     }
@@ -115,10 +120,21 @@ namespace APP_DOAN
                         AuthTokenAsyncFactory = () => Task.FromResult(idToken)
                     });
 
+                Debug.WriteLine($"GetUserProfileAsync: uid={uid}");
+
+                var raw = await authClient
+                    .Child("Users")
+                    .Child(uid)
+                    .OnceSingleAsync<object>();
+
+                Debug.WriteLine("User raw json: " + (raw?.ToString() ?? "null"));
+
                 var user = await authClient
                     .Child("Users")
                     .Child(uid)
                     .OnceSingleAsync<User>();
+
+                Debug.WriteLine($"Mapped: HoTen={user?.HoTen}, Role={user?.Role}, MSSV={user?.MSSV}, MaGiangVien={user?.MaGiangVien}");
 
                 return user;
             }
@@ -193,6 +209,24 @@ namespace APP_DOAN
             btnLogin.Enabled = enabled;
             txtEmail.Enabled = enabled;
             txtPassword.Enabled = enabled;
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void linkRegister_Click(object sender, EventArgs e)
+        {
+            RegisterForm registerForm = new RegisterForm();
+            registerForm.ShowDialog();
+
+        }
+
+        private void guna2HtmlLabel1_Click(object sender, EventArgs e)
+        {
+            ForgotPasswordForm forgotPasswordForm = new ForgotPasswordForm();
+            forgotPasswordForm.ShowDialog();
         }
     }
 }

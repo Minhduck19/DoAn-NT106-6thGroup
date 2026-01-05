@@ -2,104 +2,121 @@
 using CloudinaryDotNet.Actions;
 using System;
 using System.IO;
+using System.Net.Http;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
-public class CloudinaryHelper
+public static class CloudinaryHelper
 {
     private static Cloudinary _cloudinary;
     private const string CLOUD_NAME = "dipotmwno";
     private const string API_KEY = "987494952471117";
     private const string API_SECRET = "XKOm0cOiEQhIfB3sQvR2Mcel2No";
 
-    // Constructor tĩnh để khởi tạo kết nối 1 lần duy nhất
     static CloudinaryHelper()
     {
         Account account = new Account(CLOUD_NAME, API_KEY, API_SECRET);
         _cloudinary = new Cloudinary(account);
-        _cloudinary.Api.Secure = true; // Luôn dùng HTTPS cho an toàn
+        _cloudinary.Api.Secure = true;
     }
 
-    /// <summary>
-    /// Upload ảnh từ đường dẫn file trên máy tính
-    /// </summary>
-    /// <param name="filePath">Đường dẫn file ảnh (C:\Users\Img.jpg)</param>
-    /// <returns>Trả về URL ảnh online. Trả về null nếu lỗi.</returns>
+    // ================= UPLOAD IMAGE =================
     public static string UploadImage(string filePath)
     {
         try
         {
             if (!File.Exists(filePath))
             {
-                MessageBox.Show("File không tồn tại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("File không tồn tại!");
                 return null;
             }
 
-            var uploadParams = new ImageUploadParams()
+            var uploadParams = new ImageUploadParams
             {
                 File = new FileDescription(filePath),
-                Folder = "WinForms_App_Uploads", // Tên thư mục trên Cloudinary
-                PublicId = $"img_{DateTime.Now.Ticks}", // Đặt tên file unique để không bị đè
+                Folder = "WinForms_App_Uploads",
+                PublicId = $"img_{DateTime.Now.Ticks}",
                 Overwrite = true
             };
 
-            var uploadResult = _cloudinary.Upload(uploadParams);
-
-            if (uploadResult.StatusCode == System.Net.HttpStatusCode.OK)
-            {
-                return uploadResult.SecureUrl.ToString();
-            }
-            else
-            {
-                MessageBox.Show($"Lỗi từ Server: {uploadResult.Error.Message}", "Lỗi Upload", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return null;
-            }
+            var result = _cloudinary.Upload(uploadParams);
+            return result.SecureUrl?.ToString();
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Có lỗi ngoại lệ: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show("Upload image lỗi:\n" + ex.Message);
             return null;
         }
     }
 
-    /// <summary>
-    /// Upload file từ đường dẫn file trên máy tính (hỗ trợ PDF, Word, Excel, etc.)
-    /// </summary>
-    /// <param name="filePath">Đường dẫn file (C:\Users\Document.pdf)</param>
-    /// <returns>Trả về URL file online. Trả về null nếu lỗi.</returns>
+    // ================= UPLOAD FILE =================
     public static string UploadFile(string filePath)
     {
         try
         {
-            if (!File.Exists(filePath))
-            {
-                MessageBox.Show("File không tồn tại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return null;
-            }
+            if (!File.Exists(filePath)) return null;
 
-            var uploadParams = new RawUploadParams()
+            var uploadParams = new RawUploadParams
             {
                 File = new FileDescription(filePath),
                 Folder = "WinForms_App_Uploads",
-                PublicId = $"file_{DateTime.Now.Ticks}",
+                // Sử dụng định dạng ticks để tránh trùng lặp nhưng giữ lại phần mở rộng file gốc
+                PublicId = $"file_{DateTime.Now.Ticks}{Path.GetExtension(filePath)}",
                 Overwrite = true
             };
 
-            var uploadResult = _cloudinary.Upload(uploadParams);
+            var result = _cloudinary.Upload(uploadParams);
 
-            if (uploadResult.StatusCode == System.Net.HttpStatusCode.OK)
+            // Kiểm tra lỗi từ phía Cloudinary trả về
+            if (result.Error != null)
             {
-                return uploadResult.SecureUrl.ToString();
+                throw new Exception(result.Error.Message);
             }
-            else
+
+            return result.SecureUrl?.ToString();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("Lỗi tải lên Cloudinary:\n" + ex.Message);
+            return null;
+        }
+    }
+
+    // ================= DOWNLOAD FILE =================
+    public static async Task DownloadFileAsync(string url, string savePath)
+    {
+        try
+        {
+            // ✅ BẮT BUỘC thêm fl_attachment
+            if (!url.Contains("/fl_attachment/"))
             {
-                MessageBox.Show($"Lỗi từ Server: {uploadResult.Error.Message}", "Lỗi Upload", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return null;
+                url = url.Replace("/upload/", "/upload/fl_attachment/");
+            }
+
+            using (HttpClient client = new HttpClient())
+            {
+                client.Timeout = TimeSpan.FromMinutes(5);
+
+                HttpResponseMessage response = await client.GetAsync(url);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    MessageBox.Show(
+                        $"Download thất bại\nHTTP {(int)response.StatusCode}",
+                        "Lỗi",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error
+                    );
+                    return;
+                }
+
+                byte[] data = await response.Content.ReadAsByteArrayAsync();
+                await File.WriteAllBytesAsync(savePath, data);
             }
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Có lỗi ngoại lệ: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            return null;
+            MessageBox.Show("Lỗi tải file:\n" + ex.Message);
         }
     }
 }

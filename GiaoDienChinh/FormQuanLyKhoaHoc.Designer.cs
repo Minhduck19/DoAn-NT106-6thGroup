@@ -15,181 +15,525 @@
 
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-
-            this.pnlHeader = new Guna.UI2.WinForms.Guna2Panel();
-            this.lblCourseName = new System.Windows.Forms.Label();
-            this.guna2ControlBox1 = new Guna.UI2.WinForms.Guna2ControlBox(); // Nút tắt form xịn
-
-            this.tabControl1 = new Guna.UI2.WinForms.Guna2TabControl();
-
-            this.tabAssignments = new System.Windows.Forms.TabPage();
-            this.dgvAssignments = new Guna.UI2.WinForms.Guna2DataGridView();
-            this.btnAddAssignment = new Guna.UI2.WinForms.Guna2Button();
-
-            this.tabStudents = new System.Windows.Forms.TabPage();
-            this.dgvStudents = new Guna.UI2.WinForms.Guna2DataGridView();
-
-            this.tabRequests = new System.Windows.Forms.TabPage();
-            this.dgvRequests = new Guna.UI2.WinForms.Guna2DataGridView();
-            this.btnApprove = new Guna.UI2.WinForms.Guna2Button();
-
-            this.pnlHeader.SuspendLayout();
-            this.tabControl1.SuspendLayout();
-            this.tabAssignments.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvAssignments)).BeginInit();
-            this.tabStudents.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvStudents)).BeginInit();
-            this.tabRequests.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvRequests)).BeginInit();
-            this.SuspendLayout();
-
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges5 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges6 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges1 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges2 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges3 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges4 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges7 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges8 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges9 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges10 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges13 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges14 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            DataGridViewCellStyle dataGridViewCellStyle7 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle8 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle9 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle10 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle11 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle12 = new DataGridViewCellStyle();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges15 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges16 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges11 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges12 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            pnlHeader = new Guna.UI2.WinForms.Guna2Panel();
+            guna2ControlBox1 = new Guna.UI2.WinForms.Guna2ControlBox();
+            lblCourseName = new Label();
+            btnMaximize = new Guna.UI2.WinForms.Guna2ControlBox();
+            tabControl1 = new Guna.UI2.WinForms.Guna2TabControl();
+            tabAssignments = new TabPage();
+            btnAddAssignment = new Guna.UI2.WinForms.Guna2Button();
+            dgvAssignments = new Guna.UI2.WinForms.Guna2DataGridView();
+            tabStudents = new TabPage();
+            btnDelete = new Guna.UI2.WinForms.Guna2Button();
+            dgvStudents = new Guna.UI2.WinForms.Guna2DataGridView();
+            tabRequests = new TabPage();
+            btnApprove = new Guna.UI2.WinForms.Guna2Button();
+            dgvRequests = new Guna.UI2.WinForms.Guna2DataGridView();
+            tabPage1 = new TabPage();
+            guna2DataGridView1 = new Guna.UI2.WinForms.Guna2DataGridView();
+            guna2Button1 = new Guna.UI2.WinForms.Guna2Button();
+            guna2Button2 = new Guna.UI2.WinForms.Guna2Button();
+            pnlHeader.SuspendLayout();
+            tabControl1.SuspendLayout();
+            tabAssignments.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvAssignments).BeginInit();
+            tabStudents.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvStudents).BeginInit();
+            tabRequests.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvRequests).BeginInit();
+            tabPage1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)guna2DataGridView1).BeginInit();
+            SuspendLayout();
             // 
-            // --- 1. HEADER HIỆN ĐẠI (MÀU GRADIENT HOẶC TRẮNG) ---
+            // pnlHeader
             // 
-            this.pnlHeader.Controls.Add(this.guna2ControlBox1);
-            this.pnlHeader.Controls.Add(this.lblCourseName);
-            this.pnlHeader.Dock = System.Windows.Forms.DockStyle.Top;
-            this.pnlHeader.FillColor = System.Drawing.Color.White;
-            this.pnlHeader.ShadowDecoration.Depth = 10;
-            this.pnlHeader.ShadowDecoration.Enabled = true; // Tạo bóng đổ nhẹ xuống dưới
-            this.pnlHeader.Size = new System.Drawing.Size(950, 60);
-
-            this.lblCourseName.AutoSize = true;
-            this.lblCourseName.BackColor = System.Drawing.Color.Transparent;
-            this.lblCourseName.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold);
-            this.lblCourseName.ForeColor = System.Drawing.Color.FromArgb(94, 148, 255); // Màu xanh Guna
-            this.lblCourseName.Location = new System.Drawing.Point(20, 12);
-            this.lblCourseName.Text = "TÊN LỚP HỌC";
-
-            // Nút tắt Form (Góc trên phải)
-            this.guna2ControlBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.guna2ControlBox1.FillColor = System.Drawing.Color.White;
-            this.guna2ControlBox1.IconColor = System.Drawing.Color.Gray;
-            this.guna2ControlBox1.Location = new System.Drawing.Point(890, 10);
-            this.guna2ControlBox1.Size = new System.Drawing.Size(45, 29);
-
+            pnlHeader.Controls.Add(guna2ControlBox1);
+            pnlHeader.Controls.Add(lblCourseName);
+            pnlHeader.Controls.Add(btnMaximize);
+            pnlHeader.CustomizableEdges = customizableEdges5;
+            pnlHeader.Dock = DockStyle.Top;
+            pnlHeader.FillColor = Color.White;
+            pnlHeader.Location = new Point(0, 0);
+            pnlHeader.Margin = new Padding(3, 4, 3, 4);
+            pnlHeader.Name = "pnlHeader";
+            pnlHeader.ShadowDecoration.CustomizableEdges = customizableEdges6;
+            pnlHeader.ShadowDecoration.Depth = 10;
+            pnlHeader.ShadowDecoration.Enabled = true;
+            pnlHeader.Size = new Size(1086, 80);
+            pnlHeader.TabIndex = 1;
             // 
-            // --- 2. TAB CONTROL (Kiểu nút bấm phẳng) ---
+            // guna2ControlBox1
             // 
-            this.tabControl1.Controls.Add(this.tabAssignments);
-            this.tabControl1.Controls.Add(this.tabStudents);
-            this.tabControl1.Controls.Add(this.tabRequests);
-            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControl1.TabButtonHoverState.InnerColor = System.Drawing.Color.FromArgb(192, 255, 192); // Màu khi di chuột
-            this.tabControl1.TabButtonIdleState.FillColor = System.Drawing.Color.White;
-            this.tabControl1.TabButtonSelectedState.FillColor = System.Drawing.Color.FromArgb(240, 248, 255);
-            this.tabControl1.TabButtonSelectedState.InnerColor = System.Drawing.Color.FromArgb(94, 148, 255); // Gạch dưới màu xanh
-            this.tabControl1.TabMenuBackColor = System.Drawing.Color.White;
-            this.tabControl1.Location = new System.Drawing.Point(0, 60);
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(950, 540);
-            this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
-
-            // --- TAB BÀI TẬP ---
-            this.tabAssignments.Text = "Bài Tập";
-            this.tabAssignments.BackColor = System.Drawing.Color.White;
-            this.tabAssignments.Controls.Add(this.btnAddAssignment);
-            this.tabAssignments.Controls.Add(this.dgvAssignments);
-
-            // Nút Guna Button (Bo tròn, bóng đổ)
-            this.btnAddAssignment.BorderRadius = 5;
-            this.btnAddAssignment.FillColor = System.Drawing.Color.FromArgb(100, 88, 255);
-            this.btnAddAssignment.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.btnAddAssignment.ForeColor = System.Drawing.Color.White;
-            this.btnAddAssignment.Location = new System.Drawing.Point(20, 15);
-            this.btnAddAssignment.Size = new System.Drawing.Size(160, 40);
-            this.btnAddAssignment.Text = "+ Tạo Bài Tập";
-            this.btnAddAssignment.Click += new System.EventHandler(this.btnAddAssignment_Click);
-
-            // GridView Guna (Cực đẹp)
-            ConfigureGunaGrid(this.dgvAssignments);
-            this.dgvAssignments.Location = new System.Drawing.Point(20, 70);
-            this.dgvAssignments.Size = new System.Drawing.Size(900, 420);
-            this.dgvAssignments.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
-
-            // --- TAB SINH VIÊN ---
-            this.tabStudents.Text = "Sinh Viên";
-            this.tabStudents.BackColor = System.Drawing.Color.White;
-            this.tabStudents.Controls.Add(this.dgvStudents);
-
-            ConfigureGunaGrid(this.dgvStudents);
-            this.dgvStudents.Dock = System.Windows.Forms.DockStyle.Fill;
-
-            // --- TAB PHÊ DUYỆT ---
-            this.tabRequests.Text = "Phê Duyệt";
-            this.tabRequests.BackColor = System.Drawing.Color.White;
-            this.tabRequests.Controls.Add(this.btnApprove);
-            this.tabRequests.Controls.Add(this.dgvRequests);
-
-            this.btnApprove.BorderRadius = 5;
-            this.btnApprove.FillColor = System.Drawing.Color.FromArgb(255, 128, 0); // Màu Cam
-            this.btnApprove.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.btnApprove.ForeColor = System.Drawing.Color.White;
-            this.btnApprove.Location = new System.Drawing.Point(20, 15);
-            this.btnApprove.Size = new System.Drawing.Size(160, 40);
-            this.btnApprove.Text = "✓ Duyệt Tham Gia";
-            this.btnApprove.Click += new System.EventHandler(this.btnApprove_Click);
-
-            ConfigureGunaGrid(this.dgvRequests);
-            this.dgvRequests.Location = new System.Drawing.Point(20, 70);
-            this.dgvRequests.Size = new System.Drawing.Size(900, 420);
-            this.dgvRequests.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
-
-            // Form Main
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(950, 600);
-            this.Controls.Add(this.tabControl1);
-            this.Controls.Add(this.pnlHeader);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None; // Không viền (dùng GunaControlBox để tắt)
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Load += new System.EventHandler(this.FormQuanLyKhoaHoc_Load);
-
-            this.pnlHeader.ResumeLayout(false);
-            this.pnlHeader.PerformLayout();
-            this.tabControl1.ResumeLayout(false);
-            this.tabAssignments.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dgvAssignments)).EndInit();
-            this.tabStudents.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dgvStudents)).EndInit();
-            this.tabRequests.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dgvRequests)).EndInit();
-            this.ResumeLayout(false);
-
-            this.guna2ControlBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.guna2ControlBox1.Location = new System.Drawing.Point(890, 10); // Góc phải cùng
-
-            // --- CẤU HÌNH NÚT PHÓNG TO (MAXIMIZE) ---
-            this.btnMaximize = new Guna.UI2.WinForms.Guna2ControlBox();
-            this.btnMaximize.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnMaximize.ControlBoxType = Guna.UI2.WinForms.Enums.ControlBoxType.MaximizeBox; // 🔥 Loại nút Maximize
-            this.btnMaximize.FillColor = System.Drawing.Color.White;
-            this.btnMaximize.IconColor = System.Drawing.Color.Gray;
-            this.btnMaximize.Location = new System.Drawing.Point(840, 10); // Đặt bên cạnh nút tắt
-            this.btnMaximize.Size = new System.Drawing.Size(45, 29);
-            this.pnlHeader.Controls.Add(this.btnMaximize); // Nhớ thêm vào Panel Header
-
-            // --- CẤU HÌNH BẢNG (GRIDVIEW) ĐỂ TỰ GIÃN ---
-            // Tìm đoạn cấu hình dgvRequests, dgvStudents, dgvAssignments và THÊM dòng Anchor này:
-
-            // Ví dụ cho dgvRequests:
-            this.dgvRequests.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right))); // 🔥 Quan trọng: Neo 4 góc
-
-            // Ví dụ cho dgvStudents:
-            this.dgvStudents.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
-
-            // Ví dụ cho dgvAssignments:
-            this.dgvAssignments.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            guna2ControlBox1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            guna2ControlBox1.CustomizableEdges = customizableEdges1;
+            guna2ControlBox1.FillColor = Color.White;
+            guna2ControlBox1.IconColor = Color.Gray;
+            guna2ControlBox1.Location = new Point(1017, 13);
+            guna2ControlBox1.Margin = new Padding(3, 4, 3, 4);
+            guna2ControlBox1.Name = "guna2ControlBox1";
+            guna2ControlBox1.ShadowDecoration.CustomizableEdges = customizableEdges2;
+            guna2ControlBox1.Size = new Size(51, 39);
+            guna2ControlBox1.TabIndex = 0;
+            // 
+            // lblCourseName
+            // 
+            lblCourseName.AutoSize = true;
+            lblCourseName.BackColor = Color.Transparent;
+            lblCourseName.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
+            lblCourseName.ForeColor = Color.FromArgb(94, 148, 255);
+            lblCourseName.Location = new Point(23, 16);
+            lblCourseName.Name = "lblCourseName";
+            lblCourseName.Size = new Size(213, 41);
+            lblCourseName.TabIndex = 1;
+            lblCourseName.Text = "TÊN LỚP HỌC";
+            // 
+            // btnMaximize
+            // 
+            btnMaximize.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnMaximize.ControlBoxType = Guna.UI2.WinForms.Enums.ControlBoxType.MaximizeBox;
+            btnMaximize.CustomizableEdges = customizableEdges3;
+            btnMaximize.FillColor = Color.White;
+            btnMaximize.IconColor = Color.Gray;
+            btnMaximize.Location = new Point(960, 13);
+            btnMaximize.Margin = new Padding(3, 4, 3, 4);
+            btnMaximize.Name = "btnMaximize";
+            btnMaximize.ShadowDecoration.CustomizableEdges = customizableEdges4;
+            btnMaximize.Size = new Size(51, 39);
+            btnMaximize.TabIndex = 2;
+            // 
+            // tabControl1
+            // 
+            tabControl1.Alignment = TabAlignment.Left;
+            tabControl1.Controls.Add(tabAssignments);
+            tabControl1.Controls.Add(tabStudents);
+            tabControl1.Controls.Add(tabRequests);
+            tabControl1.Controls.Add(tabPage1);
+            tabControl1.Dock = DockStyle.Fill;
+            tabControl1.ItemSize = new Size(180, 40);
+            tabControl1.Location = new Point(0, 80);
+            tabControl1.Margin = new Padding(3, 4, 3, 4);
+            tabControl1.Name = "tabControl1";
+            tabControl1.SelectedIndex = 0;
+            tabControl1.Size = new Size(1086, 720);
+            tabControl1.TabButtonHoverState.BorderColor = Color.Empty;
+            tabControl1.TabButtonHoverState.FillColor = Color.FromArgb(40, 52, 70);
+            tabControl1.TabButtonHoverState.Font = new Font("Segoe UI Semibold", 10F);
+            tabControl1.TabButtonHoverState.ForeColor = Color.White;
+            tabControl1.TabButtonHoverState.InnerColor = Color.FromArgb(192, 255, 192);
+            tabControl1.TabButtonIdleState.BorderColor = Color.Empty;
+            tabControl1.TabButtonIdleState.FillColor = Color.White;
+            tabControl1.TabButtonIdleState.Font = new Font("Segoe UI Semibold", 10F);
+            tabControl1.TabButtonIdleState.ForeColor = Color.FromArgb(156, 160, 167);
+            tabControl1.TabButtonIdleState.InnerColor = Color.FromArgb(33, 42, 57);
+            tabControl1.TabButtonSelectedState.BorderColor = Color.Empty;
+            tabControl1.TabButtonSelectedState.FillColor = Color.FromArgb(240, 248, 255);
+            tabControl1.TabButtonSelectedState.Font = new Font("Segoe UI Semibold", 10F);
+            tabControl1.TabButtonSelectedState.ForeColor = Color.White;
+            tabControl1.TabButtonSelectedState.InnerColor = Color.FromArgb(94, 148, 255);
+            tabControl1.TabButtonSize = new Size(180, 40);
+            tabControl1.TabIndex = 0;
+            tabControl1.TabMenuBackColor = Color.White;
+            tabControl1.SelectedIndexChanged += tabControl1_SelectedIndexChanged;
+            // 
+            // tabAssignments
+            // 
+            tabAssignments.BackColor = Color.White;
+            tabAssignments.Controls.Add(btnAddAssignment);
+            tabAssignments.Controls.Add(dgvAssignments);
+            tabAssignments.Location = new Point(184, 4);
+            tabAssignments.Margin = new Padding(3, 4, 3, 4);
+            tabAssignments.Name = "tabAssignments";
+            tabAssignments.Size = new Size(898, 712);
+            tabAssignments.TabIndex = 0;
+            tabAssignments.Text = "Bài Tập";
+            // 
+            // btnAddAssignment
+            // 
+            btnAddAssignment.BorderRadius = 5;
+            btnAddAssignment.CustomizableEdges = customizableEdges7;
+            btnAddAssignment.FillColor = Color.FromArgb(100, 88, 255);
+            btnAddAssignment.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            btnAddAssignment.ForeColor = Color.White;
+            btnAddAssignment.Location = new Point(23, 20);
+            btnAddAssignment.Margin = new Padding(3, 4, 3, 4);
+            btnAddAssignment.Name = "btnAddAssignment";
+            btnAddAssignment.ShadowDecoration.CustomizableEdges = customizableEdges8;
+            btnAddAssignment.Size = new Size(183, 53);
+            btnAddAssignment.TabIndex = 0;
+            btnAddAssignment.Text = "+ Tạo Bài Tập";
+            btnAddAssignment.Click += btnAddAssignment_Click;
+            // 
+            // dgvAssignments
+            // 
+            dataGridViewCellStyle1.BackColor = Color.White;
+            dgvAssignments.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dgvAssignments.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = Color.FromArgb(100, 88, 255);
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle2.ForeColor = Color.White;
+            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
+            dgvAssignments.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dgvAssignments.ColumnHeadersHeight = 29;
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = Color.White;
+            dataGridViewCellStyle3.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle3.ForeColor = Color.FromArgb(71, 69, 94);
+            dataGridViewCellStyle3.SelectionBackColor = Color.FromArgb(231, 229, 255);
+            dataGridViewCellStyle3.SelectionForeColor = Color.FromArgb(71, 69, 94);
+            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.False;
+            dgvAssignments.DefaultCellStyle = dataGridViewCellStyle3;
+            dgvAssignments.GridColor = Color.FromArgb(231, 229, 255);
+            dgvAssignments.Location = new Point(23, 93);
+            dgvAssignments.Margin = new Padding(3, 4, 3, 4);
+            dgvAssignments.Name = "dgvAssignments";
+            dgvAssignments.RowHeadersVisible = false;
+            dgvAssignments.RowHeadersWidth = 51;
+            dgvAssignments.Size = new Size(1029, 560);
+            dgvAssignments.TabIndex = 1;
+            dgvAssignments.ThemeStyle.AlternatingRowsStyle.BackColor = Color.White;
+            dgvAssignments.ThemeStyle.AlternatingRowsStyle.Font = null;
+            dgvAssignments.ThemeStyle.AlternatingRowsStyle.ForeColor = Color.Empty;
+            dgvAssignments.ThemeStyle.AlternatingRowsStyle.SelectionBackColor = Color.Empty;
+            dgvAssignments.ThemeStyle.AlternatingRowsStyle.SelectionForeColor = Color.Empty;
+            dgvAssignments.ThemeStyle.BackColor = Color.White;
+            dgvAssignments.ThemeStyle.GridColor = Color.FromArgb(231, 229, 255);
+            dgvAssignments.ThemeStyle.HeaderStyle.BackColor = Color.FromArgb(100, 88, 255);
+            dgvAssignments.ThemeStyle.HeaderStyle.BorderStyle = DataGridViewHeaderBorderStyle.None;
+            dgvAssignments.ThemeStyle.HeaderStyle.Font = new Font("Segoe UI", 9F);
+            dgvAssignments.ThemeStyle.HeaderStyle.ForeColor = Color.White;
+            dgvAssignments.ThemeStyle.HeaderStyle.HeaightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            dgvAssignments.ThemeStyle.HeaderStyle.Height = 29;
+            dgvAssignments.ThemeStyle.ReadOnly = false;
+            dgvAssignments.ThemeStyle.RowsStyle.BackColor = Color.White;
+            dgvAssignments.ThemeStyle.RowsStyle.BorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+            dgvAssignments.ThemeStyle.RowsStyle.Font = new Font("Segoe UI", 9F);
+            dgvAssignments.ThemeStyle.RowsStyle.ForeColor = Color.FromArgb(71, 69, 94);
+            dgvAssignments.ThemeStyle.RowsStyle.Height = 29;
+            dgvAssignments.ThemeStyle.RowsStyle.SelectionBackColor = Color.FromArgb(231, 229, 255);
+            dgvAssignments.ThemeStyle.RowsStyle.SelectionForeColor = Color.FromArgb(71, 69, 94);
+            dgvAssignments.CellContentClick += dgvAssignments_CellContentClick;
+            // 
+            // tabStudents
+            // 
+            tabStudents.BackColor = Color.White;
+            tabStudents.Controls.Add(btnDelete);
+            tabStudents.Controls.Add(dgvStudents);
+            tabStudents.Location = new Point(184, 4);
+            tabStudents.Margin = new Padding(3, 4, 3, 4);
+            tabStudents.Name = "tabStudents";
+            tabStudents.Size = new Size(898, 712);
+            tabStudents.TabIndex = 1;
+            tabStudents.Text = "Sinh Viên";
+            // 
+            // btnDelete
+            // 
+            btnDelete.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnDelete.BorderColor = Color.IndianRed;
+            btnDelete.BorderRadius = 10;
+            btnDelete.BorderThickness = 1;
+            btnDelete.Cursor = Cursors.Hand;
+            btnDelete.CustomizableEdges = customizableEdges9;
+            btnDelete.FillColor = Color.White;
+            btnDelete.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            btnDelete.ForeColor = Color.IndianRed;
+            btnDelete.Location = new Point(19, 18);
+            btnDelete.Name = "btnDelete";
+            btnDelete.ShadowDecoration.CustomizableEdges = customizableEdges10;
+            btnDelete.Size = new Size(183, 40);
+            btnDelete.TabIndex = 4;
+            btnDelete.Text = "Xóa sinh viên khỏi lơp";
+            btnDelete.Click += btnDelete_Click;
+            // 
+            // dgvStudents
+            // 
+            dataGridViewCellStyle4.BackColor = Color.White;
+            dgvStudents.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle4;
+            dgvStudents.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = Color.FromArgb(100, 88, 255);
+            dataGridViewCellStyle5.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle5.ForeColor = Color.White;
+            dataGridViewCellStyle5.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = DataGridViewTriState.True;
+            dgvStudents.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
+            dgvStudents.ColumnHeadersHeight = 29;
+            dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = Color.White;
+            dataGridViewCellStyle6.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle6.ForeColor = Color.FromArgb(71, 69, 94);
+            dataGridViewCellStyle6.SelectionBackColor = Color.FromArgb(231, 229, 255);
+            dataGridViewCellStyle6.SelectionForeColor = Color.FromArgb(71, 69, 94);
+            dataGridViewCellStyle6.WrapMode = DataGridViewTriState.False;
+            dgvStudents.DefaultCellStyle = dataGridViewCellStyle6;
+            dgvStudents.GridColor = Color.FromArgb(231, 229, 255);
+            dgvStudents.Location = new Point(0, 74);
+            dgvStudents.Margin = new Padding(3, 4, 3, 4);
+            dgvStudents.Name = "dgvStudents";
+            dgvStudents.RowHeadersVisible = false;
+            dgvStudents.RowHeadersWidth = 51;
+            dgvStudents.Size = new Size(898, 561);
+            dgvStudents.TabIndex = 0;
+            dgvStudents.ThemeStyle.AlternatingRowsStyle.BackColor = Color.White;
+            dgvStudents.ThemeStyle.AlternatingRowsStyle.Font = null;
+            dgvStudents.ThemeStyle.AlternatingRowsStyle.ForeColor = Color.Empty;
+            dgvStudents.ThemeStyle.AlternatingRowsStyle.SelectionBackColor = Color.Empty;
+            dgvStudents.ThemeStyle.AlternatingRowsStyle.SelectionForeColor = Color.Empty;
+            dgvStudents.ThemeStyle.BackColor = Color.White;
+            dgvStudents.ThemeStyle.GridColor = Color.FromArgb(231, 229, 255);
+            dgvStudents.ThemeStyle.HeaderStyle.BackColor = Color.FromArgb(100, 88, 255);
+            dgvStudents.ThemeStyle.HeaderStyle.BorderStyle = DataGridViewHeaderBorderStyle.None;
+            dgvStudents.ThemeStyle.HeaderStyle.Font = new Font("Segoe UI", 9F);
+            dgvStudents.ThemeStyle.HeaderStyle.ForeColor = Color.White;
+            dgvStudents.ThemeStyle.HeaderStyle.HeaightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            dgvStudents.ThemeStyle.HeaderStyle.Height = 29;
+            dgvStudents.ThemeStyle.ReadOnly = false;
+            dgvStudents.ThemeStyle.RowsStyle.BackColor = Color.White;
+            dgvStudents.ThemeStyle.RowsStyle.BorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+            dgvStudents.ThemeStyle.RowsStyle.Font = new Font("Segoe UI", 9F);
+            dgvStudents.ThemeStyle.RowsStyle.ForeColor = Color.FromArgb(71, 69, 94);
+            dgvStudents.ThemeStyle.RowsStyle.Height = 29;
+            dgvStudents.ThemeStyle.RowsStyle.SelectionBackColor = Color.FromArgb(231, 229, 255);
+            dgvStudents.ThemeStyle.RowsStyle.SelectionForeColor = Color.FromArgb(71, 69, 94);
+            dgvStudents.CellContentClick += dgvStudents_CellContentClick;
+            // 
+            // tabRequests
+            // 
+            tabRequests.BackColor = Color.White;
+            tabRequests.Controls.Add(guna2Button2);
+            tabRequests.Controls.Add(btnApprove);
+            tabRequests.Controls.Add(dgvRequests);
+            tabRequests.Location = new Point(184, 4);
+            tabRequests.Margin = new Padding(3, 4, 3, 4);
+            tabRequests.Name = "tabRequests";
+            tabRequests.Size = new Size(898, 712);
+            tabRequests.TabIndex = 2;
+            tabRequests.Text = "Phê Duyệt";
+            // 
+            // btnApprove
+            // 
+            btnApprove.BorderRadius = 5;
+            btnApprove.CustomizableEdges = customizableEdges13;
+            btnApprove.FillColor = Color.FromArgb(255, 128, 0);
+            btnApprove.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            btnApprove.ForeColor = Color.White;
+            btnApprove.Location = new Point(23, 20);
+            btnApprove.Margin = new Padding(3, 4, 3, 4);
+            btnApprove.Name = "btnApprove";
+            btnApprove.ShadowDecoration.CustomizableEdges = customizableEdges14;
+            btnApprove.Size = new Size(183, 53);
+            btnApprove.TabIndex = 0;
+            btnApprove.Text = "✓ Duyệt Tham Gia";
+            btnApprove.Click += btnApprove_Click;
+            // 
+            // dgvRequests
+            // 
+            dataGridViewCellStyle7.BackColor = Color.White;
+            dgvRequests.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle7;
+            dgvRequests.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            dataGridViewCellStyle8.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle8.BackColor = Color.FromArgb(100, 88, 255);
+            dataGridViewCellStyle8.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle8.ForeColor = Color.White;
+            dataGridViewCellStyle8.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle8.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle8.WrapMode = DataGridViewTriState.True;
+            dgvRequests.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle8;
+            dgvRequests.ColumnHeadersHeight = 29;
+            dataGridViewCellStyle9.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle9.BackColor = Color.White;
+            dataGridViewCellStyle9.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle9.ForeColor = Color.FromArgb(71, 69, 94);
+            dataGridViewCellStyle9.SelectionBackColor = Color.FromArgb(231, 229, 255);
+            dataGridViewCellStyle9.SelectionForeColor = Color.FromArgb(71, 69, 94);
+            dataGridViewCellStyle9.WrapMode = DataGridViewTriState.False;
+            dgvRequests.DefaultCellStyle = dataGridViewCellStyle9;
+            dgvRequests.GridColor = Color.FromArgb(231, 229, 255);
+            dgvRequests.Location = new Point(23, 93);
+            dgvRequests.Margin = new Padding(3, 4, 3, 4);
+            dgvRequests.Name = "dgvRequests";
+            dgvRequests.RowHeadersVisible = false;
+            dgvRequests.RowHeadersWidth = 51;
+            dgvRequests.Size = new Size(1029, 560);
+            dgvRequests.TabIndex = 1;
+            dgvRequests.ThemeStyle.AlternatingRowsStyle.BackColor = Color.White;
+            dgvRequests.ThemeStyle.AlternatingRowsStyle.Font = null;
+            dgvRequests.ThemeStyle.AlternatingRowsStyle.ForeColor = Color.Empty;
+            dgvRequests.ThemeStyle.AlternatingRowsStyle.SelectionBackColor = Color.Empty;
+            dgvRequests.ThemeStyle.AlternatingRowsStyle.SelectionForeColor = Color.Empty;
+            dgvRequests.ThemeStyle.BackColor = Color.White;
+            dgvRequests.ThemeStyle.GridColor = Color.FromArgb(231, 229, 255);
+            dgvRequests.ThemeStyle.HeaderStyle.BackColor = Color.FromArgb(100, 88, 255);
+            dgvRequests.ThemeStyle.HeaderStyle.BorderStyle = DataGridViewHeaderBorderStyle.None;
+            dgvRequests.ThemeStyle.HeaderStyle.Font = new Font("Segoe UI", 9F);
+            dgvRequests.ThemeStyle.HeaderStyle.ForeColor = Color.White;
+            dgvRequests.ThemeStyle.HeaderStyle.HeaightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            dgvRequests.ThemeStyle.HeaderStyle.Height = 29;
+            dgvRequests.ThemeStyle.ReadOnly = false;
+            dgvRequests.ThemeStyle.RowsStyle.BackColor = Color.White;
+            dgvRequests.ThemeStyle.RowsStyle.BorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+            dgvRequests.ThemeStyle.RowsStyle.Font = new Font("Segoe UI", 9F);
+            dgvRequests.ThemeStyle.RowsStyle.ForeColor = Color.FromArgb(71, 69, 94);
+            dgvRequests.ThemeStyle.RowsStyle.Height = 29;
+            dgvRequests.ThemeStyle.RowsStyle.SelectionBackColor = Color.FromArgb(231, 229, 255);
+            dgvRequests.ThemeStyle.RowsStyle.SelectionForeColor = Color.FromArgb(71, 69, 94);
+            // 
+            // tabPage1
+            // 
+            tabPage1.Controls.Add(guna2DataGridView1);
+            tabPage1.Controls.Add(guna2Button1);
+            tabPage1.Location = new Point(184, 4);
+            tabPage1.Name = "tabPage1";
+            tabPage1.Padding = new Padding(3);
+            tabPage1.Size = new Size(898, 712);
+            tabPage1.TabIndex = 3;
+            tabPage1.Text = "Thông Báo";
+            tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // guna2DataGridView1
+            // 
+            dataGridViewCellStyle10.BackColor = Color.White;
+            guna2DataGridView1.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle10;
+            guna2DataGridView1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            dataGridViewCellStyle11.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle11.BackColor = Color.FromArgb(100, 88, 255);
+            dataGridViewCellStyle11.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle11.ForeColor = Color.White;
+            dataGridViewCellStyle11.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle11.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle11.WrapMode = DataGridViewTriState.True;
+            guna2DataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle11;
+            guna2DataGridView1.ColumnHeadersHeight = 29;
+            dataGridViewCellStyle12.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle12.BackColor = Color.White;
+            dataGridViewCellStyle12.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle12.ForeColor = Color.FromArgb(71, 69, 94);
+            dataGridViewCellStyle12.SelectionBackColor = Color.FromArgb(231, 229, 255);
+            dataGridViewCellStyle12.SelectionForeColor = Color.FromArgb(71, 69, 94);
+            dataGridViewCellStyle12.WrapMode = DataGridViewTriState.False;
+            guna2DataGridView1.DefaultCellStyle = dataGridViewCellStyle12;
+            guna2DataGridView1.GridColor = Color.FromArgb(231, 229, 255);
+            guna2DataGridView1.Location = new Point(30, 95);
+            guna2DataGridView1.Margin = new Padding(3, 4, 3, 4);
+            guna2DataGridView1.Name = "guna2DataGridView1";
+            guna2DataGridView1.RowHeadersVisible = false;
+            guna2DataGridView1.RowHeadersWidth = 51;
+            guna2DataGridView1.Size = new Size(1029, 560);
+            guna2DataGridView1.TabIndex = 2;
+            guna2DataGridView1.ThemeStyle.AlternatingRowsStyle.BackColor = Color.White;
+            guna2DataGridView1.ThemeStyle.AlternatingRowsStyle.Font = null;
+            guna2DataGridView1.ThemeStyle.AlternatingRowsStyle.ForeColor = Color.Empty;
+            guna2DataGridView1.ThemeStyle.AlternatingRowsStyle.SelectionBackColor = Color.Empty;
+            guna2DataGridView1.ThemeStyle.AlternatingRowsStyle.SelectionForeColor = Color.Empty;
+            guna2DataGridView1.ThemeStyle.BackColor = Color.White;
+            guna2DataGridView1.ThemeStyle.GridColor = Color.FromArgb(231, 229, 255);
+            guna2DataGridView1.ThemeStyle.HeaderStyle.BackColor = Color.FromArgb(100, 88, 255);
+            guna2DataGridView1.ThemeStyle.HeaderStyle.BorderStyle = DataGridViewHeaderBorderStyle.None;
+            guna2DataGridView1.ThemeStyle.HeaderStyle.Font = new Font("Segoe UI", 9F);
+            guna2DataGridView1.ThemeStyle.HeaderStyle.ForeColor = Color.White;
+            guna2DataGridView1.ThemeStyle.HeaderStyle.HeaightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            guna2DataGridView1.ThemeStyle.HeaderStyle.Height = 29;
+            guna2DataGridView1.ThemeStyle.ReadOnly = false;
+            guna2DataGridView1.ThemeStyle.RowsStyle.BackColor = Color.White;
+            guna2DataGridView1.ThemeStyle.RowsStyle.BorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+            guna2DataGridView1.ThemeStyle.RowsStyle.Font = new Font("Segoe UI", 9F);
+            guna2DataGridView1.ThemeStyle.RowsStyle.ForeColor = Color.FromArgb(71, 69, 94);
+            guna2DataGridView1.ThemeStyle.RowsStyle.Height = 29;
+            guna2DataGridView1.ThemeStyle.RowsStyle.SelectionBackColor = Color.FromArgb(231, 229, 255);
+            guna2DataGridView1.ThemeStyle.RowsStyle.SelectionForeColor = Color.FromArgb(71, 69, 94);
+            guna2DataGridView1.CellContentClick += guna2DataGridView1_CellContentClick;
+            // 
+            // guna2Button1
+            // 
+            guna2Button1.BorderRadius = 5;
+            guna2Button1.CustomizableEdges = customizableEdges15;
+            guna2Button1.FillColor = Color.FromArgb(255, 128, 0);
+            guna2Button1.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            guna2Button1.ForeColor = Color.White;
+            guna2Button1.Location = new Point(30, 24);
+            guna2Button1.Margin = new Padding(3, 4, 3, 4);
+            guna2Button1.Name = "guna2Button1";
+            guna2Button1.ShadowDecoration.CustomizableEdges = customizableEdges16;
+            guna2Button1.Size = new Size(183, 53);
+            guna2Button1.TabIndex = 1;
+            guna2Button1.Text = " Thêm Thông Báo";
+            guna2Button1.Click += guna2Button1_Click;
+            // 
+            // guna2Button2
+            // 
+            guna2Button2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            guna2Button2.BorderColor = Color.IndianRed;
+            guna2Button2.BorderRadius = 10;
+            guna2Button2.BorderThickness = 1;
+            guna2Button2.Cursor = Cursors.Hand;
+            guna2Button2.CustomizableEdges = customizableEdges11;
+            guna2Button2.FillColor = Color.White;
+            guna2Button2.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            guna2Button2.ForeColor = Color.IndianRed;
+            guna2Button2.Location = new Point(226, 20);
+            guna2Button2.Name = "guna2Button2";
+            guna2Button2.ShadowDecoration.CustomizableEdges = customizableEdges12;
+            guna2Button2.Size = new Size(168, 53);
+            guna2Button2.TabIndex = 5;
+            guna2Button2.Text = "Từ Chối ";
+            guna2Button2.Click += guna2Button2_Click;
+            // 
+            // FormQuanLyKhoaHoc
+            // 
+            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleMode = AutoScaleMode.Font;
+            BackColor = Color.White;
+            ClientSize = new Size(1086, 800);
+            Controls.Add(tabControl1);
+            Controls.Add(pnlHeader);
+            FormBorderStyle = FormBorderStyle.None;
+            Margin = new Padding(3, 4, 3, 4);
+            Name = "FormQuanLyKhoaHoc";
+            StartPosition = FormStartPosition.CenterScreen;
+            Load += FormQuanLyKhoaHoc_Load;
+            pnlHeader.ResumeLayout(false);
+            pnlHeader.PerformLayout();
+            tabControl1.ResumeLayout(false);
+            tabAssignments.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dgvAssignments).EndInit();
+            tabStudents.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dgvStudents).EndInit();
+            tabRequests.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dgvRequests).EndInit();
+            tabPage1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)guna2DataGridView1).EndInit();
+            ResumeLayout(false);
         }
 
         // Hàm hỗ trợ cài đặt Grid Guna cho đẹp (Code reuse)
@@ -254,5 +598,10 @@
         private System.Windows.Forms.TabPage tabRequests;
         private Guna.UI2.WinForms.Guna2DataGridView dgvRequests;
         private Guna.UI2.WinForms.Guna2Button btnApprove;
+        private TabPage tabPage1;
+        private Guna.UI2.WinForms.Guna2Button guna2Button1;
+        private Guna.UI2.WinForms.Guna2DataGridView guna2DataGridView1;
+        private Guna.UI2.WinForms.Guna2Button btnDelete;
+        private Guna.UI2.WinForms.Guna2Button guna2Button2;
     }
 }

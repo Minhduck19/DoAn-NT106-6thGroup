@@ -1,382 +1,349 @@
-﻿// Tên file: frmMainChat.Designer.cs
-namespace APP_DOAN
+﻿namespace APP_DOAN
 {
     partial class frmMainChat
     {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
         #region Windows Form Designer generated code
 
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges3 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges4 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges1 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges2 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges6 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges7 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges5 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges14 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges15 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges12 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges13 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMainChat));
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges8 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges9 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges10 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges11 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            panelContacts = new Guna.UI2.WinForms.Guna2Panel();
-            guna2TextBox1 = new Guna.UI2.WinForms.Guna2TextBox();
+            splitContainer1 = new SplitContainer();
             flowUserListPanel = new FlowLayoutPanel();
-            label1 = new Label();
-            guna2Separator1 = new Guna.UI2.WinForms.Guna2Separator();
-            panelInfo = new Guna.UI2.WinForms.Guna2Panel();
+            panelSearch = new Panel();
+            guna2TextBox1 = new TextBox();
+            panelTabs = new Panel();
+            btnTabClass = new Button();
+            btnTabPersonal = new Button();
+            panelChatArea = new Panel();
+            flowChatPanel = new FlowLayoutPanel();
+            panelInput = new Panel();
+            btnSend = new Button();
+            btnUpload = new Button();
+            btnEmoji = new Button();
+            txtMessage = new TextBox();
+            panelHeader = new Panel();
             lblInfoRole = new Label();
             lblInfoEmail = new Label();
             lblInfoName = new Label();
-            guna2CirclePictureBox1 = new Guna.UI2.WinForms.Guna2CirclePictureBox();
-            guna2Separator2 = new Guna.UI2.WinForms.Guna2Separator();
-            panelChatArea = new Guna.UI2.WinForms.Guna2Panel();
-            flowChatPanel = new FlowLayoutPanel();
-            panelInput = new Guna.UI2.WinForms.Guna2Panel();
-            btnUpload = new Button();
-            button1 = new Button();
-            txtMessage = new Guna.UI2.WinForms.Guna2TextBox();
-            btnSend = new Guna.UI2.WinForms.Guna2Button();
-            panelContacts.SuspendLayout();
-            panelInfo.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)guna2CirclePictureBox1).BeginInit();
+            guna2CirclePictureBox1 = new PictureBox();
+            ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
+            splitContainer1.Panel1.SuspendLayout();
+            splitContainer1.Panel2.SuspendLayout();
+            splitContainer1.SuspendLayout();
+            panelSearch.SuspendLayout();
+            panelTabs.SuspendLayout();
             panelChatArea.SuspendLayout();
             panelInput.SuspendLayout();
+            panelHeader.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)guna2CirclePictureBox1).BeginInit();
             SuspendLayout();
             // 
-            // panelContacts
+            // splitContainer1
             // 
-            panelContacts.BackColor = Color.White;
-            panelContacts.Controls.Add(guna2TextBox1);
-            panelContacts.Controls.Add(flowUserListPanel);
-            panelContacts.Controls.Add(label1);
-            panelContacts.CustomizableEdges = customizableEdges3;
-            panelContacts.Dock = DockStyle.Left;
-            panelContacts.FillColor = Color.FromArgb(255, 255, 255);
-            panelContacts.Location = new Point(0, 0);
-            panelContacts.Margin = new Padding(0);
-            panelContacts.Name = "panelContacts";
-            panelContacts.ShadowDecoration.CustomizableEdges = customizableEdges4;
-            panelContacts.Size = new Size(360, 750);
-            panelContacts.TabIndex = 0;
+            splitContainer1.Dock = DockStyle.Fill;
+            splitContainer1.Location = new Point(0, 0);
+            splitContainer1.Name = "splitContainer1";
             // 
-            // guna2TextBox1
+            // splitContainer1.Panel1
             // 
-            guna2TextBox1.BorderRadius = 8;
-            guna2TextBox1.CustomizableEdges = customizableEdges1;
-            guna2TextBox1.DefaultText = "";
-            guna2TextBox1.DisabledState.BorderColor = Color.FromArgb(208, 208, 208);
-            guna2TextBox1.DisabledState.FillColor = Color.FromArgb(226, 226, 226);
-            guna2TextBox1.DisabledState.ForeColor = Color.FromArgb(138, 138, 138);
-            guna2TextBox1.DisabledState.PlaceholderForeColor = Color.FromArgb(138, 138, 138);
-            guna2TextBox1.FocusedState.BorderColor = Color.FromArgb(94, 148, 255);
-            guna2TextBox1.Font = new Font("Segoe UI", 9F);
-            guna2TextBox1.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
-            guna2TextBox1.Location = new Point(12, 68);
-            guna2TextBox1.Margin = new Padding(3, 4, 3, 4);
-            guna2TextBox1.Name = "guna2TextBox1";
-            guna2TextBox1.PlaceholderText = "🔍 Tìm kiếm...";
-            guna2TextBox1.SelectedText = "";
-            guna2TextBox1.ShadowDecoration.CustomizableEdges = customizableEdges2;
-            guna2TextBox1.Size = new Size(336, 40);
-            guna2TextBox1.TabIndex = 0;
-            guna2TextBox1.TextChanged += guna2TextBox1_TextChanged;
+            splitContainer1.Panel1.BackColor = Color.White;
+            splitContainer1.Panel1.Controls.Add(flowUserListPanel);
+            splitContainer1.Panel1.Controls.Add(panelSearch);
+            splitContainer1.Panel1.Controls.Add(panelTabs);
+            // 
+            // splitContainer1.Panel2
+            // 
+            splitContainer1.Panel2.BackColor = Color.FromArgb(240, 242, 245);
+            splitContainer1.Panel2.Controls.Add(panelChatArea);
+            splitContainer1.Panel2.Controls.Add(panelHeader);
+            splitContainer1.Size = new Size(1100, 650);
+            splitContainer1.SplitterDistance = 320;
+            splitContainer1.TabIndex = 0;
             // 
             // flowUserListPanel
             // 
-            flowUserListPanel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             flowUserListPanel.AutoScroll = true;
-            flowUserListPanel.BackColor = Color.Transparent;
-            flowUserListPanel.FlowDirection = FlowDirection.TopDown;
-            flowUserListPanel.Location = new Point(0, 115);
-            flowUserListPanel.Margin = new Padding(0);
+            flowUserListPanel.BackColor = Color.White;
+            flowUserListPanel.Dock = DockStyle.Fill;
+            flowUserListPanel.Location = new Point(0, 105);
             flowUserListPanel.Name = "flowUserListPanel";
-            flowUserListPanel.Size = new Size(360, 635);
-            flowUserListPanel.TabIndex = 1;
-            flowUserListPanel.WrapContents = false;
+            flowUserListPanel.Size = new Size(320, 545);
+            flowUserListPanel.TabIndex = 0;
             // 
-            // label1
+            // panelSearch
             // 
-            label1.AutoSize = true;
-            label1.BackColor = Color.Transparent;
-            label1.Font = new Font("Segoe UI", 13F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label1.ForeColor = Color.FromArgb(50, 50, 50);
-            label1.Location = new Point(12, 18);
-            label1.Name = "label1";
-            label1.Size = new Size(122, 30);
-            label1.TabIndex = 0;
-            label1.Text = "TIN NHẮN";
+            panelSearch.BackColor = Color.White;
+            panelSearch.Controls.Add(guna2TextBox1);
+            panelSearch.Dock = DockStyle.Top;
+            panelSearch.Location = new Point(0, 50);
+            panelSearch.Name = "panelSearch";
+            panelSearch.Padding = new Padding(15, 10, 15, 10);
+            panelSearch.Size = new Size(320, 55);
+            panelSearch.TabIndex = 1;
             // 
-            // guna2Separator1
+            // guna2TextBox1
             // 
-            guna2Separator1.Dock = DockStyle.Left;
-            guna2Separator1.FillColor = Color.FromArgb(230, 230, 230);
-            guna2Separator1.Location = new Point(360, 0);
-            guna2Separator1.Margin = new Padding(0);
-            guna2Separator1.Name = "guna2Separator1";
-            guna2Separator1.Size = new Size(1, 750);
-            guna2Separator1.TabIndex = 1;
+            guna2TextBox1.BackColor = Color.FromArgb(240, 242, 245);
+            guna2TextBox1.BorderStyle = BorderStyle.None;
+            guna2TextBox1.Dock = DockStyle.Fill;
+            guna2TextBox1.Font = new Font("Segoe UI", 10F);
+            guna2TextBox1.Location = new Point(15, 10);
+            guna2TextBox1.Multiline = true;
+            guna2TextBox1.Name = "guna2TextBox1";
+            guna2TextBox1.PlaceholderText = "   Tìm kiếm người dùng/lớp...";
+            guna2TextBox1.Size = new Size(290, 35);
+            guna2TextBox1.TabIndex = 0;
             // 
-            // panelInfo
+            // panelTabs
             // 
-            panelInfo.BackColor = Color.White;
-            panelInfo.Controls.Add(lblInfoRole);
-            panelInfo.Controls.Add(lblInfoEmail);
-            panelInfo.Controls.Add(lblInfoName);
-            panelInfo.Controls.Add(guna2CirclePictureBox1);
-            panelInfo.CustomizableEdges = customizableEdges6;
-            panelInfo.Dock = DockStyle.Right;
-            panelInfo.FillColor = Color.FromArgb(255, 255, 255);
-            panelInfo.Location = new Point(1508, 0);
-            panelInfo.Margin = new Padding(0);
-            panelInfo.Name = "panelInfo";
-            panelInfo.ShadowDecoration.CustomizableEdges = customizableEdges7;
-            panelInfo.Size = new Size(270, 750);
-            panelInfo.TabIndex = 2;
+            panelTabs.BackColor = Color.White;
+            panelTabs.Controls.Add(btnTabClass);
+            panelTabs.Controls.Add(btnTabPersonal);
+            panelTabs.Dock = DockStyle.Top;
+            panelTabs.Location = new Point(0, 0);
+            panelTabs.Name = "panelTabs";
+            panelTabs.Padding = new Padding(5);
+            panelTabs.Size = new Size(320, 50);
+            panelTabs.TabIndex = 2;
             // 
-            // lblInfoRole
+            // btnTabClass
             // 
-            lblInfoRole.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            lblInfoRole.BackColor = Color.Transparent;
-            lblInfoRole.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblInfoRole.ForeColor = Color.FromArgb(120, 120, 120);
-            lblInfoRole.Location = new Point(10, 310);
-            lblInfoRole.Name = "lblInfoRole";
-            lblInfoRole.Size = new Size(250, 25);
-            lblInfoRole.TabIndex = 3;
-            lblInfoRole.Text = "(Vai trò)";
-            lblInfoRole.TextAlign = ContentAlignment.TopCenter;
+            btnTabClass.BackColor = Color.WhiteSmoke;
+            btnTabClass.Cursor = Cursors.Hand;
+            btnTabClass.Dock = DockStyle.Right;
+            btnTabClass.FlatAppearance.BorderSize = 0;
+            btnTabClass.FlatStyle = FlatStyle.Flat;
+            btnTabClass.Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold);
+            btnTabClass.ForeColor = Color.FromArgb(64, 64, 64);
+            btnTabClass.Location = new Point(163, 5);
+            btnTabClass.Name = "btnTabClass";
+            btnTabClass.Size = new Size(152, 40);
+            btnTabClass.TabIndex = 1;
+            btnTabClass.Text = "Lớp học";
+            btnTabClass.UseVisualStyleBackColor = false;
             // 
-            // lblInfoEmail
+            // btnTabPersonal
             // 
-            lblInfoEmail.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            lblInfoEmail.BackColor = Color.Transparent;
-            lblInfoEmail.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblInfoEmail.ForeColor = Color.FromArgb(120, 120, 120);
-            lblInfoEmail.Location = new Point(10, 280);
-            lblInfoEmail.Name = "lblInfoEmail";
-            lblInfoEmail.Size = new Size(250, 25);
-            lblInfoEmail.TabIndex = 2;
-            lblInfoEmail.Text = "(Email)";
-            lblInfoEmail.TextAlign = ContentAlignment.TopCenter;
-            // 
-            // lblInfoName
-            // 
-            lblInfoName.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            lblInfoName.BackColor = Color.Transparent;
-            lblInfoName.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblInfoName.ForeColor = Color.FromArgb(50, 50, 50);
-            lblInfoName.Location = new Point(10, 220);
-            lblInfoName.Name = "lblInfoName";
-            lblInfoName.Size = new Size(250, 30);
-            lblInfoName.TabIndex = 1;
-            lblInfoName.Text = "(Chọn để chat)";
-            lblInfoName.TextAlign = ContentAlignment.TopCenter;
-            // 
-            // guna2CirclePictureBox1
-            // 
-            guna2CirclePictureBox1.BackColor = Color.Transparent;
-            guna2CirclePictureBox1.Image = Properties.Resources.avatar_trang_1_cd729c335b;
-            guna2CirclePictureBox1.ImageRotate = 0F;
-            guna2CirclePictureBox1.Location = new Point(85, 65);
-            guna2CirclePictureBox1.Margin = new Padding(0);
-            guna2CirclePictureBox1.Name = "guna2CirclePictureBox1";
-            guna2CirclePictureBox1.ShadowDecoration.CustomizableEdges = customizableEdges5;
-            guna2CirclePictureBox1.ShadowDecoration.Mode = Guna.UI2.WinForms.Enums.ShadowMode.Circle;
-            guna2CirclePictureBox1.ShadowDecoration.Shadow = new Padding(0, 0, 5, 5);
-            guna2CirclePictureBox1.Size = new Size(100, 100);
-            guna2CirclePictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
-            guna2CirclePictureBox1.TabIndex = 0;
-            guna2CirclePictureBox1.TabStop = false;
-            // 
-            // guna2Separator2
-            // 
-            guna2Separator2.Dock = DockStyle.Right;
-            guna2Separator2.FillColor = Color.FromArgb(230, 230, 230);
-            guna2Separator2.Location = new Point(1507, 0);
-            guna2Separator2.Margin = new Padding(0);
-            guna2Separator2.Name = "guna2Separator2";
-            guna2Separator2.Size = new Size(1, 750);
-            guna2Separator2.TabIndex = 3;
+            btnTabPersonal.BackColor = Color.FromArgb(0, 118, 212);
+            btnTabPersonal.Cursor = Cursors.Hand;
+            btnTabPersonal.Dock = DockStyle.Left;
+            btnTabPersonal.FlatAppearance.BorderSize = 0;
+            btnTabPersonal.FlatStyle = FlatStyle.Flat;
+            btnTabPersonal.Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold);
+            btnTabPersonal.ForeColor = Color.White;
+            btnTabPersonal.Location = new Point(5, 5);
+            btnTabPersonal.Name = "btnTabPersonal";
+            btnTabPersonal.Size = new Size(152, 40);
+            btnTabPersonal.TabIndex = 0;
+            btnTabPersonal.Text = "Cá nhân";
+            btnTabPersonal.UseVisualStyleBackColor = false;
             // 
             // panelChatArea
             // 
-            panelChatArea.BackColor = Color.FromArgb(250, 250, 250);
             panelChatArea.Controls.Add(flowChatPanel);
             panelChatArea.Controls.Add(panelInput);
-            panelChatArea.CustomizableEdges = customizableEdges14;
             panelChatArea.Dock = DockStyle.Fill;
-            panelChatArea.Location = new Point(361, 0);
-            panelChatArea.Margin = new Padding(0);
+            panelChatArea.Location = new Point(0, 70);
             panelChatArea.Name = "panelChatArea";
-            panelChatArea.ShadowDecoration.CustomizableEdges = customizableEdges15;
-            panelChatArea.Size = new Size(1146, 750);
-            panelChatArea.TabIndex = 4;
+            panelChatArea.Size = new Size(776, 580);
+            panelChatArea.TabIndex = 1;
             // 
             // flowChatPanel
             // 
             flowChatPanel.AutoScroll = true;
-            flowChatPanel.BackColor = Color.FromArgb(250, 250, 250);
+            flowChatPanel.BackColor = Color.FromArgb(240, 242, 245);
             flowChatPanel.Dock = DockStyle.Fill;
             flowChatPanel.FlowDirection = FlowDirection.TopDown;
             flowChatPanel.Location = new Point(0, 0);
-            flowChatPanel.Margin = new Padding(0);
             flowChatPanel.Name = "flowChatPanel";
-            flowChatPanel.Padding = new Padding(15, 15, 5, 15);
-            flowChatPanel.Size = new Size(1146, 675);
-            flowChatPanel.TabIndex = 1;
+            flowChatPanel.Padding = new Padding(10, 0, 0, 20);
+            flowChatPanel.Size = new Size(776, 520);
+            flowChatPanel.TabIndex = 0;
             flowChatPanel.WrapContents = false;
+            flowChatPanel.Paint += flowChatPanel_Paint;
             // 
             // panelInput
             // 
-            panelInput.Controls.Add(btnUpload);
-            panelInput.Controls.Add(button1);
-            panelInput.Controls.Add(txtMessage);
+            panelInput.BackColor = Color.White;
             panelInput.Controls.Add(btnSend);
-            panelInput.CustomizableEdges = customizableEdges12;
+            panelInput.Controls.Add(btnUpload);
+            panelInput.Controls.Add(btnEmoji);
+            panelInput.Controls.Add(txtMessage);
             panelInput.Dock = DockStyle.Bottom;
             panelInput.Enabled = false;
-            panelInput.FillColor = Color.White;
-            panelInput.Location = new Point(0, 675);
-            panelInput.Margin = new Padding(0);
+            panelInput.Location = new Point(0, 520);
             panelInput.Name = "panelInput";
-            panelInput.Padding = new Padding(12, 10, 12, 10);
-            panelInput.ShadowDecoration.CustomizableEdges = customizableEdges13;
-            panelInput.ShadowDecoration.Depth = 3;
-            panelInput.ShadowDecoration.Enabled = true;
-            panelInput.ShadowDecoration.Shadow = new Padding(0, -3, 0, 0);
-            panelInput.Size = new Size(1146, 75);
-            panelInput.TabIndex = 0;
-            // 
-            // btnUpload
-            // 
-            btnUpload.BackgroundImage = (Image)resources.GetObject("btnUpload.BackgroundImage");
-            btnUpload.BackgroundImageLayout = ImageLayout.Stretch;
-            btnUpload.ForeColor = SystemColors.ControlLight;
-            btnUpload.Location = new Point(948, 17);
-            btnUpload.Name = "btnUpload";
-            btnUpload.Size = new Size(38, 38);
-            btnUpload.TabIndex = 3;
-            btnUpload.UseVisualStyleBackColor = true;
-            btnUpload.Click += btnUpload_Click_1;
-            // 
-            // button1
-            // 
-            button1.BackgroundImage = Properties.Resources._8721408;
-            button1.BackgroundImageLayout = ImageLayout.Stretch;
-            button1.ForeColor = SystemColors.ControlLight;
-            button1.Location = new Point(992, 17);
-            button1.Name = "button1";
-            button1.Size = new Size(38, 38);
-            button1.TabIndex = 2;
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
-            // 
-            // txtMessage
-            // 
-            txtMessage.BorderRadius = 10;
-            txtMessage.Cursor = Cursors.IBeam;
-            txtMessage.CustomizableEdges = customizableEdges8;
-            txtMessage.DefaultText = "";
-            txtMessage.DisabledState.BorderColor = Color.FromArgb(208, 208, 208);
-            txtMessage.DisabledState.FillColor = Color.FromArgb(226, 226, 226);
-            txtMessage.DisabledState.ForeColor = Color.FromArgb(138, 138, 138);
-            txtMessage.DisabledState.PlaceholderForeColor = Color.FromArgb(138, 138, 138);
-            txtMessage.Dock = DockStyle.Fill;
-            txtMessage.FocusedState.BorderColor = Color.FromArgb(94, 148, 255);
-            txtMessage.Font = new Font("Segoe UI", 9F);
-            txtMessage.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
-            txtMessage.Location = new Point(12, 10);
-            txtMessage.Margin = new Padding(0);
-            txtMessage.Name = "txtMessage";
-            txtMessage.PlaceholderText = "Nhập tin nhắn...";
-            txtMessage.SelectedText = "";
-            txtMessage.ShadowDecoration.CustomizableEdges = customizableEdges9;
-            txtMessage.Size = new Size(1058, 55);
-            txtMessage.TabIndex = 0;
-            txtMessage.TextChanged += txtMessage_TextChanged;
+            panelInput.Size = new Size(776, 60);
+            panelInput.TabIndex = 1;
             // 
             // btnSend
             // 
-            btnSend.Animated = true;
-            btnSend.BackgroundImageLayout = ImageLayout.Stretch;
-            btnSend.BorderRadius = 8;
-            btnSend.CustomizableEdges = customizableEdges10;
-            btnSend.DisabledState.BorderColor = Color.DarkGray;
-            btnSend.DisabledState.CustomBorderColor = Color.DarkGray;
-            btnSend.DisabledState.FillColor = Color.FromArgb(169, 169, 169);
-            btnSend.DisabledState.ForeColor = Color.FromArgb(141, 141, 141);
-            btnSend.Dock = DockStyle.Right;
-            btnSend.FillColor = Color.FromArgb(33, 150, 243);
-            btnSend.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            btnSend.ForeColor = Color.White;
-            btnSend.Image = Properties.Resources.maybay;
-            btnSend.Location = new Point(1070, 10);
-            btnSend.Margin = new Padding(3, 4, 3, 4);
+            btnSend.Anchor = AnchorStyles.Right;
+            btnSend.BackColor = Color.White;
+            btnSend.Cursor = Cursors.Hand;
+            btnSend.FlatAppearance.BorderSize = 0;
+            btnSend.FlatStyle = FlatStyle.Flat;
+            btnSend.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            btnSend.ForeColor = Color.FromArgb(0, 118, 212);
+            btnSend.Location = new Point(690, 12);
             btnSend.Name = "btnSend";
-            btnSend.ShadowDecoration.CustomizableEdges = customizableEdges11;
-            btnSend.Size = new Size(64, 55);
+            btnSend.Size = new Size(75, 36);
             btnSend.TabIndex = 1;
+            btnSend.Text = "GỬI";
+            btnSend.UseVisualStyleBackColor = false;
+            // 
+            // btnUpload
+            // 
+            btnUpload.Cursor = Cursors.Hand;
+            btnUpload.FlatAppearance.BorderSize = 0;
+            btnUpload.FlatStyle = FlatStyle.Flat;
+            btnUpload.Font = new Font("Segoe UI Emoji", 14F);
+            btnUpload.ForeColor = Color.FromArgb(0, 118, 212);
+            btnUpload.Location = new Point(10, 10);
+            btnUpload.Name = "btnUpload";
+            btnUpload.Size = new Size(40, 40);
+            btnUpload.TabIndex = 2;
+            btnUpload.Text = "📎";
+            btnUpload.UseVisualStyleBackColor = true;
+            // 
+            // btnEmoji
+            // 
+            btnEmoji.Anchor = AnchorStyles.Right;
+            btnEmoji.Cursor = Cursors.Hand;
+            btnEmoji.FlatAppearance.BorderSize = 0;
+            btnEmoji.FlatStyle = FlatStyle.Flat;
+            btnEmoji.Font = new Font("Segoe UI Emoji", 14F);
+            btnEmoji.ForeColor = Color.FromArgb(0, 118, 212);
+            btnEmoji.Location = new Point(645, 10);
+            btnEmoji.Name = "btnEmoji";
+            btnEmoji.Size = new Size(40, 40);
+            btnEmoji.TabIndex = 3;
+            btnEmoji.Text = "😊";
+            btnEmoji.UseVisualStyleBackColor = true;
+            btnEmoji.Click += btnEmoji_Click;
+            // 
+            // txtMessage
+            // 
+            txtMessage.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            txtMessage.BackColor = Color.FromArgb(240, 242, 245);
+            txtMessage.BorderStyle = BorderStyle.None;
+            txtMessage.Font = new Font("Segoe UI", 11F);
+            txtMessage.Location = new Point(60, 15);
+            txtMessage.Multiline = true;
+            txtMessage.Name = "txtMessage";
+            txtMessage.PlaceholderText = "Nhập tin nhắn...";
+            txtMessage.Size = new Size(580, 30);
+            txtMessage.TabIndex = 0;
+            // 
+            // panelHeader
+            // 
+            panelHeader.BackColor = Color.White;
+            panelHeader.Controls.Add(lblInfoRole);
+            panelHeader.Controls.Add(lblInfoEmail);
+            panelHeader.Controls.Add(lblInfoName);
+            panelHeader.Controls.Add(guna2CirclePictureBox1);
+            panelHeader.Dock = DockStyle.Top;
+            panelHeader.Location = new Point(0, 0);
+            panelHeader.Name = "panelHeader";
+            panelHeader.Size = new Size(776, 70);
+            panelHeader.TabIndex = 0;
+            // 
+            // lblInfoRole
+            // 
+            lblInfoRole.Anchor = AnchorStyles.Right;
+            lblInfoRole.AutoSize = true;
+            lblInfoRole.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold);
+            lblInfoRole.ForeColor = Color.FromArgb(0, 118, 212);
+            lblInfoRole.Location = new Point(586, 30);
+            lblInfoRole.Name = "lblInfoRole";
+            lblInfoRole.Size = new Size(54, 20);
+            lblInfoRole.TabIndex = 3;
+            lblInfoRole.Text = "Vai trò";
+            lblInfoRole.Click += lblInfoRole_Click;
+            // 
+            // lblInfoEmail
+            // 
+            lblInfoEmail.AutoSize = true;
+            lblInfoEmail.Font = new Font("Segoe UI", 9F);
+            lblInfoEmail.ForeColor = Color.Gray;
+            lblInfoEmail.Location = new Point(82, 40);
+            lblInfoEmail.Name = "lblInfoEmail";
+            lblInfoEmail.Size = new Size(149, 20);
+            lblInfoEmail.TabIndex = 2;
+            lblInfoEmail.Text = "email@example.com";
+            // 
+            // lblInfoName
+            // 
+            lblInfoName.AutoSize = true;
+            lblInfoName.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
+            lblInfoName.ForeColor = Color.FromArgb(28, 30, 33);
+            lblInfoName.Location = new Point(80, 12);
+            lblInfoName.Name = "lblInfoName";
+            lblInfoName.Size = new Size(193, 30);
+            lblInfoName.TabIndex = 1;
+            lblInfoName.Text = "(Tên người dùng)";
+            // 
+            // guna2CirclePictureBox1
+            // 
+            guna2CirclePictureBox1.Location = new Point(20, 10);
+            guna2CirclePictureBox1.Name = "guna2CirclePictureBox1";
+            guna2CirclePictureBox1.Size = new Size(50, 50);
+            guna2CirclePictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+            guna2CirclePictureBox1.TabIndex = 0;
+            guna2CirclePictureBox1.TabStop = false;
             // 
             // frmMainChat
             // 
-            AcceptButton = btnSend;
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(9F, 21F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1778, 750);
-            Controls.Add(panelChatArea);
-            Controls.Add(guna2Separator2);
-            Controls.Add(panelInfo);
-            Controls.Add(guna2Separator1);
-            Controls.Add(panelContacts);
-            Margin = new Padding(0);
+            BackColor = Color.White;
+            ClientSize = new Size(1100, 650);
+            Controls.Add(splitContainer1);
+            Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            Margin = new Padding(3, 4, 3, 4);
             Name = "frmMainChat";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "Chat";
-            WindowState = FormWindowState.Maximized;
-            FormClosing += frmMainChat_FormClosing;
+            Text = "Ứng Dụng Chat";
             Load += frmMainChat_Load;
-            panelContacts.ResumeLayout(false);
-            panelContacts.PerformLayout();
-            panelInfo.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)guna2CirclePictureBox1).EndInit();
+            splitContainer1.Panel1.ResumeLayout(false);
+            splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
+            splitContainer1.ResumeLayout(false);
+            panelSearch.ResumeLayout(false);
+            panelSearch.PerformLayout();
+            panelTabs.ResumeLayout(false);
             panelChatArea.ResumeLayout(false);
             panelInput.ResumeLayout(false);
+            panelInput.PerformLayout();
+            panelHeader.ResumeLayout(false);
+            panelHeader.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)guna2CirclePictureBox1).EndInit();
             ResumeLayout(false);
         }
 
         #endregion
 
-        private Guna.UI2.WinForms.Guna2Panel panelContacts;
-        private Guna.UI2.WinForms.Guna2Separator guna2Separator1;
-        private Guna.UI2.WinForms.Guna2Panel panelInfo;
-        private Guna.UI2.WinForms.Guna2Separator guna2Separator2;
-        private Guna.UI2.WinForms.Guna2Panel panelChatArea;
+        private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.FlowLayoutPanel flowUserListPanel;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Panel panelTabs;
+        private System.Windows.Forms.Button btnTabClass;
+        private System.Windows.Forms.Button btnTabPersonal;
+        private System.Windows.Forms.Panel panelSearch;
+        private System.Windows.Forms.TextBox guna2TextBox1;
+
+        private System.Windows.Forms.Panel panelChatArea;
+        private System.Windows.Forms.FlowLayoutPanel flowChatPanel;
+        private System.Windows.Forms.Panel panelInput;
+        private System.Windows.Forms.Button btnSend;
+        private System.Windows.Forms.Button btnUpload;
+        private System.Windows.Forms.Button btnEmoji;
+        private System.Windows.Forms.TextBox txtMessage;
+
+        private System.Windows.Forms.Panel panelHeader;
         private System.Windows.Forms.Label lblInfoRole;
         private System.Windows.Forms.Label lblInfoEmail;
         private System.Windows.Forms.Label lblInfoName;
-        private Guna.UI2.WinForms.Guna2CirclePictureBox guna2CirclePictureBox1;
-        private System.Windows.Forms.FlowLayoutPanel flowChatPanel;
-        private Guna.UI2.WinForms.Guna2Panel panelInput;
-        private Guna.UI2.WinForms.Guna2TextBox txtMessage;
-        private Guna.UI2.WinForms.Guna2Button btnSend;
-        private Guna.UI2.WinForms.Guna2TextBox guna2TextBox1;
-        private Button button1;
-        private Button btnUpload;
+        private System.Windows.Forms.PictureBox guna2CirclePictureBox1;
     }
 }

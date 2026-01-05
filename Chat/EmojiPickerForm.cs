@@ -17,7 +17,6 @@ namespace APP_DOAN
             CreateEmojiPanel();
             LoadEmojis();
         }
-
         private void CreateEmojiPanel()
         {
             flowEmojis = new FlowLayoutPanel();
@@ -113,11 +112,11 @@ namespace APP_DOAN
                 {
                     SelectedEmoji = emoji;
                     EmojiSelected?.Invoke(this, emoji);
-                    this.Close();
                 };
 
                 flowEmojis.Controls.Add(lblEmoji);
             }
         }
+
     }
 }

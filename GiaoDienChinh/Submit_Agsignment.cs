@@ -2,105 +2,144 @@
 using Firebase.Database.Query;
 using Guna.UI2.WinForms;
 using Guna.UI2.WinForms.Enums;
+using Guna.UI2.WinForms.Suite;
 using System;
-using System.ComponentModel;
 using System.Drawing;
-using System.IO; // Để dùng Path.GetFileName
+using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace APP_DOAN.GiaoDienChinh
 {
-    
-
-    // Form logic
     public partial class Submit_Agsignment : Form
     {
-        public event Action<AssignmentSubmitResult> OnSubmitSuccess;
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public string TenLopHoc { get; set; }
+        private const long MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 
-        private readonly FirebaseClient firebaseClient;
+        public event Action OnSubmitSuccess;
 
-        private readonly string courseId;
-        private readonly string studentUid;
+        private readonly FirebaseClient _client;
+        private readonly string _courseId;
+        private readonly string _assignmentId;
+        private readonly string _studentUid;
+        private string title;
+        private string studentId;
 
+        // Sửa Constructor chính để nhận thêm tham số dueDate
         public Submit_Agsignment(
-     string tenLop,
-     FirebaseClient firebaseClient,
-     string courseId,
-     string studentUid)
+            string assignmentTitle,
+            string assignmentDescription,
+            string assignmentDueDate, // Thêm tham số này
+            string assignmentId,
+            FirebaseClient client,
+            string courseId,
+            string studentUid)
         {
             InitializeComponent();
 
-            TenLopHoc = tenLop;
-            this.firebaseClient = firebaseClient;
-            this.courseId = courseId;
-            this.studentUid = studentUid;
+            lblAssignmentName.Text = "Nộp bài tập: " + assignmentTitle.ToUpper();
 
-            lblAssignmentName.Text = $"NỘP BÀI TẬP LỚP: {tenLop.ToUpper()}";
+            _assignmentId = assignmentId;
+            _client = client;
+            _courseId = courseId;
+            _studentUid = studentUid;
+
+            txtTitle.Text = assignmentTitle;
+            txtDesc.Text = assignmentDescription;
+
+            // Gán dữ liệu vào Label hạn nộp
+            lbDl.Text = "Hạn nộp: " + assignmentDueDate;
         }
-
-
-
-
+        public Submit_Agsignment(string title, string assignmentId, FirebaseClient client, string courseId, string studentId)
+        {
+            this.title = title;
+            _assignmentId = assignmentId;
+            _client = client;
+            _courseId = courseId;
+            this.studentId = studentId;
+        }
 
         private void btnBrowse_Click_1(object sender, EventArgs e)
         {
-            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            
+            using OpenFileDialog dlg = new OpenFileDialog
             {
-                openFileDialog.Title = "Chọn tệp bài tập để nộp";
-                openFileDialog.Filter = "Tệp Bài Tập (*.doc;*.docx;*.pdf;*.zip;*.rar)|*.doc;*.docx;*.pdf;*.zip;*.rar|Tất cả tệp (*.*)|*.*";
-                openFileDialog.RestoreDirectory = true;
+                Title = "Chọn file bài tập",
+                Filter = "All files|*.*"
+            };
 
-                if (openFileDialog.ShowDialog() == DialogResult.OK)
+            
+
+
+            if (dlg.ShowDialog() == DialogResult.OK)
+            {
+                FileInfo fileInfo = new FileInfo(dlg.FileName);
+
+                if (fileInfo.Length > MAX_FILE_SIZE)
                 {
-                    txtFilePath.Text = openFileDialog.FileName;
+                    new Guna2MessageDialog
+                    {
+                        Caption = "File quá lớn",
+                        Text = "Dung lượng file không được vượt quá 10 MB",
+                        Icon = MessageDialogIcon.Warning,
+                        Buttons = MessageDialogButtons.OK,
+                        Parent = this
+                    }.Show();
+                    return;
+                }
+
+                txtFilePath.Text = dlg.FileName;
+                string ext = Path.GetExtension(txtFilePath.Text).ToLower();
+                string[] allowed = { ".pdf", ".docx", ".zip" };
+                if (!allowed.Contains(ext))
+                {
+                    MessageBox.Show("Chỉ cho phép file PDF, DOCX hoặc ZIP");
+                    return;
                 }
             }
-
         }
 
         private async void btnSubmit_Click_1(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(txtFilePath.Text) || !File.Exists(txtFilePath.Text))
+            if (!File.Exists(txtFilePath.Text))
             {
-                Guna2MessageDialog errorDialog = new Guna2MessageDialog
+                new Guna2MessageDialog
                 {
                     Caption = "Lỗi",
-                    Text = "Vui lòng chọn một tệp bài tập hợp lệ trước khi nộp.",
+                    Text = "Vui lòng chọn file hợp lệ",
                     Icon = MessageDialogIcon.Error,
                     Buttons = MessageDialogButtons.OK,
                     Parent = this
-                };
-
-                //Kiểm tra kích thước tệp
-                const long MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
-                FileInfo fileInfo = new FileInfo(txtFilePath.Text);
-
-                if (fileInfo.Length > MAX_FILE_SIZE)
-                {
-                    Guna2MessageDialog sizeDialog = new Guna2MessageDialog
-                    {
-                        Caption = "Tệp quá lớn",
-                        Text = "Dung lượng tệp vượt quá 50MB.\nVui lòng chọn tệp nhỏ hơn.",
-                        Icon = MessageDialogIcon.Warning,
-                        Buttons = MessageDialogButtons.OK,
-                        Parent = this
-                    };
-                    sizeDialog.Show();
-                    return;
-                }
-
-                errorDialog.Show();
+                }.Show();
                 return;
             }
 
             try
             {
-                // Hiển thị dialog đang upload
+                string ext = Path.GetExtension(txtFilePath.Text).ToLower();
+                string[] allowed = { ".pdf", ".docx", ".zip" };
+                if (!allowed.Contains(ext))
+                {
+                    MessageBox.Show("Chỉ cho phép file PDF, DOCX hoặc ZIP");
+                    return;
+                }
+                FileInfo fileInfo = new FileInfo(txtFilePath.Text);
+
+                if (fileInfo.Length > MAX_FILE_SIZE)
+                {
+                    new Guna2MessageDialog
+                    {
+                        Caption = "File quá lớn",
+                        Text = "Dung lượng file vượt quá 10 MB. Vui lòng chọn file khác.",
+                        Icon = MessageDialogIcon.Error,
+                        Buttons = MessageDialogButtons.OK,
+                        Parent = this
+                    }.Show();
+                    return;
+                }
+
+
                 Cursor = Cursors.WaitCursor;
 
-                // Upload file lên Cloudinary
                 string fileUrl = await Task.Run(() =>
                     CloudinaryHelper.UploadFile(txtFilePath.Text)
                 );
@@ -108,64 +147,44 @@ namespace APP_DOAN.GiaoDienChinh
                 Cursor = Cursors.Default;
 
                 if (string.IsNullOrEmpty(fileUrl))
-                {
-                    Guna2MessageDialog failDialog = new Guna2MessageDialog
-                    {
-                        Caption = "Thất bại",
-                        Text = "Không thể upload bài tập. Vui lòng thử lại.",
-                        Icon = MessageDialogIcon.Error,
-                        Buttons = MessageDialogButtons.OK,
-                        Parent = this
-                    };
-                    failDialog.Show();
-                    return;
-                }
+                    throw new Exception("Upload thất bại");
 
-                // Thành công
-                Guna2MessageDialog successDialog = new Guna2MessageDialog
+                // ✅ GHI ĐÚNG FIREBASE PATH
+                await _client
+                    .Child("Assignments")
+                    .Child(_courseId)
+                    .Child(_assignmentId)
+                    .Child("Submissions")
+                    .Child(_studentUid)
+                    .PutAsync(new
+                    {
+                        TenFile = Path.GetFileName(txtFilePath.Text),
+                        FileUrl = fileUrl,
+                        ThoiGianNop = DateTimeOffset.UtcNow.ToUnixTimeSeconds()
+                    });
+
+                new Guna2MessageDialog
                 {
-                    Caption = "Nộp bài thành công 🎉",
-                    Text =
-                        $"Lớp: {this.TenLopHoc}\n\n" +
-                        $"Tệp: {Path.GetFileName(txtFilePath.Text)}\n\n" +
-                        $"Link bài nộp:\n{fileUrl}",
+                    Caption = "🎉 Thành công",
+                    Text = "Nộp bài thành công!",
                     Icon = MessageDialogIcon.Information,
                     Buttons = MessageDialogButtons.OK,
                     Parent = this
-                };
-                successDialog.Show();
+                }.Show();
 
-
-                await firebaseClient
-                 .Child("Assignments")
-                 .Child(courseId)          // ID môn học
-                 .Child(studentUid)        // UID sinh viên
-                 .PutAsync(new
-                 {
-                       TenFile = Path.GetFileName(txtFilePath.Text),
-                       FileUrl = fileUrl,
-                       ThoiGianNop = DateTime.Now
-                 });
-
-
-                OnSubmitSuccess?.Invoke(new AssignmentSubmitResult
-                {
-                    TenLop = this.TenLopHoc,
-                    TenFile = Path.GetFileName(txtFilePath.Text),
-                    FileUrl = fileUrl,
-                    ThoiGianNop = DateTime.Now
-                });
-
-                this.Close();
+                OnSubmitSuccess?.Invoke();
+                Close();
             }
             catch (Exception ex)
             {
                 Cursor = Cursors.Default;
-                MessageBox.Show("Lỗi khi nộp bài: " + ex.Message);
+                MessageBox.Show("Lỗi nộp bài:\n" + ex.Message);
             }
         }
 
+        private void lblAssignmentName_Click(object sender, EventArgs e)
+        {
 
-
+        }
     }
 }

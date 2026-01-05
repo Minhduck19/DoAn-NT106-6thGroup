@@ -14,160 +14,211 @@
 
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.borderlessForm = new Guna.UI2.WinForms.Guna2BorderlessForm(this.components);
-            this.lblWelcome = new System.Windows.Forms.Label();
-            this.txtFind = new Guna.UI2.WinForms.Guna2TextBox();
-            this.btnCreateNew = new Guna.UI2.WinForms.Guna2Button();
-            this.btnLogOut = new Guna.UI2.WinForms.Guna2Button();
-            this.flpMyCourses = new System.Windows.Forms.FlowLayoutPanel();
-            this.btnExit = new Guna.UI2.WinForms.Guna2ControlBox();
-            this.btnMinimize = new Guna.UI2.WinForms.Guna2ControlBox();
-
-            this.SuspendLayout();
-
+            components = new System.ComponentModel.Container();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges13 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges14 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges11 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges12 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges9 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges10 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges1 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges2 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges3 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges4 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges5 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges6 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges7 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges8 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            borderlessForm = new Guna.UI2.WinForms.Guna2BorderlessForm(components);
+            lblWelcome = new Label();
+            flpMyCourses = new FlowLayoutPanel();
+            txtSearch = new Guna.UI2.WinForms.Guna2TextBox();
+            btnExit = new Guna.UI2.WinForms.Guna2ControlBox();
+            btnMinimize = new Guna.UI2.WinForms.Guna2ControlBox();
+            btnCreate = new Guna.UI2.WinForms.Guna2Button();
+            btnChat = new Guna.UI2.WinForms.Guna2GradientButton();
+            btnProfile = new Guna.UI2.WinForms.Guna2Button();
+            btnLogout = new Guna.UI2.WinForms.Guna2Button();
+            SuspendLayout();
             // 
-            // 1. BO TRÒN FORM (Borderless)
+            // borderlessForm
             // 
-            this.borderlessForm.BorderRadius = 20;
-            this.borderlessForm.ContainerControl = this;
-            this.borderlessForm.ShadowColor = System.Drawing.Color.DimGray;
-
+            borderlessForm.BorderRadius = 20;
+            borderlessForm.ContainerControl = this;
+            borderlessForm.DockIndicatorTransparencyValue = 0.6D;
+            borderlessForm.ShadowColor = Color.DimGray;
+            borderlessForm.TransparentWhileDrag = true;
             // 
-            // 2. LABEL CHÀO MỪNG
+            // lblWelcome
             // 
-            this.lblWelcome.AutoSize = true;
-            this.lblWelcome.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold);
-            this.lblWelcome.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
-            this.lblWelcome.Location = new System.Drawing.Point(30, 30);
-            this.lblWelcome.Name = "lblWelcome";
-            this.lblWelcome.Size = new System.Drawing.Size(120, 32);
-            this.lblWelcome.TabIndex = 0;
-            this.lblWelcome.Text = "Xin chào!";
-
+            lblWelcome.AutoSize = true;
+            lblWelcome.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
+            lblWelcome.ForeColor = Color.FromArgb(40, 40, 40);
+            lblWelcome.Location = new Point(30, 30);
+            lblWelcome.Name = "lblWelcome";
+            lblWelcome.Size = new Size(149, 41);
+            lblWelcome.TabIndex = 0;
+            lblWelcome.Text = "Xin chào!";
             // 
-            // 3. THANH TÌM KIẾM (Guna TextBox)
+            // flpMyCourses
             // 
-            this.txtFind.BorderRadius = 18;
-            this.txtFind.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.txtFind.DefaultText = "";
-            this.txtFind.DisabledState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(208)))), ((int)(((byte)(208)))), ((int)(((byte)(208)))));
-            this.txtFind.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(226)))), ((int)(((byte)(226)))));
-            this.txtFind.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(138)))), ((int)(((byte)(138)))));
-            this.txtFind.DisabledState.PlaceholderForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(138)))), ((int)(((byte)(138)))));
-            this.txtFind.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
-            this.txtFind.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.txtFind.HoverState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
-            this.txtFind.Location = new System.Drawing.Point(30, 80);
-            this.txtFind.Name = "txtFind";
-            this.txtFind.PasswordChar = '\0';
-            this.txtFind.PlaceholderText = "Tìm kiếm lớp học...";
-            this.txtFind.SelectedText = "";
-            this.txtFind.Size = new System.Drawing.Size(350, 40);
-            this.txtFind.TabIndex = 1;
-            this.txtFind.TextChanged += new System.EventHandler(this.txtFind_TextChanged);
-
+            flpMyCourses.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            flpMyCourses.AutoScroll = true;
+            flpMyCourses.Location = new Point(34, 150);
+            flpMyCourses.Name = "flpMyCourses";
+            flpMyCourses.Size = new Size(1300, 850);
+            flpMyCourses.TabIndex = 2;
+            flpMyCourses.Paint += flpMyCourses_Paint;
             // 
-            // 4. NÚT TẠO LỚP (Guna Button - Gradient)
+            // txtSearch
             // 
-            this.btnCreateNew.BorderRadius = 10;
-            this.btnCreateNew.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnCreateNew.DisabledState.BorderColor = System.Drawing.Color.DarkGray;
-            this.btnCreateNew.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray;
-            this.btnCreateNew.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(169)))), ((int)(((byte)(169)))), ((int)(((byte)(169)))));
-            this.btnCreateNew.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
-            this.btnCreateNew.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(118)))), ((int)(((byte)(212))))); 
-            this.btnCreateNew.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.btnCreateNew.ForeColor = System.Drawing.Color.White;
-            this.btnCreateNew.Location = new System.Drawing.Point(400, 80);
-            this.btnCreateNew.Name = "btnCreateNew";
-            this.btnCreateNew.Size = new System.Drawing.Size(160, 40);
-            this.btnCreateNew.TabIndex = 2;
-            this.btnCreateNew.Text = "+ Tạo Lớp Mới";
-            this.btnCreateNew.Click += new System.EventHandler(this.btnCreateNew_Click);
-
+            txtSearch.BorderRadius = 10;
+            txtSearch.Cursor = Cursors.IBeam;
+            txtSearch.CustomizableEdges = customizableEdges13;
+            txtSearch.DefaultText = "";
+            txtSearch.Font = new Font("Segoe UI", 10F);
+            txtSearch.Location = new Point(34, 85);
+            txtSearch.Margin = new Padding(3, 4, 3, 4);
+            txtSearch.Name = "txtSearch";
+            txtSearch.PlaceholderText = "Tìm kiếm lớp học...";
+            txtSearch.SelectedText = "";
+            txtSearch.ShadowDecoration.CustomizableEdges = customizableEdges14;
+            txtSearch.Size = new Size(300, 40);
+            txtSearch.TabIndex = 1;
             // 
-            // 5. NÚT ĐĂNG XUẤT
+            // btnExit
             // 
-            this.btnLogOut.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnLogOut.BorderColor = System.Drawing.Color.IndianRed;
-            this.btnLogOut.BorderRadius = 10;
-            this.btnLogOut.BorderThickness = 1;
-            this.btnLogOut.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnLogOut.FillColor = System.Drawing.Color.White;
-            this.btnLogOut.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.btnLogOut.ForeColor = System.Drawing.Color.IndianRed;
-            this.btnLogOut.Location = new System.Drawing.Point(1000, 30);
-            this.btnLogOut.Name = "btnLogOut";
-            this.btnLogOut.Size = new System.Drawing.Size(120, 40);
-            this.btnLogOut.TabIndex = 3;
-            this.btnLogOut.Text = "Đăng xuất";
-            this.btnLogOut.Click += new System.EventHandler(this.btnLogOut_Click);
-
+            btnExit.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnExit.CustomizableEdges = customizableEdges11;
+            btnExit.FillColor = Color.Transparent;
+            btnExit.IconColor = Color.Gray;
+            btnExit.Location = new Point(1310, 10);
+            btnExit.Name = "btnExit";
+            btnExit.ShadowDecoration.CustomizableEdges = customizableEdges12;
+            btnExit.Size = new Size(45, 30);
+            btnExit.TabIndex = 10;
             // 
-            // 6. KHUNG CHỨA THẺ (FlowLayoutPanel)
+            // btnMinimize
             // 
-            this.flpMyCourses.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.flpMyCourses.AutoScroll = true;
-            this.flpMyCourses.Location = new System.Drawing.Point(30, 150);
-            this.flpMyCourses.Name = "flpMyCourses";
-            this.flpMyCourses.Size = new System.Drawing.Size(1140, 600);
-            this.flpMyCourses.TabIndex = 4;
-
+            btnMinimize.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnMinimize.ControlBoxType = Guna.UI2.WinForms.Enums.ControlBoxType.MinimizeBox;
+            btnMinimize.CustomizableEdges = customizableEdges9;
+            btnMinimize.FillColor = Color.Transparent;
+            btnMinimize.IconColor = Color.Gray;
+            btnMinimize.Location = new Point(1260, 10);
+            btnMinimize.Name = "btnMinimize";
+            btnMinimize.ShadowDecoration.CustomizableEdges = customizableEdges10;
+            btnMinimize.Size = new Size(45, 30);
+            btnMinimize.TabIndex = 11;
             // 
-            // Nút Tắt & Minimize (Góc phải trên)
+            // btnCreate
             // 
-            this.btnExit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnExit.FillColor = System.Drawing.Color.Transparent;
-            this.btnExit.IconColor = System.Drawing.Color.Gray;
-            this.btnExit.Location = new System.Drawing.Point(1150, 0);
-            this.btnExit.Name = "btnExit";
-            this.btnExit.Size = new System.Drawing.Size(45, 29);
-            this.btnExit.TabIndex = 5;
-
-            this.btnMinimize.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnMinimize.ControlBoxType = Guna.UI2.WinForms.Enums.ControlBoxType.MinimizeBox;
-            this.btnMinimize.FillColor = System.Drawing.Color.Transparent;
-            this.btnMinimize.IconColor = System.Drawing.Color.Gray;
-            this.btnMinimize.Location = new System.Drawing.Point(1100, 0);
-            this.btnMinimize.Name = "btnMinimize";
-            this.btnMinimize.Size = new System.Drawing.Size(45, 29);
-            this.btnMinimize.TabIndex = 6;
-
+            btnCreate.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnCreate.BorderRadius = 10;
+            btnCreate.Cursor = Cursors.Hand;
+            btnCreate.CustomizableEdges = customizableEdges1;
+            btnCreate.FillColor = Color.FromArgb(0, 118, 212);
+            btnCreate.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            btnCreate.ForeColor = Color.White;
+            btnCreate.Location = new Point(541, 85);
+            btnCreate.Name = "btnCreate";
+            btnCreate.ShadowDecoration.CustomizableEdges = customizableEdges2;
+            btnCreate.Size = new Size(150, 40);
+            btnCreate.TabIndex = 0;
+            btnCreate.Text = "+ Tạo lớp mới";
+            btnCreate.Click += btnCreateCourse_Click;
+            // 
+            // btnChat
+            // 
+            btnChat.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnChat.BorderRadius = 10;
+            btnChat.Cursor = Cursors.Hand;
+            btnChat.CustomizableEdges = customizableEdges3;
+            btnChat.FillColor = Color.FromArgb(118, 96, 240);
+            btnChat.FillColor2 = Color.FromArgb(49, 209, 245);
+            btnChat.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            btnChat.ForeColor = Color.White;
+            btnChat.Location = new Point(1153, 85);
+            btnChat.Name = "btnChat";
+            btnChat.ShadowDecoration.CustomizableEdges = customizableEdges4;
+            btnChat.Size = new Size(130, 40);
+            btnChat.TabIndex = 1;
+            btnChat.Text = "💬 Tin nhắn";
+            btnChat.Click += guna2Button1_Click;
+            // 
+            // btnProfile
+            // 
+            btnProfile.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnProfile.BorderRadius = 10;
+            btnProfile.Cursor = Cursors.Hand;
+            btnProfile.CustomizableEdges = customizableEdges5;
+            btnProfile.FillColor = Color.FromArgb(64, 64, 64);
+            btnProfile.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            btnProfile.ForeColor = Color.White;
+            btnProfile.Location = new Point(397, 85);
+            btnProfile.Name = "btnProfile";
+            btnProfile.ShadowDecoration.CustomizableEdges = customizableEdges6;
+            btnProfile.Size = new Size(120, 40);
+            btnProfile.TabIndex = 2;
+            btnProfile.Text = "Hồ sơ";
+            btnProfile.Click += OpenProfile_Click;
+            // 
+            // btnLogout
+            // 
+            btnLogout.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnLogout.BorderColor = Color.IndianRed;
+            btnLogout.BorderRadius = 10;
+            btnLogout.BorderThickness = 1;
+            btnLogout.Cursor = Cursors.Hand;
+            btnLogout.CustomizableEdges = customizableEdges7;
+            btnLogout.FillColor = Color.White;
+            btnLogout.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            btnLogout.ForeColor = Color.IndianRed;
+            btnLogout.Location = new Point(713, 85);
+            btnLogout.Name = "btnLogout";
+            btnLogout.ShadowDecoration.CustomizableEdges = customizableEdges8;
+            btnLogout.Size = new Size(119, 40);
+            btnLogout.TabIndex = 3;
+            btnLogout.Text = "Đăng xuất";
+            btnLogout.Click += btnLogout_Click;
             // 
             // MainForm_GiangVien
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(242)))), ((int)(((byte)(245))))); // Màu nền xám Facebook
-            this.ClientSize = new System.Drawing.Size(1200, 800);
-            this.Controls.Add(this.btnMinimize);
-            this.Controls.Add(this.btnExit);
-            this.Controls.Add(this.flpMyCourses);
-            this.Controls.Add(this.btnLogOut);
-            this.Controls.Add(this.btnCreateNew);
-            this.Controls.Add(this.txtFind);
-            this.Controls.Add(this.lblWelcome);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Name = "MainForm_GiangVien";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "MainForm_GiangVien";
-            this.Load += new System.EventHandler(this.MainForm_GiangVien_Load);
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleMode = AutoScaleMode.Font;
+            BackColor = Color.FromArgb(240, 242, 245);
+            ClientSize = new Size(1371, 1067);
+            Controls.Add(btnCreate);
+            Controls.Add(btnChat);
+            Controls.Add(btnProfile);
+            Controls.Add(btnLogout);
+            Controls.Add(btnMinimize);
+            Controls.Add(btnExit);
+            Controls.Add(txtSearch);
+            Controls.Add(flpMyCourses);
+            Controls.Add(lblWelcome);
+            FormBorderStyle = FormBorderStyle.None;
+            Name = "MainForm_GiangVien";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "MainForm_GiangVien";
+            Load += MainForm_GiangVien_Load;
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
 
         private Guna.UI2.WinForms.Guna2BorderlessForm borderlessForm;
         private System.Windows.Forms.Label lblWelcome;
-        private Guna.UI2.WinForms.Guna2TextBox txtFind;
-        private Guna.UI2.WinForms.Guna2Button btnCreateNew;
-        private Guna.UI2.WinForms.Guna2Button btnLogOut;
         private System.Windows.Forms.FlowLayoutPanel flpMyCourses;
+        private Guna.UI2.WinForms.Guna2TextBox txtSearch;
+
+        // Các nút Toolbar (Đã được chuẩn hóa tên biến)
         private Guna.UI2.WinForms.Guna2ControlBox btnExit;
         private Guna.UI2.WinForms.Guna2ControlBox btnMinimize;
+        private Guna.UI2.WinForms.Guna2Button btnCreate;
+        private Guna.UI2.WinForms.Guna2GradientButton btnChat;
+        private Guna.UI2.WinForms.Guna2Button btnProfile;
+        private Guna.UI2.WinForms.Guna2Button btnLogout;
     }
 }

@@ -38,6 +38,13 @@ namespace APP_DOAN.GiaoDienChinh
 
         private void HienThiThongTinLop()
         {
+            if (_course.IsJoined)
+            {
+                btnAgree.Text = "Đã tham gia";
+                btnAgree.Enabled = false;
+                btnAgree.BackColor = Color.LightGreen;
+                return;
+            }
             int hienTai = _course.Students?.Count ?? 0;
             int toiDa = _course.SiSo;
 
