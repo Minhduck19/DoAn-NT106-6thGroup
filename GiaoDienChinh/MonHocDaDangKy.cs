@@ -149,22 +149,23 @@ namespace APP_DOAN.GiaoDienChinh
         private void RefreshListView(List<Course> dataToShow)
         {
             lvCourses.Items.Clear();
+
             foreach (var course in dataToShow)
             {
                 var item = new ListViewItem(course.MaLop ?? course.Id);
+
+                item.Tag = course.Id;
+
                 item.SubItems.Add(course.TenLop ?? "Không có tên");
                 item.SubItems.Add(course.Instructor ?? "Chưa rõ");
-
-                // Hiển thị: Sĩ số hiện tại / Sĩ số tối đa
                 item.SubItems.Add($"{course.SiSoHienTai}/{course.SiSo}");
 
-                // Logic màu sắc
                 if (course.IsJoined)
                 {
                     item.ForeColor = Color.Green;
                 }
                 else if (course.SiSoHienTai >= course.SiSo)
-                { // So sánh với SiSo
+                {
                     item.ForeColor = Color.Red;
                 }
 
@@ -172,34 +173,10 @@ namespace APP_DOAN.GiaoDienChinh
             }
         }
 
+
         private void lvCourses_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (lvCourses.SelectedItems.Count == 0) return;
 
-            var item = lvCourses.SelectedItems[0];
-            if (item.Tag == null) return;
-
-            string courseId = item.Tag.ToString();
-            var course = _allCourses.FirstOrDefault(c => c.Id == courseId);
-            if (course == null) return;
-
-            // Chặn ngay lập tức nếu đầy và chưa tham gia
-            if (!course.IsJoined && course.SiSo >= course.SiSoToiDa)
-            {
-                MessageBox.Show(
-                    $"❌ Lớp học đã đủ sĩ số ({course.SiSoHienTai}/{course.SiSo}).\nBạn không thể đăng ký lớp này.",
-                    "Lớp đã đầy",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning
-                );
-                // Bỏ chọn dòng đó để người dùng không nhầm lẫn
-                item.Selected = false;
-                return;
-            }
-
-            // Mở form chi tiết
-            ChiTietLopHoc form = new ChiTietLopHoc(course, _studentUid, _idToken);
-            form.ShowDialog();
         }
 
         private void btnThoat_Click(object sender, EventArgs e)
@@ -225,6 +202,32 @@ namespace APP_DOAN.GiaoDienChinh
 
                 RefreshListView(filtered); // Sử dụng lại hàm vẽ để giữ nguyên logic màu đỏ/xanh
             }
+        }
+
+        private void lvCourses_DoubleClick(object sender, EventArgs e)
+        {
+            if (lvCourses.SelectedItems.Count == 0) return;
+
+            var item = lvCourses.SelectedItems[0];
+            if (item.Tag == null) return;
+
+            string courseId = item.Tag.ToString();
+            var course = _allCourses.FirstOrDefault(c => c.Id == courseId);
+            if (course == null) return;
+
+            // Chặn nếu lớp đầy và chưa tham gia
+            if (!course.IsJoined && course.SiSoHienTai >= course.SiSo)
+            {
+                MessageBox.Show(
+                    $"❌ Lớp học đã đủ sĩ số ({course.SiSoHienTai}/{course.SiSo}).\nBạn không thể đăng ký lớp này.",
+                    "Lớp đã đầy",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                );
+                return;
+            }
+            ChiTietLopHoc form = new ChiTietLopHoc(course, _studentUid, _idToken);
+            form.ShowDialog();
         }
     }
 
