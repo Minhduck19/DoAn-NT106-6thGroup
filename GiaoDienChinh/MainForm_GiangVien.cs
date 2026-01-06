@@ -35,7 +35,7 @@ namespace APP_DOAN
             // --- KẾT NỐI FIREBASE ---
             try
             {
-                _client = FirebaseService.Instance._client;
+                _client = FirebaseService.Instance.Client;
             }
             catch
             {

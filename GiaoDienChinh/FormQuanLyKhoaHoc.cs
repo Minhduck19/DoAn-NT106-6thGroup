@@ -52,7 +52,7 @@ namespace APP_DOAN
             // Khởi tạo Firebase
             try
             {
-                _client = FirebaseService.Instance._client;
+                _client = FirebaseService.Instance.Client;
             }
             catch
             {

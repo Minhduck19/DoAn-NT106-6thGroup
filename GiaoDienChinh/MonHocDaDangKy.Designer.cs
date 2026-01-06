@@ -88,7 +88,6 @@ namespace APP_DOAN.GiaoDienChinh
             lvCourses.UseCompatibleStateImageBehavior = false;
             lvCourses.View = View.Details;
             lvCourses.SelectedIndexChanged += lvCourses_SelectedIndexChanged;
-            lvCourses.DoubleClick += lvCourses_DoubleClick;
             // 
             // btnThoat
             // 

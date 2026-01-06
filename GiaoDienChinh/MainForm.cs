@@ -36,7 +36,7 @@ namespace APP_DOAN
 
             try
             {
-                _firebaseClient = FirebaseService.Instance._client;
+                _firebaseClient = FirebaseService.Instance.Client;
             }
             catch
             {
