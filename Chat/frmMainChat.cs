@@ -426,14 +426,19 @@ namespace APP_DOAN
                     ReorderContactList();
                 }
             }
-            
+
+            // Tìm đến cuối hàm DisplayMessageAsBubble
             if (!isMe)
             {
-                // Chỉ thông báo nếu tin nhắn mới hơn thời điểm hiện tại (tránh thông báo loạt tin nhắn cũ khi vừa load)
+                // Lấy thời gian hiện tại của hệ thống
                 long now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-                if (msg.Timestamp > now - 5000) // Tin nhắn trong vòng 5 giây trở lại
+
+                // Nới lỏng điều kiện lên 30 giây hoặc 1 phút để tránh lệch múi giờ/độ trễ server
+                // Hoặc tốt nhất là kiểm tra xem Form có đang được Active hay không
+                if (msg.Timestamp > now - 30000)
                 {
-                    ShowDesktopNotification(msg.SenderName, msg.Text);
+                    // Phải đảm bảo gọi Invoke nếu cần, nhưng ShowDesktopNotification đã an toàn
+                    ShowDesktopNotification(msg.SenderName ?? "Người dùng", msg.Text);
                 }
             }
         }
