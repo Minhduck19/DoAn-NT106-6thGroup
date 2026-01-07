@@ -30,6 +30,8 @@ namespace APP_DOAN.GiaoDienChinh
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges2 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges3 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges4 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges5 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges6 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             formElipse = new Guna2Elipse(components);
             lblTitle = new Label();
             panelContainer = new Guna2Panel();
@@ -38,6 +40,7 @@ namespace APP_DOAN.GiaoDienChinh
             colCourseName = new ColumnHeader();
             colInstructor = new ColumnHeader();
             btnThoat = new Guna2GradientButton();
+            guna2GradientButton1ChamBai = new Guna2GradientButton();
             panelContainer.SuspendLayout();
             SuspendLayout();
             // 
@@ -89,7 +92,7 @@ namespace APP_DOAN.GiaoDienChinh
             btnThoat.FillColor2 = Color.FromArgb(255, 128, 0);
             btnThoat.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             btnThoat.ForeColor = Color.White;
-            btnThoat.Location = new Point(446, 684);
+            btnThoat.Location = new Point(147, 663);
             btnThoat.Name = "btnThoat";
             btnThoat.ShadowDecoration.CustomizableEdges = customizableEdges4;
             btnThoat.Size = new Size(200, 48);
@@ -97,11 +100,28 @@ namespace APP_DOAN.GiaoDienChinh
             btnThoat.Text = "Thoát";
             btnThoat.Click += btnThoat_Click;
             // 
+            // guna2GradientButton1ChamBai
+            // 
+            guna2GradientButton1ChamBai.BorderRadius = 10;
+            guna2GradientButton1ChamBai.CustomizableEdges = customizableEdges5;
+            guna2GradientButton1ChamBai.FillColor = Color.Aqua;
+            guna2GradientButton1ChamBai.FillColor2 = Color.FromArgb(0, 0, 192);
+            guna2GradientButton1ChamBai.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            guna2GradientButton1ChamBai.ForeColor = Color.White;
+            guna2GradientButton1ChamBai.Location = new Point(738, 663);
+            guna2GradientButton1ChamBai.Name = "guna2GradientButton1ChamBai";
+            guna2GradientButton1ChamBai.ShadowDecoration.CustomizableEdges = customizableEdges6;
+            guna2GradientButton1ChamBai.Size = new Size(200, 48);
+            guna2GradientButton1ChamBai.TabIndex = 5;
+            guna2GradientButton1ChamBai.Text = "Chấm bài";
+            guna2GradientButton1ChamBai.Click += guna2GradientButton1ChamBai_Click;
+            // 
             // Assignment
             // 
             AutoSize = true;
             BackColor = Color.FromArgb(232, 241, 250);
             ClientSize = new Size(1164, 744);
+            Controls.Add(guna2GradientButton1ChamBai);
             Controls.Add(btnThoat);
             Controls.Add(lblTitle);
             Controls.Add(panelContainer);
@@ -113,5 +133,6 @@ namespace APP_DOAN.GiaoDienChinh
             ResumeLayout(false);
         }
         private Guna2GradientButton btnThoat;
+        private Guna2GradientButton guna2GradientButton1ChamBai;
     }
 }

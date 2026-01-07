@@ -11,7 +11,11 @@ public class FirebaseService
     public static FirebaseService Instance =>
         _instance ?? throw new Exception("FirebaseService chưa được khởi tạo!");
 
-    public readonly FirebaseClient _client;
+    // FirebaseClient nội bộ
+    private readonly FirebaseClient _client;
+
+    // 🔥 PUBLIC PROPERTY ĐỂ FORM KHÁC DÙNG
+    public FirebaseClient Client => _client;
 
     private FirebaseService(string idToken)
     {
@@ -55,13 +59,13 @@ public class FirebaseService
 
 
     // 🔥 GIÁO VIÊN: LẤY TOÀN BỘ BÀI NỘP CỦA MÔN HỌC
+    // GIÁO VIÊN: LẤY TOÀN BỘ BÀI NỘP CỦA MÔN HỌC
     public async Task<List<AssignmentSubmitResult>> GetAssignmentsByCourseAsync(string courseId)
     {
         var results = new List<AssignmentSubmitResult>();
 
         try
         {
-            // 1. Lấy danh sách bài tập
             var assignments = await _client
                 .Child("Assignments")
                 .Child(courseId)
@@ -71,7 +75,6 @@ public class FirebaseService
             {
                 string assignmentId = assignment.Key;
 
-                // 2. Lấy bài nộp của sinh viên trong mỗi bài tập
                 var submissions = await _client
                     .Child("Assignments")
                     .Child(courseId)
@@ -85,7 +88,6 @@ public class FirebaseService
                     {
                         sub.Object.StudentUid = sub.Key;
                         sub.Object.AssignmentId = assignmentId;
-
                         results.Add(sub.Object);
                     }
                 }

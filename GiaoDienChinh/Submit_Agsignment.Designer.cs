@@ -124,7 +124,7 @@ namespace APP_DOAN.GiaoDienChinh
             btnSubmit.Name = "btnSubmit";
             btnSubmit.ShadowDecoration.CustomizableEdges = customizableEdges6;
             btnSubmit.ShadowDecoration.Enabled = true;
-            btnSubmit.Size = new Size(250, 50);
+            btnSubmit.Size = new Size(250, 32);
             btnSubmit.TabIndex = 0;
             btnSubmit.Text = "HOÀN TẤT VÀ NỘP BÀI";
             btnSubmit.Click += btnSubmit_Click_1;

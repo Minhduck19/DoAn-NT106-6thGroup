@@ -1,4 +1,6 @@
 ﻿using APP_DOAN;
+using APP_DOAN.Môn_học;
+using Firebase.Database;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -108,7 +110,7 @@ namespace APP_DOAN.GiaoDienChinh
             var item = lvCourses.SelectedItems[0];
 
             string fileUrl = item.Tag.ToString();
-            string fileName = item.SubItems[2].Text; // ✅ Tên file đúng
+            string fileName = item.SubItems[2].Text; 
 
             using (SaveFileDialog dlg = new SaveFileDialog())
             {
@@ -127,6 +129,30 @@ namespace APP_DOAN.GiaoDienChinh
         private void btnThoat_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void guna2GradientButton1ChamBai_Click(object sender, EventArgs e)
+        {
+            if (lvCourses.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("Vui lòng chọn bài tập cần chấm!");
+                return;
+            }
+
+            var item = lvCourses.SelectedItems[0];
+
+            string assignmentId = item.Text;      
+            string tieuDe = item.Text;             
+            var client = FirebaseService.Instance.Client;
+
+            ChamBai cb = new ChamBai(
+                _courseId,
+                assignmentId,
+                tieuDe,
+                client
+            );
+
+            cb.Show();
         }
     }
 }
