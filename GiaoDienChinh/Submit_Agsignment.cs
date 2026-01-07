@@ -151,17 +151,21 @@ namespace APP_DOAN.GiaoDienChinh
 
                 // ✅ GHI ĐÚNG FIREBASE PATH
                 await _client
-                    .Child("Assignments")
-                    .Child(_courseId)
-                    .Child(_assignmentId)
-                    .Child("Submissions")
-                    .Child(_studentUid)
-                    .PutAsync(new
-                    {
-                        TenFile = Path.GetFileName(txtFilePath.Text),
-                        FileUrl = fileUrl,
-                        ThoiGianNop = DateTimeOffset.UtcNow.ToUnixTimeSeconds()
-                    });
+                 .Child("Assignments")
+                .Child(_courseId)
+                .Child(_assignmentId)
+                .Child("Submissions")
+                .Child(_studentUid)
+                 .PutAsync(new AssignmentSubmitResult
+                 {
+                   CourseId = _courseId,
+                  AssignmentId = _assignmentId,
+                     StudentUid = _studentUid,
+                    TenFile = Path.GetFileName(txtFilePath.Text),
+                    FileUrl = fileUrl,
+                    ThoiGianNop = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+                   EmailSent = false // 🔥 CHƯA GỬI MAIL
+              });
 
                 new Guna2MessageDialog
                 {

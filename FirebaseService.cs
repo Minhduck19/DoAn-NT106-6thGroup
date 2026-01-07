@@ -32,6 +32,33 @@ public class FirebaseService
         _instance = new FirebaseService(idToken);
     }
 
+
+    public async Task<User> GetUserByUidAsync(string uid)
+    {
+        return await _client
+            .Child("Users")
+            .Child(uid)
+            .OnceSingleAsync<User>();
+    }
+
+    public async Task MarkEmailSentAsync(
+      string courseId,
+      string assignmentId,
+      string studentUid)
+    {
+        await _client
+            .Child("Assignments")
+            .Child(courseId)
+            .Child(assignmentId)
+            .Child("Submissions")
+            .Child(studentUid)
+            .Child("EmailSent")
+            .PutAsync(true);
+    }
+
+
+
+    // 🔥 GIÁO VIÊN: LẤY TOÀN BỘ BÀI NỘP CỦA MÔN HỌC
     // GIÁO VIÊN: LẤY TOÀN BỘ BÀI NỘP CỦA MÔN HỌC
     public async Task<List<AssignmentSubmitResult>> GetAssignmentsByCourseAsync(string courseId)
     {
