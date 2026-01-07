@@ -49,11 +49,57 @@ namespace APP_DOAN.GiaoDienChinh
                 item.SubItems.Add(s.StudentUid);
                 item.SubItems.Add(s.TenFile);
                 item.SubItems.Add(submitTime);
-
                 item.Tag = s.FileUrl;
                 lvCourses.Items.Add(item);
+
+                // 🔥 GỬI EMAIL NẾU CHƯA GỬI
+                if (!s.EmailSent)
+                {
+                    await SendEmailForSubmissionAsync(s);
+                }
             }
         }
+
+        private async Task SendEmailForSubmissionAsync(AssignmentSubmitResult s)
+        {
+            try
+            {
+                // 1. Lấy thông tin sinh viên
+                var user = await FirebaseService.Instance
+                    .GetUserByUidAsync(s.StudentUid);
+
+                if (user == null || string.IsNullOrEmpty(user.Email))
+                    return;
+
+                // 2. Nội dung mail
+                string subject = "📥 Xác nhận nộp bài thành công";
+                string body = $@"
+            <h3>Xin chào {user.HoTen}</h3>
+            <p>Bạn đã nộp bài thành công.</p>
+            <ul>
+                <li><b>Bài tập:</b> {s.AssignmentId}</li>
+                <li><b>Tên file:</b> {s.TenFile}</li>
+                <li><b>Thời gian:</b> {DateTime.Now:dd/MM/yyyy HH:mm}</li>
+            </ul>
+            <p>Chúc bạn học tốt! 🎓</p>";
+
+                // 3. Gửi email
+                await EmailHelper.SendEmailAsync(user.Email, subject, body);
+
+                // 4. Đánh dấu đã gửi mail (tránh gửi lại)
+                await FirebaseService.Instance.MarkEmailSentAsync(
+    s.CourseId,
+    s.AssignmentId,
+    s.StudentUid
+);
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Lỗi gửi email: " + ex.Message);
+            }
+        }
+
 
         private async void lvCourses_SelectedIndexChanged(object sender, EventArgs e)
         {
