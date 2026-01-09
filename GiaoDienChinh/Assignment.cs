@@ -2,6 +2,8 @@
 using APP_DOAN.Môn_học;
 using Firebase.Database;
 using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -26,7 +28,8 @@ namespace APP_DOAN.GiaoDienChinh
 
             lvCourses.Columns.Clear();
             lvCourses.Columns.Add("Bài tập", 160);
-            lvCourses.Columns.Add("Sinh viên", 160);
+            lvCourses.Columns.Add("Sinh viên", 180);
+            lvCourses.Columns.Add("MSSV", 120);
             lvCourses.Columns.Add("Tên file", 200);
             lvCourses.Columns.Add("Thời gian nộp", 180);
 
@@ -47,8 +50,13 @@ namespace APP_DOAN.GiaoDienChinh
                                   .LocalDateTime
                                   .ToString("dd/MM/yyyy HH:mm");
 
+                var user = await FirebaseService.Instance.GetUserByUidAsync(s.StudentUid);
+                var hoTen = user?.HoTen ?? s.StudentUid;
+                var mssv = user?.MSSV ?? string.Empty;
+
                 ListViewItem item = new ListViewItem(s.AssignmentId);
-                item.SubItems.Add(s.StudentUid);
+                item.SubItems.Add(hoTen);
+                item.SubItems.Add(mssv);
                 item.SubItems.Add(s.TenFile);
                 item.SubItems.Add(submitTime);
                 item.Tag = s.FileUrl;
@@ -90,18 +98,16 @@ namespace APP_DOAN.GiaoDienChinh
 
                 // 4. Đánh dấu đã gửi mail (tránh gửi lại)
                 await FirebaseService.Instance.MarkEmailSentAsync(
-    s.CourseId,
-    s.AssignmentId,
-    s.StudentUid
-);
-
+                    s.CourseId,
+                    s.AssignmentId,
+                    s.StudentUid
+                );
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Lỗi gửi email: " + ex.Message);
             }
         }
-
 
         private async void lvCourses_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -110,7 +116,7 @@ namespace APP_DOAN.GiaoDienChinh
             var item = lvCourses.SelectedItems[0];
 
             string fileUrl = item.Tag.ToString();
-            string fileName = item.SubItems[2].Text; 
+            string fileName = item.SubItems[3].Text;
 
             using (SaveFileDialog dlg = new SaveFileDialog())
             {
@@ -124,7 +130,6 @@ namespace APP_DOAN.GiaoDienChinh
                 }
             }
         }
-
 
         private void btnThoat_Click(object sender, EventArgs e)
         {
@@ -141,8 +146,8 @@ namespace APP_DOAN.GiaoDienChinh
 
             var item = lvCourses.SelectedItems[0];
 
-            string assignmentId = item.Text;      
-            string tieuDe = item.Text;             
+            string assignmentId = item.Text;
+            string tieuDe = item.Text;
             var client = FirebaseService.Instance.Client;
 
             ChamBai cb = new ChamBai(

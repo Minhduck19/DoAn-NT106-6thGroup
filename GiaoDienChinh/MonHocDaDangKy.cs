@@ -235,7 +235,6 @@ namespace APP_DOAN.GiaoDienChinh
         public string TenLop { get; set; }
         public string InstructorName { get; set; }
         public string MaLop { get; set; }
-        // Phải để public set thì Firebase mới ghi dữ liệu vào được
         public int SiSo { get; set; }
     }
 }

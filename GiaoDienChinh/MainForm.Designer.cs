@@ -4,36 +4,36 @@
     {
         private System.ComponentModel.IContainer components = null;
 
-        // Các Control cơ bản
-        private Guna.UI2.WinForms.Guna2Panel panelLeft;
-        private Guna.UI2.WinForms.Guna2Panel panelTop;
-        private Guna.UI2.WinForms.Guna2Panel panelMainContent;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblWelcome;
+        // --- KHAI BÁO CONTROL ---
+        private Guna.UI2.WinForms.Guna2Panel pnlSidebar;
+        private Guna.UI2.WinForms.Guna2Panel pnlHeader;
+        private Guna.UI2.WinForms.Guna2Panel pnlContent;
+
+        // Sidebar Controls
+        private System.Windows.Forms.Label lblBrand;
+        private Guna.UI2.WinForms.Guna2Button btnNavHome;
+        private Guna.UI2.WinForms.Guna2Button btnNavProfile;
+        private Guna.UI2.WinForms.Guna2Button btnNavSchedule;
+        private Guna.UI2.WinForms.Guna2Button btnNavGrades;
+        private Guna.UI2.WinForms.Guna2Button btnNavRegister;
         private Guna.UI2.WinForms.Guna2Button btnLogout;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblTitle;
-        private Guna.UI2.WinForms.Guna2GroupBox grpJoinedCourses;
+        private Guna.UI2.WinForms.Guna2Separator separatorSidebar;
 
-        // --- THAY ĐỔI QUAN TRỌNG: Dùng FlowLayoutPanel thay cho ListView ---
+        // Header Controls
+        private Guna.UI2.WinForms.Guna2TextBox txtSearch;
+        private Guna.UI2.WinForms.Guna2Button btnChat;
+        private System.Windows.Forms.Label lblUserNameHeader;
+
+        // Content Controls
+        private Guna.UI2.WinForms.Guna2Panel pnlBanner;
+        private System.Windows.Forms.Label lblWelcomeBig;
+        private System.Windows.Forms.Label lblDate;
+        private System.Windows.Forms.Label lblSectionTitle;
         private System.Windows.Forms.FlowLayoutPanel flpCourses;
-
-        // Các menu, button tìm kiếm giữ nguyên
-        private System.Windows.Forms.ContextMenuStrip cmsUserOptions;
-        private System.Windows.Forms.ToolStripMenuItem profileToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem scheduleToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem gradesToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem changePasswordToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem đăngKýMônHọcToolStripMenuItem;
-        private Guna.UI2.WinForms.Guna2Button guna2Button1; // Nút Chat
-        private Guna.UI2.WinForms.Guna2Button Find;
-        private System.Windows.Forms.Label label1;
-        private Guna.UI2.WinForms.Guna2TextBox txtNameClass;
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
+            if (disposing && (components != null)) components.Dispose();
             base.Dispose(disposing);
         }
 
@@ -41,283 +41,184 @@
 
         private void InitializeComponent()
         {
-            components = new System.ComponentModel.Container();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges3 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges4 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges1 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges2 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges7 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges8 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges5 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges6 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges15 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges16 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges13 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges14 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges9 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges10 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges11 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges12 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            panelLeft = new Guna.UI2.WinForms.Guna2Panel();
-            btnLogout = new Guna.UI2.WinForms.Guna2Button();
-            lblWelcome = new Guna.UI2.WinForms.Guna2HtmlLabel();
-            panelTop = new Guna.UI2.WinForms.Guna2Panel();
-            guna2Button1 = new Guna.UI2.WinForms.Guna2Button();
-            lblTitle = new Guna.UI2.WinForms.Guna2HtmlLabel();
-            panelMainContent = new Guna.UI2.WinForms.Guna2Panel();
-            grpJoinedCourses = new Guna.UI2.WinForms.Guna2GroupBox();
-            flpCourses = new FlowLayoutPanel();
-            Find = new Guna.UI2.WinForms.Guna2Button();
-            label1 = new Label();
-            txtNameClass = new Guna.UI2.WinForms.Guna2TextBox();
-            cmsUserOptions = new ContextMenuStrip(components);
-            profileToolStripMenuItem = new ToolStripMenuItem();
-            scheduleToolStripMenuItem = new ToolStripMenuItem();
-            gradesToolStripMenuItem = new ToolStripMenuItem();
-            changePasswordToolStripMenuItem = new ToolStripMenuItem();
-            đăngKýMônHọcToolStripMenuItem = new ToolStripMenuItem();
-            panelLeft.SuspendLayout();
-            panelTop.SuspendLayout();
-            panelMainContent.SuspendLayout();
-            grpJoinedCourses.SuspendLayout();
-            cmsUserOptions.SuspendLayout();
-            SuspendLayout();
-            // 
-            // panelLeft
-            // 
-            panelLeft.BackColor = Color.FromArgb(52, 152, 219);
-            panelLeft.Controls.Add(btnLogout);
-            panelLeft.Controls.Add(lblWelcome);
-            panelLeft.CustomizableEdges = customizableEdges3;
-            panelLeft.Dock = DockStyle.Left;
-            panelLeft.Location = new Point(0, 0);
-            panelLeft.Name = "panelLeft";
-            panelLeft.ShadowDecoration.CustomizableEdges = customizableEdges4;
-            panelLeft.Size = new Size(250, 781);
-            panelLeft.TabIndex = 2;
-            // 
-            // btnLogout
-            // 
-            btnLogout.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            btnLogout.BackColor = Color.Transparent;
-            btnLogout.BorderRadius = 15;
-            btnLogout.CustomizableEdges = customizableEdges1;
-            btnLogout.FillColor = Color.White;
-            btnLogout.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
-            btnLogout.ForeColor = Color.Black;
-            btnLogout.Location = new Point(25, 720);
-            btnLogout.Name = "btnLogout";
-            btnLogout.ShadowDecoration.CustomizableEdges = customizableEdges2;
-            btnLogout.Size = new Size(200, 45);
-            btnLogout.TabIndex = 0;
-            btnLogout.Text = "Đăng xuất";
-            btnLogout.Click += btnLogout_Click;
-            // 
-            // lblWelcome
-            // 
-            lblWelcome.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            lblWelcome.AutoSize = false;
-            lblWelcome.BackColor = Color.Transparent;
-            lblWelcome.Cursor = Cursors.Hand;
-            lblWelcome.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
-            lblWelcome.ForeColor = Color.FromArgb(236, 240, 241);
-            lblWelcome.Location = new Point(15, 30);
-            lblWelcome.Name = "lblWelcome";
-            lblWelcome.Size = new Size(220, 80);
-            lblWelcome.TabIndex = 1;
-            lblWelcome.Text = "Chào, [User]";
-            lblWelcome.Click += lblWelcome_Click;
-            // 
-            // panelTop
-            // 
-            panelTop.BackColor = Color.White;
-            panelTop.Controls.Add(guna2Button1);
-            panelTop.Controls.Add(lblTitle);
-            panelTop.CustomizableEdges = customizableEdges7;
-            panelTop.Dock = DockStyle.Top;
-            panelTop.Location = new Point(250, 0);
-            panelTop.Name = "panelTop";
-            panelTop.ShadowDecoration.CustomizableEdges = customizableEdges8;
-            panelTop.Size = new Size(1524, 79);
-            panelTop.TabIndex = 1;
-            // 
-            // guna2Button1
-            // 
-            guna2Button1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            guna2Button1.BackColor = Color.Transparent;
-            guna2Button1.BorderRadius = 15;
-            guna2Button1.CustomizableEdges = customizableEdges5;
-            guna2Button1.FillColor = Color.DeepSkyBlue;
-            guna2Button1.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
-            guna2Button1.ForeColor = Color.Black;
-            guna2Button1.Location = new Point(1310, 18);
-            guna2Button1.Name = "guna2Button1";
-            guna2Button1.ShadowDecoration.CustomizableEdges = customizableEdges6;
-            guna2Button1.Size = new Size(200, 45);
-            guna2Button1.TabIndex = 2;
-            guna2Button1.Text = "Chat";
-            guna2Button1.Click += guna2Button1_Click;
-            // 
-            // lblTitle
-            // 
-            lblTitle.BackColor = Color.Transparent;
-            lblTitle.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
-            lblTitle.ForeColor = Color.FromArgb(52, 152, 219);
-            lblTitle.Location = new Point(30, 20);
-            lblTitle.Name = "lblTitle";
-            lblTitle.Size = new Size(293, 43);
-            lblTitle.TabIndex = 0;
-            lblTitle.Text = "Dashboard | Lớp học";
-            // 
-            // panelMainContent
-            // 
-            panelMainContent.BackColor = Color.FromArgb(236, 240, 241);
-            panelMainContent.Controls.Add(grpJoinedCourses);
-            panelMainContent.CustomizableEdges = customizableEdges15;
-            panelMainContent.Dock = DockStyle.Fill;
-            panelMainContent.Location = new Point(250, 79);
-            panelMainContent.Name = "panelMainContent";
-            panelMainContent.Padding = new Padding(15);
-            panelMainContent.ShadowDecoration.CustomizableEdges = customizableEdges16;
-            panelMainContent.Size = new Size(1524, 702);
-            panelMainContent.TabIndex = 0;
-            // 
-            // grpJoinedCourses
-            // 
-            grpJoinedCourses.BackColor = Color.Transparent;
-            grpJoinedCourses.BorderRadius = 15;
-            grpJoinedCourses.Controls.Add(flpCourses);
-            grpJoinedCourses.Controls.Add(Find);
-            grpJoinedCourses.Controls.Add(label1);
-            grpJoinedCourses.Controls.Add(txtNameClass);
-            grpJoinedCourses.CustomBorderColor = Color.FromArgb(52, 152, 219);
-            grpJoinedCourses.CustomizableEdges = customizableEdges13;
-            grpJoinedCourses.Dock = DockStyle.Fill;
-            grpJoinedCourses.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            grpJoinedCourses.ForeColor = Color.FromArgb(52, 73, 94);
-            grpJoinedCourses.Location = new Point(15, 15);
-            grpJoinedCourses.Name = "grpJoinedCourses";
-            grpJoinedCourses.Padding = new Padding(10);
-            grpJoinedCourses.ShadowDecoration.CustomizableEdges = customizableEdges14;
-            grpJoinedCourses.Size = new Size(1494, 672);
-            grpJoinedCourses.TabIndex = 0;
-            grpJoinedCourses.Text = "Tất cả khóa học";
-            // 
-            // flpCourses
-            // 
-            flpCourses.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            flpCourses.AutoScroll = true;
-            flpCourses.BackColor = Color.WhiteSmoke;
-            flpCourses.FlowDirection = FlowDirection.TopDown;
-            flpCourses.Location = new Point(17, 94);
-            flpCourses.Name = "flpCourses";
-            flpCourses.Size = new Size(1464, 557);
-            flpCourses.TabIndex = 13;
-            flpCourses.WrapContents = false;
-            flpCourses.Paint += flpCourses_Paint;
-            // 
-            // Find
-            // 
-            Find.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            Find.BackColor = Color.Transparent;
-            Find.BorderRadius = 15;
-            Find.CustomizableEdges = customizableEdges9;
-            Find.FillColor = Color.DeepSkyBlue;
-            Find.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
-            Find.ForeColor = Color.Black;
-            Find.Location = new Point(1340, 53);
-            Find.Name = "Find";
-            Find.ShadowDecoration.CustomizableEdges = customizableEdges10;
-            Find.Size = new Size(140, 34);
-            Find.TabIndex = 12;
-            Find.Text = "Find";
-            Find.Click += Find_Click;
-            // 
-            // label1
-            // 
-            label1.Font = new Font("Segoe UI", 10.2F, FontStyle.Bold);
-            label1.Location = new Point(15, 58);
-            label1.Name = "label1";
-            label1.Size = new Size(160, 25);
-            label1.TabIndex = 11;
-            label1.Text = "Nhập tên lớp học:";
-            // 
-            // txtNameClass
-            // 
-            txtNameClass.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            txtNameClass.CustomizableEdges = customizableEdges11;
-            txtNameClass.DefaultText = "";
-            txtNameClass.Font = new Font("Segoe UI", 9F);
-            txtNameClass.Location = new Point(180, 54);
-            txtNameClass.Margin = new Padding(3, 4, 3, 4);
-            txtNameClass.Name = "txtNameClass";
-            txtNameClass.PlaceholderText = "";
-            txtNameClass.SelectedText = "";
-            txtNameClass.ShadowDecoration.CustomizableEdges = customizableEdges12;
-            txtNameClass.Size = new Size(1140, 33);
-            txtNameClass.TabIndex = 10;
-            txtNameClass.TextChanged += txtNameClass_TextChanged;
-            // 
-            // cmsUserOptions
-            // 
-            cmsUserOptions.ImageScalingSize = new Size(20, 20);
-            cmsUserOptions.Items.AddRange(new ToolStripItem[] { profileToolStripMenuItem, scheduleToolStripMenuItem, gradesToolStripMenuItem, changePasswordToolStripMenuItem, đăngKýMônHọcToolStripMenuItem });
-            cmsUserOptions.Name = "cmsUserOptions";
-            cmsUserOptions.Size = new Size(199, 124);
-            // 
-            // profileToolStripMenuItem
-            // 
-            profileToolStripMenuItem.Name = "profileToolStripMenuItem";
-            profileToolStripMenuItem.Size = new Size(198, 24);
-            profileToolStripMenuItem.Text = "Hồ sơ";
-            profileToolStripMenuItem.Click += profileToolStripMenuItem_Click;
-            // 
-            // scheduleToolStripMenuItem
-            // 
-            scheduleToolStripMenuItem.Name = "scheduleToolStripMenuItem";
-            scheduleToolStripMenuItem.Size = new Size(198, 24);
-            scheduleToolStripMenuItem.Text = "Lịch học";
-            scheduleToolStripMenuItem.Click += scheduleToolStripMenuItem_Click_1;
-            // 
-            // gradesToolStripMenuItem
-            // 
-            gradesToolStripMenuItem.Name = "gradesToolStripMenuItem";
-            gradesToolStripMenuItem.Size = new Size(198, 24);
-            gradesToolStripMenuItem.Text = "Điểm";
-            gradesToolStripMenuItem.Click += gradesToolStripMenuItem_Click_1;
-            // 
-            // changePasswordToolStripMenuItem
-            // 
-            changePasswordToolStripMenuItem.Name = "changePasswordToolStripMenuItem";
-            changePasswordToolStripMenuItem.Size = new Size(198, 24);
-            changePasswordToolStripMenuItem.Text = "Đổi mật khẩu";
-            changePasswordToolStripMenuItem.Click += changePasswordToolStripMenuItem_Click;
-            // 
-            // đăngKýMônHọcToolStripMenuItem
-            // 
-            đăngKýMônHọcToolStripMenuItem.Name = "đăngKýMônHọcToolStripMenuItem";
-            đăngKýMônHọcToolStripMenuItem.Size = new Size(198, 24);
-            đăngKýMônHọcToolStripMenuItem.Text = "Tất cả các lớp học";
-            đăngKýMônHọcToolStripMenuItem.Click += đăngKýMônHọcToolStripMenuItem_Click;
-            // 
-            // MainForm
-            // 
-            ClientSize = new Size(1774, 781);
-            Controls.Add(panelMainContent);
-            Controls.Add(panelTop);
-            Controls.Add(panelLeft);
-            Name = "MainForm";
-            Text = "Trang chủ";
-            WindowState = FormWindowState.Maximized;
-            FormClosing += MainForm_FormClosing;
-            Load += MainForm_Load;
-            panelLeft.ResumeLayout(false);
-            panelTop.ResumeLayout(false);
-            panelTop.PerformLayout();
-            panelMainContent.ResumeLayout(false);
-            grpJoinedCourses.ResumeLayout(false);
-            cmsUserOptions.ResumeLayout(false);
-            ResumeLayout(false);
+            this.pnlSidebar = new Guna.UI2.WinForms.Guna2Panel();
+            this.pnlHeader = new Guna.UI2.WinForms.Guna2Panel();
+            this.pnlContent = new Guna.UI2.WinForms.Guna2Panel();
+            this.lblBrand = new System.Windows.Forms.Label();
+            this.btnNavHome = new Guna.UI2.WinForms.Guna2Button();
+            this.btnNavProfile = new Guna.UI2.WinForms.Guna2Button();
+            this.btnNavRegister = new Guna.UI2.WinForms.Guna2Button();
+            this.btnLogout = new Guna.UI2.WinForms.Guna2Button();
+            this.separatorSidebar = new Guna.UI2.WinForms.Guna2Separator();
+            this.txtSearch = new Guna.UI2.WinForms.Guna2TextBox();
+            this.btnChat = new Guna.UI2.WinForms.Guna2Button();
+            this.lblUserNameHeader = new System.Windows.Forms.Label();
+            this.pnlBanner = new Guna.UI2.WinForms.Guna2Panel();
+            this.lblWelcomeBig = new System.Windows.Forms.Label();
+            this.lblDate = new System.Windows.Forms.Label();
+            this.lblSectionTitle = new System.Windows.Forms.Label();
+            this.flpCourses = new System.Windows.Forms.FlowLayoutPanel();
+
+            // --- 1. SIDEBAR CONFIGURATION ---
+            this.pnlSidebar.Dock = System.Windows.Forms.DockStyle.Left;
+            this.pnlSidebar.Size = new System.Drawing.Size(260, 800);
+            this.pnlSidebar.FillColor = System.Drawing.Color.White;
+            this.pnlSidebar.ShadowDecoration.Depth = 10;
+            this.pnlSidebar.ShadowDecoration.Enabled = true;
+            this.pnlSidebar.Controls.Clear();
+
+            this.lblBrand.Text = "EDU MANAGER";
+            this.lblBrand.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Bold);
+            this.lblBrand.ForeColor = System.Drawing.Color.FromArgb(94, 148, 255);
+            this.lblBrand.Location = new System.Drawing.Point(20, 30);
+            this.lblBrand.Size = new System.Drawing.Size(220, 40);
+            this.lblBrand.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+
+            SetupButton(this.btnNavHome, "Trang chủ", 100);
+            SetupButton(this.btnNavRegister, "Đăng ký môn", 160);
+            SetupButton(this.btnNavProfile, "Hồ sơ cá nhân", 220);
+
+            this.btnLogout.Text = "Đăng xuất";
+            this.btnLogout.FillColor = System.Drawing.Color.FromArgb(255, 235, 238);
+            this.btnLogout.ForeColor = System.Drawing.Color.Red;
+            this.btnLogout.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.btnLogout.BorderRadius = 10;
+            this.btnLogout.Location = new System.Drawing.Point(20, 700);
+            this.btnLogout.Size = new System.Drawing.Size(220, 45);
+            this.btnLogout.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            this.btnLogout.Click += new System.EventHandler(this.btnLogout_Click);
+
+            this.separatorSidebar.Location = new System.Drawing.Point(30, 80);
+            this.separatorSidebar.Size = new System.Drawing.Size(200, 10);
+            this.separatorSidebar.FillColor = System.Drawing.Color.LightGray;
+
+            this.pnlSidebar.Controls.Add(lblBrand);
+            this.pnlSidebar.Controls.Add(separatorSidebar);
+            this.pnlSidebar.Controls.Add(btnNavHome);
+            this.pnlSidebar.Controls.Add(btnNavRegister);
+            this.pnlSidebar.Controls.Add(btnNavSchedule);
+            this.pnlSidebar.Controls.Add(btnNavGrades);
+            this.pnlSidebar.Controls.Add(btnNavProfile);
+            this.pnlSidebar.Controls.Add(btnLogout);
+
+            this.pnlHeader.Dock = System.Windows.Forms.DockStyle.Top;
+            this.pnlHeader.Height = 80;
+            this.pnlHeader.FillColor = System.Drawing.Color.FromArgb(248, 249, 253);
+            this.pnlHeader.Controls.Clear();
+
+            this.txtSearch.PlaceholderText = "Tìm kiếm khóa học...";
+            this.txtSearch.BorderRadius = 20;
+            this.txtSearch.FillColor = System.Drawing.Color.White;
+            this.txtSearch.Location = new System.Drawing.Point(30, 20);
+            this.txtSearch.Size = new System.Drawing.Size(400, 40);
+            this.txtSearch.TextChanged += new System.EventHandler(this.txtNameClass_TextChanged);
+
+            this.btnChat.Text = "Chat";
+            this.btnChat.BorderRadius = 15;
+            this.btnChat.FillColor = System.Drawing.Color.FromArgb(94, 148, 255);
+            this.btnChat.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.btnChat.ForeColor = System.Drawing.Color.White;
+            this.btnChat.Location = new System.Drawing.Point(0, 20); // Sẽ set Anchor right
+            this.btnChat.Size = new System.Drawing.Size(100, 40);
+            this.btnChat.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            this.btnChat.Click += new System.EventHandler(this.guna2Button1_Click);
+
+            this.lblUserNameHeader.Text = "Sinh viên";
+            this.lblUserNameHeader.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.lblUserNameHeader.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblUserNameHeader.Size = new System.Drawing.Size(200, 40);
+            this.lblUserNameHeader.Location = new System.Drawing.Point(0, 20); // Sẽ set Anchor right
+            this.lblUserNameHeader.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+
+            this.pnlHeader.Controls.Add(txtSearch);
+            this.btnChat.Location = new System.Drawing.Point(1000, 20);
+            this.lblUserNameHeader.Location = new System.Drawing.Point(1120, 20);
+
+            this.pnlHeader.Controls.Add(btnChat);
+            this.pnlHeader.Controls.Add(lblUserNameHeader);
+
+            this.pnlContent.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnlContent.FillColor = System.Drawing.Color.FromArgb(248, 249, 253);
+            this.pnlContent.Padding = new System.Windows.Forms.Padding(30);
+
+            this.pnlBanner.Dock = System.Windows.Forms.DockStyle.Top;
+            this.pnlBanner.Height = 140;
+            this.pnlBanner.BorderRadius = 20;
+            this.pnlBanner.FillColor = System.Drawing.Color.FromArgb(100, 149, 237);
+
+            this.lblWelcomeBig.Text = "Chào mừng trở lại!";
+            this.lblWelcomeBig.Font = new System.Drawing.Font("Segoe UI", 22F, System.Drawing.FontStyle.Bold);
+            this.lblWelcomeBig.ForeColor = System.Drawing.Color.White;
+            this.lblWelcomeBig.BackColor = System.Drawing.Color.Transparent;
+            this.lblWelcomeBig.Location = new System.Drawing.Point(30, 25);
+            this.lblWelcomeBig.AutoSize = true;
+
+            this.lblDate.Text = "10/01/2026";
+            this.lblDate.Font = new System.Drawing.Font("Segoe UI", 11F);
+            this.lblDate.ForeColor = System.Drawing.Color.WhiteSmoke;
+            this.lblDate.BackColor = System.Drawing.Color.Transparent;
+            this.lblDate.Location = new System.Drawing.Point(35, 80);
+            this.lblDate.AutoSize = true;
+
+            this.pnlBanner.Controls.Add(lblWelcomeBig);
+            this.pnlBanner.Controls.Add(lblDate);
+
+            this.lblSectionTitle.Text = "Khóa học của tôi";
+            this.lblSectionTitle.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Bold);
+            this.lblSectionTitle.ForeColor = System.Drawing.Color.FromArgb(64, 64, 64);
+            this.lblSectionTitle.Location = new System.Drawing.Point(30, 200);
+            this.lblSectionTitle.AutoSize = true;
+
+            this.flpCourses.Location = new System.Drawing.Point(30, 240);
+            this.flpCourses.Size = new System.Drawing.Size(1200, 500);
+            this.flpCourses.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            this.flpCourses.AutoScroll = true;
+            this.flpCourses.BackColor = System.Drawing.Color.Transparent;
+
+            this.pnlContent.Controls.Add(flpCourses);
+            this.pnlContent.Controls.Add(lblSectionTitle);
+            this.pnlContent.Controls.Add(pnlBanner);
+
+            
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.White;
+            this.ClientSize = new System.Drawing.Size(1400, 800);
+
+            this.Controls.Add(this.pnlContent); 
+            this.Controls.Add(this.pnlHeader);  
+            this.Controls.Add(this.pnlSidebar); 
+
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.Text = "Hệ thống quản lý sinh viên";
+
+            this.Resize += new System.EventHandler(this.MainForm_Resize);
+
+            this.ResumeLayout(false);
+        }
+        private void SetupButton(Guna.UI2.WinForms.Guna2Button btn, string text, int top)
+        {
+            btn.Text = text;
+            btn.FillColor = System.Drawing.Color.White;
+            btn.ForeColor = System.Drawing.Color.DimGray;
+            btn.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+            btn.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
+            btn.TextOffset = new System.Drawing.Point(20, 0);
+            btn.Location = new System.Drawing.Point(10, top);
+            btn.Size = new System.Drawing.Size(240, 50);
+            btn.BorderRadius = 10;
+            btn.HoverState.FillColor = System.Drawing.Color.FromArgb(235, 240, 255);
+            btn.HoverState.ForeColor = System.Drawing.Color.FromArgb(94, 148, 255);
+            btn.Cursor = System.Windows.Forms.Cursors.Hand;
+        }
+
+        private void MainForm_Resize(object sender, System.EventArgs e)
+        {
+            if (this.btnChat != null && this.pnlHeader != null)
+            {
+                this.btnChat.Location = new System.Drawing.Point(this.pnlHeader.Width - 140, 20);
+                this.lblUserNameHeader.Location = new System.Drawing.Point(this.pnlHeader.Width - 350, 20);
+            }
         }
 
         #endregion

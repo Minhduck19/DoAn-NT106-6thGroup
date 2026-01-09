@@ -3,6 +3,7 @@ using APP_DOAN.Môn_học;
 using APP_DOAN.Services;
 using Firebase.Database;
 using Firebase.Database.Query;
+using Guna.UI2.WinForms;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -24,10 +25,12 @@ namespace APP_DOAN
 
         private bool isLoggingOut = false;
         private List<Course> _allCourses = new();
+        private bool _isInitialLoadDone;
 
         public MainForm(string uid, string MSSV, string hoTen, string email, string token)
         {
             InitializeComponent();
+
             _currentMaSo = MSSV;
             _currentUserUid = uid;
             _currentUserName = hoTen;
@@ -45,16 +48,48 @@ namespace APP_DOAN
                     new FirebaseOptions { AuthTokenAsyncFactory = () => Task.FromResult(token) }
                 );
             }
+
+            btnNavRegister.Click += đăngKýMônHọcToolStripMenuItem_Click;
+            btnNavProfile.Click += profileToolStripMenuItem_Click;
+            btnNavHome.Click += (s, e) => { _ = LoadClassDataFromFirebase(); };
+            btnChat.Click += guna2Button1_Click;
+            txtSearch.TextChanged += txtNameClass_TextChanged;
+
+            Shown += MainForm_Shown;
         }
 
         private async void MainForm_Load(object sender, EventArgs e)
         {
             try { FirebaseService.Initialize(_idToken); } catch { }
 
-            lblWelcome.Text = $"Chào mừng,\n{_currentUserName} (Sinh viên)";
+            lblUserNameHeader.Text = _currentUserName;
+            lblWelcomeBig.Text = $"Chào mừng, {_currentUserName}!";
+            lblDate.Text = "Hôm nay là: " + DateTime.Now.ToString("dd/MM/yyyy");
 
-            await LoadClassDataFromFirebase();
-            ListenCourseChanges();
+            btnNavHome.FillColor = Color.FromArgb(235, 240, 255);
+            btnNavHome.ForeColor = Color.FromArgb(94, 148, 255);
+
+        }
+
+        private async void MainForm_Shown(object? sender, EventArgs e)
+        {
+            if (_isInitialLoadDone)
+            {
+                return;
+            }
+
+            _isInitialLoadDone = true;
+
+            try
+            {
+                UseWaitCursor = true;
+                await LoadClassDataFromFirebase();
+                ListenCourseChanges();
+            }
+            finally
+            {
+                UseWaitCursor = false;
+            }
         }
 
         private async Task LoadClassDataFromFirebase()
@@ -64,24 +99,19 @@ namespace APP_DOAN
                 if (_allCourses.Count == 0)
                 {
                     flpCourses.Controls.Clear();
-                    Label lblLoading = new Label()
+                    Guna2Button btnLoading = new Guna2Button()
                     {
-                        Text = "Đang tải dữ liệu...",
-                        AutoSize = true,
-                        Font = new Font("Segoe UI", 12, FontStyle.Italic),
+                        Text = "Đang đồng bộ dữ liệu...",
+                        FillColor = Color.Transparent,
                         ForeColor = Color.Gray,
-                        Location = new Point(20, 20)
+                        Font = new Font("Segoe UI", 12, FontStyle.Italic),
+                        AutoSize = true
                     };
-                    flpCourses.Controls.Add(lblLoading);
+                    flpCourses.Controls.Add(btnLoading);
                 }
 
-                var taskAllCourses = _firebaseClient
-                    .Child("Courses")
-                    .OnceAsync<Course>();
-
-                var taskStudentMap = _firebaseClient
-                    .Child("CourseStudents")
-                    .OnceAsync<Dictionary<string, StudentInfo>>();
+                var taskAllCourses = _firebaseClient.Child("Courses").OnceAsync<Course>();
+                var taskStudentMap = _firebaseClient.Child("CourseStudents").OnceAsync<Dictionary<string, StudentInfo>>();
 
                 await Task.WhenAll(taskAllCourses, taskStudentMap);
 
@@ -89,13 +119,11 @@ namespace APP_DOAN
                 var courseStudentsSnapshot = taskStudentMap.Result;
 
                 var joinedCourseIds = new HashSet<string>();
-
                 if (courseStudentsSnapshot != null)
                 {
                     joinedCourseIds = new HashSet<string>(
                         courseStudentsSnapshot
-                            .Where(cs => cs.Object != null &&
-                                         cs.Object.ContainsKey(_currentUserUid))
+                            .Where(cs => cs.Object != null && cs.Object.ContainsKey(_currentUserUid))
                             .Select(cs => cs.Key)
                     );
                 }
@@ -105,7 +133,6 @@ namespace APP_DOAN
                 foreach (var c in firebaseCourses)
                 {
                     if (c.Object == null) continue;
-
                     bool isJoined = joinedCourseIds.Contains(c.Key);
 
                     _allCourses.Add(new Course(
@@ -120,12 +147,7 @@ namespace APP_DOAN
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    "Lỗi tải lớp:\n" + ex.Message,
-                    "Firebase Error",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error
-                );
+                MessageBox.Show("Lỗi tải lớp:\n" + ex.Message, "Firebase Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -151,58 +173,92 @@ namespace APP_DOAN
 
             flpCourses.Controls.Clear();
 
+            lblSectionTitle.Text = $"Khóa học của tôi ({joinedCourses.Count})";
+
             if (joinedCourses.Count == 0)
             {
-                Label lblEmpty = new Label();
-                lblEmpty.Text = "Chưa tham gia khóa học nào.";
-                lblEmpty.Font = new Font("Segoe UI", 12, FontStyle.Italic);
-                lblEmpty.ForeColor = Color.DimGray;
-                lblEmpty.AutoSize = true;
-                lblEmpty.Margin = new Padding(20);
+                Label lblEmpty = new Label()
+                {
+                    Text = "Bạn chưa đăng ký khóa học nào.",
+                    Font = new Font("Segoe UI", 12, FontStyle.Regular),
+                    ForeColor = Color.DimGray,
+                    AutoSize = true,
+                    Margin = new Padding(20)
+                };
                 flpCourses.Controls.Add(lblEmpty);
                 return;
             }
 
             foreach (var c in joinedCourses)
             {
-                Panel pnlCard = new Panel();
-                pnlCard.Size = new Size(flpCourses.Width - 40, 110);
-                pnlCard.BackColor = Color.White;
-                pnlCard.Margin = new Padding(10, 5, 10, 15);
+                Guna2Panel pnlCard = new Guna2Panel();
+                pnlCard.Size = new Size(280, 180);
+                pnlCard.FillColor = Color.White;
+                pnlCard.BorderRadius = 15;
+                pnlCard.Margin = new Padding(15);
                 pnlCard.Cursor = Cursors.Hand;
                 pnlCard.Tag = c.Id;
 
-                pnlCard.Click += (s, e) => OpenCourseDetail(c.Id, c.TenLop);
+                pnlCard.ShadowDecoration.Enabled = true;
+                pnlCard.ShadowDecoration.Color = Color.Gray;
+                pnlCard.ShadowDecoration.Depth = 5;
+                pnlCard.ShadowDecoration.Shadow = new Padding(3, 3, 5, 5);
+                pnlCard.ShadowDecoration.BorderRadius = 15;
+
+                Guna2Panel pnlHeaderColor = new Guna2Panel();
+                pnlHeaderColor.Dock = DockStyle.Top;
+                pnlHeaderColor.Height = 10;
+                pnlHeaderColor.FillColor = GetRandomColor(c.Id);
+                pnlHeaderColor.CustomizableEdges.BottomLeft = false;
+                pnlHeaderColor.CustomizableEdges.BottomRight = false;
+                pnlCard.Controls.Add(pnlHeaderColor);
 
                 Label lblName = new Label();
-                lblName.Text = c.TenLop ?? "Chưa đặt tên";
-                lblName.Font = new Font("Segoe UI", 14, FontStyle.Bold);
-                lblName.ForeColor = Color.FromArgb(51, 153, 255);
-                lblName.Location = new Point(20, 15);
-                lblName.AutoSize = true;
+                lblName.Text = c.TenLop;
+                lblName.Font = new Font("Segoe UI", 13, FontStyle.Bold);
+                lblName.ForeColor = Color.FromArgb(50, 50, 50);
+                lblName.Location = new Point(15, 30);
+                lblName.Size = new Size(250, 60);
+                lblName.AutoEllipsis = true;
                 lblName.Click += (s, e) => OpenCourseDetail(c.Id, c.TenLop);
                 pnlCard.Controls.Add(lblName);
 
                 Label lblGV = new Label();
-                lblGV.Text = $"GV: {c.Instructor ?? "N/A"}";
+                lblGV.Text = $"GV: {c.Instructor}";
                 lblGV.Font = new Font("Segoe UI", 10, FontStyle.Regular);
-                lblGV.ForeColor = Color.LightGray;
-                lblGV.Location = new Point(20, 50);
+                lblGV.ForeColor = Color.Gray;
+                lblGV.Location = new Point(15, 100);
                 lblGV.AutoSize = true;
                 lblGV.Click += (s, e) => OpenCourseDetail(c.Id, c.TenLop);
                 pnlCard.Controls.Add(lblGV);
 
-                Label lblStatus = new Label();
-                lblStatus.Text = "✅ Đã tham gia";
-                lblStatus.ForeColor = Color.LightGreen;
-                lblStatus.Font = new Font("Segoe UI", 9, FontStyle.Italic);
-                lblStatus.AutoSize = true;
-                lblStatus.Location = new Point(pnlCard.Width - 120, 15);
-                lblStatus.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-                pnlCard.Controls.Add(lblStatus);
+                Guna2Button btnAction = new Guna2Button();
+                btnAction.Text = "Truy cập";
+                btnAction.BorderRadius = 12;
+                btnAction.FillColor = Color.FromArgb(240, 245, 255);
+                btnAction.ForeColor = Color.FromArgb(94, 148, 255);
+                btnAction.Font = new Font("Segoe UI", 9, FontStyle.Bold);
+                btnAction.Size = new Size(100, 30);
+                btnAction.Location = new Point(160, 135);
+                btnAction.Click += (s, e) => OpenCourseDetail(c.Id, c.TenLop);
+                pnlCard.Controls.Add(btnAction);
+
+                pnlCard.Click += (s, e) => OpenCourseDetail(c.Id, c.TenLop);
+
+                pnlCard.MouseEnter += (s, e) => { pnlCard.Top -= 2; };
+                pnlCard.MouseLeave += (s, e) => { pnlCard.Top += 2; };
 
                 flpCourses.Controls.Add(pnlCard);
             }
+        }
+
+        private Color GetRandomColor(string seed)
+        {
+            int hash = seed.GetHashCode();
+            if (hash % 4 == 0) return Color.FromArgb(255, 118, 117);
+            if (hash % 4 == 1) return Color.FromArgb(9, 132, 227);
+            if (hash % 4 == 2) return Color.FromArgb(0, 184, 148);
+            return Color.FromArgb(253, 203, 110);
         }
 
         private void OpenCourseDetail(string courseId, string courseName)
@@ -211,18 +267,9 @@ namespace APP_DOAN
             frm.ShowDialog();
         }
 
-        private void Find_Click(object sender, EventArgs e)
-        {
-            PerformSearch();
-        }
-
         private void txtNameClass_TextChanged(object sender, EventArgs e)
         {
-        }
-
-        private void PerformSearch()
-        {
-            string keyword = txtNameClass.Text.ToLower().Trim();
+            string keyword = txtSearch.Text.ToLower().Trim();
 
             if (string.IsNullOrEmpty(keyword))
             {
@@ -259,22 +306,16 @@ namespace APP_DOAN
             base.OnFormClosing(e);
         }
 
-        private void lblWelcome_Click(object sender, EventArgs e) => cmsUserOptions.Show(lblWelcome, new Point(0, lblWelcome.Height));
-        private void cmsUserOptions_Opening_1(object sender, System.ComponentModel.CancelEventArgs e) { }
+        private void guna2Button1_Click(object sender, EventArgs e)
+        {
+            frmMainChat chat = new frmMainChat(_currentUserUid, _currentMaSo, _currentUserName, _idToken);
+            chat.Show();
+        }
+
         private void profileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.Hide();
             Student_Information frm = new Student_Information(_currentUserUid, _idToken, _loggedInEmail);
-            frm.ShowDialog();
-            this.Show();
-        }
-        private void scheduleToolStripMenuItem_Click_1(object sender, EventArgs e) => MessageBox.Show("Chức năng Lịch học đang phát triển.");
-        private void gradesToolStripMenuItem_Click_1(object sender, EventArgs e) => MessageBox.Show("Chức năng Điểm đang phát triển.");
-
-        private void changePasswordToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            this.Hide();
-            ChangePassword frm = new ChangePassword(_loggedInEmail, _idToken);
             frm.ShowDialog();
             this.Show();
         }
@@ -288,18 +329,20 @@ namespace APP_DOAN
             _ = LoadClassDataFromFirebase();
         }
 
-        private void guna2Button1_Click(object sender, EventArgs e)
+        private void changePasswordToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            frmMainChat chat = new frmMainChat(_currentUserUid, _currentMaSo, _currentUserName, _idToken);
-            chat.Show();
+            this.Hide();
+            ChangePassword frm = new ChangePassword(_loggedInEmail, _idToken);
+            frm.ShowDialog();
+            this.Show();
         }
 
+        private void Find_Click(object sender, EventArgs e) { }
+        private void lblWelcome_Click(object sender, EventArgs e) { }
+        private void cmsUserOptions_Opening_1(object sender, System.ComponentModel.CancelEventArgs e) { }
         private void grpJoinedCourses_Click_1(object sender, EventArgs e) { }
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e) { }
-
-        private void flpCourses_Paint(object sender, PaintEventArgs e)
-        {
-        }
+        private void flpCourses_Paint(object sender, PaintEventArgs e) { }
     }
 
     public class StudentInfo
