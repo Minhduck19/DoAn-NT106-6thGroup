@@ -16,14 +16,18 @@ namespace APP_DOAN
         private readonly string _courseName;
         private readonly string _studentId;
         private readonly FirebaseClient _client;
+        private readonly string _studentEmail;
+        private readonly string _studentName;
 
-        public CourseDetailForm(string courseId, string courseName, string studentId, FirebaseClient client)
+        public CourseDetailForm(string courseId, string courseName, string studentId, FirebaseClient client, string studentEmail, string studentName)
         {
             InitializeComponent();
             _courseId = courseId;
             _courseName = courseName;
             _studentId = studentId;
             _client = client;
+            _studentEmail = studentEmail;
+            _studentName = studentName;
 
             this.StartPosition = FormStartPosition.CenterScreen;
             this.BackColor = Color.FromArgb(20, 20, 20);
@@ -276,7 +280,9 @@ namespace APP_DOAN
                         assignmentId,
                         _client,
                         _courseId,
-                        _studentId
+                        _studentId,
+                        _studentEmail,
+                        _studentName
                     );
                     submitForm.ShowDialog();
                 }

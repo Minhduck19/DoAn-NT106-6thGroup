@@ -23,6 +23,8 @@ namespace APP_DOAN.GiaoDienChinh
         private readonly string _studentUid;
         private string title;
         private string studentId;
+        private readonly string _studentEmail;
+        private readonly string _studentName;
 
         // Sửa Constructor chính để nhận thêm tham số dueDate
         public Submit_Agsignment(
@@ -32,7 +34,10 @@ namespace APP_DOAN.GiaoDienChinh
             string assignmentId,
             FirebaseClient client,
             string courseId,
-            string studentUid)
+            string studentUid,
+            string studentEmail,
+            string studentName
+            )
         {
             InitializeComponent();
 
@@ -42,6 +47,9 @@ namespace APP_DOAN.GiaoDienChinh
             _client = client;
             _courseId = courseId;
             _studentUid = studentUid;
+
+            _studentEmail = studentEmail;
+            _studentName = studentName;
 
             txtTitle.Text = assignmentTitle;
             txtDesc.Text = assignmentDescription;
@@ -166,6 +174,29 @@ namespace APP_DOAN.GiaoDienChinh
                     ThoiGianNop = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
                    EmailSent = false // 🔥 CHƯA GỬI MAIL
               });
+
+                string subject = "Xác nhận đã nộp bài";
+                string body = $@"
+                <p>Xin chào <b>{_studentName}</b>,</p>
+                <p>Bạn đã nộp thành công bài tập <b>{txtTitle.Text}</b>.</p>
+                <p>⏰ Thời gian nộp: {DateTime.Now:dd/MM/yyyy HH:mm}</p>
+                <p>📎 File: {Path.GetFileName(txtFilePath.Text)}</p>
+                <p>🔗 Link bài nộp: <a href='{fileUrl}'>Xem file</a></p>
+                <hr/>
+                <p>Hệ thống nộp bài</p>
+                ";
+
+                await EmailHelper.SendEmailAsync(_studentEmail, subject, body);
+
+                // 🔁 CẬP NHẬT CỜ EMAIL ĐÃ GỬI
+                await _client
+                    .Child("Assignments")
+                    .Child(_courseId)
+                    .Child(_assignmentId)
+                    .Child("Submissions")
+                    .Child(_studentUid)
+                    .Child("EmailSent")
+                    .PutAsync(true);
 
                 new Guna2MessageDialog
                 {

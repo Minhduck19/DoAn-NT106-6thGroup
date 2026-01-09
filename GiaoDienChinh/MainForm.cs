@@ -207,7 +207,7 @@ namespace APP_DOAN
 
         private void OpenCourseDetail(string courseId, string courseName)
         {
-            CourseDetailForm frm = new CourseDetailForm(courseId, courseName, _currentUserUid, _firebaseClient);
+            CourseDetailForm frm = new CourseDetailForm(courseId, courseName, _currentUserUid, _firebaseClient, _loggedInEmail, _currentUserName);
             frm.ShowDialog();
         }
 

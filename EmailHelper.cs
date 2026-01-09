@@ -15,8 +15,8 @@ namespace APP_DOAN
             string subject,
             string body)
         {
-            var fromEmail = "yourgmail@gmail.com";       // 🔥 Gmail gửi
-            var fromPassword = "app_password_here";      // 🔥 App Password
+            var fromEmail = "codeptraiskycuatung@gmail.com";       // 🔥 Gmail gửi
+            var fromPassword = "reqtizijmmnuhiac";      // 🔥 App Password
 
             var client = new SmtpClient("smtp.gmail.com", 587)
             {
