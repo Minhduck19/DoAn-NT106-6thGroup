@@ -161,6 +161,7 @@
             flowChatPanel.Size = new Size(776, 520);
             flowChatPanel.TabIndex = 0;
             flowChatPanel.WrapContents = false;
+            flowChatPanel.Paint += flowChatPanel_Paint;
             // 
             // panelInput
             // 

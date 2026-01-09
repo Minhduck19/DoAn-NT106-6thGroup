@@ -26,19 +26,23 @@
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges9 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges10 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges9 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges10 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges11 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges12 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges13 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges14 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             DataGridViewCellStyle dataGridViewCellStyle7 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle8 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle9 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle10 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle11 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle12 = new DataGridViewCellStyle();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges11 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges12 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges15 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges16 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             pnlHeader = new Guna.UI2.WinForms.Guna2Panel();
             guna2ControlBox1 = new Guna.UI2.WinForms.Guna2ControlBox();
             lblCourseName = new Label();
@@ -48,8 +52,10 @@
             btnAddAssignment = new Guna.UI2.WinForms.Guna2Button();
             dgvAssignments = new Guna.UI2.WinForms.Guna2DataGridView();
             tabStudents = new TabPage();
+            btnDelete = new Guna.UI2.WinForms.Guna2Button();
             dgvStudents = new Guna.UI2.WinForms.Guna2DataGridView();
             tabRequests = new TabPage();
+            guna2Button2 = new Guna.UI2.WinForms.Guna2Button();
             btnApprove = new Guna.UI2.WinForms.Guna2Button();
             dgvRequests = new Guna.UI2.WinForms.Guna2DataGridView();
             tabPage1 = new TabPage();
@@ -241,6 +247,7 @@
             // tabStudents
             // 
             tabStudents.BackColor = Color.White;
+            tabStudents.Controls.Add(btnDelete);
             tabStudents.Controls.Add(dgvStudents);
             tabStudents.Location = new Point(184, 4);
             tabStudents.Margin = new Padding(3, 4, 3, 4);
@@ -248,6 +255,25 @@
             tabStudents.Size = new Size(898, 712);
             tabStudents.TabIndex = 1;
             tabStudents.Text = "Sinh Viên";
+            // 
+            // btnDelete
+            // 
+            btnDelete.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnDelete.BorderColor = Color.IndianRed;
+            btnDelete.BorderRadius = 10;
+            btnDelete.BorderThickness = 1;
+            btnDelete.Cursor = Cursors.Hand;
+            btnDelete.CustomizableEdges = customizableEdges9;
+            btnDelete.FillColor = Color.White;
+            btnDelete.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            btnDelete.ForeColor = Color.IndianRed;
+            btnDelete.Location = new Point(19, 18);
+            btnDelete.Name = "btnDelete";
+            btnDelete.ShadowDecoration.CustomizableEdges = customizableEdges10;
+            btnDelete.Size = new Size(183, 40);
+            btnDelete.TabIndex = 4;
+            btnDelete.Text = "Xóa sinh viên khỏi lơp";
+            btnDelete.Click += btnDelete_Click;
             // 
             // dgvStudents
             // 
@@ -272,12 +298,12 @@
             dataGridViewCellStyle6.WrapMode = DataGridViewTriState.False;
             dgvStudents.DefaultCellStyle = dataGridViewCellStyle6;
             dgvStudents.GridColor = Color.FromArgb(231, 229, 255);
-            dgvStudents.Location = new Point(0, 0);
+            dgvStudents.Location = new Point(0, 74);
             dgvStudents.Margin = new Padding(3, 4, 3, 4);
             dgvStudents.Name = "dgvStudents";
             dgvStudents.RowHeadersVisible = false;
             dgvStudents.RowHeadersWidth = 51;
-            dgvStudents.Size = new Size(274, 200);
+            dgvStudents.Size = new Size(898, 561);
             dgvStudents.TabIndex = 0;
             dgvStudents.ThemeStyle.AlternatingRowsStyle.BackColor = Color.White;
             dgvStudents.ThemeStyle.AlternatingRowsStyle.Font = null;
@@ -300,10 +326,12 @@
             dgvStudents.ThemeStyle.RowsStyle.Height = 29;
             dgvStudents.ThemeStyle.RowsStyle.SelectionBackColor = Color.FromArgb(231, 229, 255);
             dgvStudents.ThemeStyle.RowsStyle.SelectionForeColor = Color.FromArgb(71, 69, 94);
+            dgvStudents.CellContentClick += dgvStudents_CellContentClick;
             // 
             // tabRequests
             // 
             tabRequests.BackColor = Color.White;
+            tabRequests.Controls.Add(guna2Button2);
             tabRequests.Controls.Add(btnApprove);
             tabRequests.Controls.Add(dgvRequests);
             tabRequests.Location = new Point(184, 4);
@@ -313,17 +341,36 @@
             tabRequests.TabIndex = 2;
             tabRequests.Text = "Phê Duyệt";
             // 
+            // guna2Button2
+            // 
+            guna2Button2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            guna2Button2.BorderColor = Color.IndianRed;
+            guna2Button2.BorderRadius = 10;
+            guna2Button2.BorderThickness = 1;
+            guna2Button2.Cursor = Cursors.Hand;
+            guna2Button2.CustomizableEdges = customizableEdges11;
+            guna2Button2.FillColor = Color.White;
+            guna2Button2.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            guna2Button2.ForeColor = Color.IndianRed;
+            guna2Button2.Location = new Point(226, 20);
+            guna2Button2.Name = "guna2Button2";
+            guna2Button2.ShadowDecoration.CustomizableEdges = customizableEdges12;
+            guna2Button2.Size = new Size(168, 53);
+            guna2Button2.TabIndex = 5;
+            guna2Button2.Text = "Từ Chối ";
+            guna2Button2.Click += guna2Button2_Click;
+            // 
             // btnApprove
             // 
             btnApprove.BorderRadius = 5;
-            btnApprove.CustomizableEdges = customizableEdges9;
+            btnApprove.CustomizableEdges = customizableEdges13;
             btnApprove.FillColor = Color.FromArgb(255, 128, 0);
             btnApprove.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             btnApprove.ForeColor = Color.White;
             btnApprove.Location = new Point(23, 20);
             btnApprove.Margin = new Padding(3, 4, 3, 4);
             btnApprove.Name = "btnApprove";
-            btnApprove.ShadowDecoration.CustomizableEdges = customizableEdges10;
+            btnApprove.ShadowDecoration.CustomizableEdges = customizableEdges14;
             btnApprove.Size = new Size(183, 53);
             btnApprove.TabIndex = 0;
             btnApprove.Text = "✓ Duyệt Tham Gia";
@@ -449,14 +496,14 @@
             // guna2Button1
             // 
             guna2Button1.BorderRadius = 5;
-            guna2Button1.CustomizableEdges = customizableEdges11;
+            guna2Button1.CustomizableEdges = customizableEdges15;
             guna2Button1.FillColor = Color.FromArgb(255, 128, 0);
             guna2Button1.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             guna2Button1.ForeColor = Color.White;
             guna2Button1.Location = new Point(30, 24);
             guna2Button1.Margin = new Padding(3, 4, 3, 4);
             guna2Button1.Name = "guna2Button1";
-            guna2Button1.ShadowDecoration.CustomizableEdges = customizableEdges12;
+            guna2Button1.ShadowDecoration.CustomizableEdges = customizableEdges16;
             guna2Button1.Size = new Size(183, 53);
             guna2Button1.TabIndex = 1;
             guna2Button1.Text = " Thêm Thông Báo";
@@ -554,5 +601,7 @@
         private TabPage tabPage1;
         private Guna.UI2.WinForms.Guna2Button guna2Button1;
         private Guna.UI2.WinForms.Guna2DataGridView guna2DataGridView1;
+        private Guna.UI2.WinForms.Guna2Button btnDelete;
+        private Guna.UI2.WinForms.Guna2Button guna2Button2;
     }
 }

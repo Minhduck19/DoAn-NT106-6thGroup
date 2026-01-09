@@ -52,7 +52,7 @@ namespace APP_DOAN
             // Khởi tạo Firebase
             try
             {
-                _client = FirebaseService.Instance._client;
+                _client = FirebaseService.Instance.Client;
             }
             catch
             {
@@ -333,6 +333,17 @@ namespace APP_DOAN
 
             try
             {
+                bool isFull = await IsClassFull();
+                if (isFull)
+                {
+                    MessageBox.Show(
+                        "Lớp học đã đủ sĩ số.\nKhông thể duyệt thêm sinh viên!",
+                        "Đã đủ sĩ số",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning
+                    );
+                    return;
+                }
                 // Lấy UID và Tên
                 var cellUid = dgvRequests.CurrentRow.Cells["StudentUid"].Value;
                 var cellName = dgvRequests.CurrentRow.Cells["TenSV"].Value;
@@ -405,6 +416,25 @@ namespace APP_DOAN
                 Console.WriteLine("Lỗi cập nhật sĩ số: " + ex.Message);
             }
         }
+        private async Task<bool> IsClassFull()
+        {
+            try
+            {
+                var course = await _client
+                    .Child("Courses")
+                    .Child(_courseId)
+                    .OnceSingleAsync<Course>();
+
+                if (course == null) return false;
+
+                return course.SiSoHienTai >= course.SiSo;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
 
         private void dgvAssignments_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -427,6 +457,144 @@ namespace APP_DOAN
         private void guna2DataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
 
+        }
+
+        private void dgvStudents_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private async void btnDelete_Click(object sender, EventArgs e)
+        {
+            if (dgvStudents.CurrentRow == null)
+            {
+                MessageBox.Show(
+                    "Vui lòng chọn sinh viên cần xóa!",
+                    "Thông báo",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                );
+                return;
+            }
+
+            // 🔥 Lấy UID sinh viên từ cột ẩn
+            var uidCell = dgvStudents.CurrentRow.Cells["Uid"].Value;
+            var nameCell = dgvStudents.CurrentRow.Cells["HoTen"].Value;
+
+            if (uidCell == null) return;
+
+            string studentUid = uidCell.ToString();
+            string studentName = nameCell?.ToString() ?? "Sinh viên";
+
+            var confirm = MessageBox.Show(
+                $"Bạn có chắc chắn muốn XÓA sinh viên:\n{studentName}?",
+                "Xác nhận xóa sinh viên",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning
+            );
+
+            if (confirm != DialogResult.Yes) return;
+
+            try
+            {
+                Cursor = Cursors.WaitCursor;
+                btnDelete.Enabled = false;
+
+                // 🔥 1. Xóa sinh viên khỏi lớp
+                await _client
+                    .Child($"CourseStudents/{_courseId}/{studentUid}")
+                    .DeleteAsync();
+
+                // 🔥 2. (Tuỳ chọn) Xóa luôn bài nộp của sinh viên
+                await _client
+                    .Child($"Assignments/{_courseId}")
+                    .OnceAsync<object>()
+                    .ContinueWith(async t =>
+                    {
+                        foreach (var a in t.Result)
+                        {
+                            await _client
+                                .Child($"Assignments/{_courseId}/{a.Key}/Submissions/{studentUid}")
+                                .DeleteAsync();
+                        }
+                    });
+
+                // 🔥 3. Cập nhật lại sĩ số
+                await UpdateStudentCount();
+
+                MessageBox.Show(
+                    "Đã xóa sinh viên khỏi lớp!",
+                    "Thành công",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information
+                );
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "Xóa sinh viên thất bại:\n" + ex.Message,
+                    "Lỗi",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+            }
+            finally
+            {
+                Cursor = Cursors.Default;
+                btnDelete.Enabled = true;
+            }
+        }
+
+        private async void guna2Button2_Click(object sender, EventArgs e)
+        {
+            if (dgvRequests.CurrentRow == null)
+            {
+                MessageBox.Show("Vui lòng chọn yêu cầu cần từ chối!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // 🔥 SỬA TÊN CỘT: Phải là "StudentUid" và "TenSV" mới đúng với SetupGunaColumns
+            var uidCell = dgvRequests.CurrentRow.Cells["StudentUid"].Value;
+            var nameCell = dgvRequests.CurrentRow.Cells["TenSV"].Value;
+
+            if (uidCell == null) return;
+
+            string studentUid = uidCell.ToString();
+            string studentName = nameCell?.ToString() ?? "Sinh viên";
+
+            var confirm = MessageBox.Show(
+                $"Bạn có chắc chắn muốn TỪ CHỐI yêu cầu của:\n{studentName}?",
+                "Xác nhận",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question
+            );
+
+            if (confirm != DialogResult.Yes) return;
+
+            try
+            {
+                Cursor = Cursors.WaitCursor;
+
+                // 1. Xóa trên Firebase (Node JoinRequests)
+                await _client
+                    .Child($"JoinRequests/{_courseId}/{studentUid}")
+                    .DeleteAsync();
+
+                // 2. Cập nhật giao diện: 
+                // Vì bạn có hàm SubscribeRequests() đang chạy ngầm, 
+                // Firebase xóa xong thì Subscribe sẽ tự gọi ReloadRequestList để vẽ lại bảng.
+                // Bạn không cần code xóa dòng thủ công ở đây nữa.
+
+                MessageBox.Show("Đã từ chối yêu cầu đăng ký!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi khi xóa: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                Cursor = Cursors.Default;
+            }
         }
     }
 }

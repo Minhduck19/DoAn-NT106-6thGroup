@@ -22,7 +22,7 @@ namespace APP_DOAN
         private FirebaseClient _client;
         private List<Course> _allMyCourses = new List<Course>();
 
-        public MainForm_GiangVien(string uid,string MaSo, string displayName, string token, string email)
+        public MainForm_GiangVien(string uid, string MaSo, string displayName, string token, string email)
         {
             InitializeComponent();
             this.WindowState = FormWindowState.Maximized;
@@ -35,7 +35,7 @@ namespace APP_DOAN
             // --- KẾT NỐI FIREBASE ---
             try
             {
-                _client = FirebaseService.Instance._client;
+                _client = FirebaseService.Instance.Client;
             }
             catch
             {
@@ -83,7 +83,7 @@ namespace APP_DOAN
             FirebaseApi.CurrentUid = this.currentUid;
             FirebaseApi.IdToken = this.idToken;
 
-            CreateCourse createCourse = new CreateCourse();
+            CreateCourse createCourse = new CreateCourse(currentDisplayName);
             // Khi tạo xong thì tải lại danh sách
             createCourse.OnCourseCreated += (ma, ten, si) => { LoadMyCoursesData(); };
             createCourse.ShowDialog();
@@ -292,6 +292,12 @@ namespace APP_DOAN
         private void flpMyCourses_Paint(object sender, PaintEventArgs e)
         {
 
+        }
+
+        private void guna2Button1_Click_1(object sender, EventArgs e)
+        {
+            ForgotPasswordForm form = new ForgotPasswordForm();
+            form.ShowDialog();
         }
     }
 }

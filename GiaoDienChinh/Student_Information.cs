@@ -46,7 +46,7 @@ namespace APP_DOAN.GiaoDienChinh
                 {
                     // Map dữ liệu vào các ô (Sử dụng hàm GetValue an toàn)
                     txtFullName.Text = GetValue(rawData, "HoTen");
-                    txtStudentID.Text = GetValue(rawData, "MaSinhVien"); // Đổi từ MaGiangVien -> MaSinhVien
+                    txtStudentID.Text = GetValue(rawData, "MSSV"); // Đổi từ MaGiangVien -> MaSinhVien
 
                     // Nếu MaSinhVien trống, thử tìm MaGiangVien (trường hợp dùng chung User model)
                     if (string.IsNullOrEmpty(txtStudentID.Text))
@@ -55,7 +55,7 @@ namespace APP_DOAN.GiaoDienChinh
                     txtBirthday.Text = GetValue(rawData, "NgaySinh");
                     txtSex.Text = GetValue(rawData, "Sex");
                     txtFaculty.Text = GetValue(rawData, "Khoa");
-                    txtClass.Text = GetValue(rawData, "ChucVu"); 
+                    txtClass.Text = GetValue(rawData, "Lop"); 
 
                     string fbEmail = GetValue(rawData, "Email");
                     txtEmail.Text = string.IsNullOrEmpty(fbEmail) ? _email : fbEmail;
@@ -151,11 +151,14 @@ namespace APP_DOAN.GiaoDienChinh
                     IsOnline = oldData?.IsOnline ?? false,
                     CreatedDate = oldData?.CreatedDate ?? DateTime.UtcNow.ToString("o")
                 };
-
+                
                 bool success = await FirebaseApi.Put($"Users/{_uid}", updatedUser);
 
                 if (success)
+                {
+                    await LoadDataAsync();
                     MessageBox.Show("Cập nhật hồ sơ sinh viên thành công!");
+                }
                 else
                     MessageBox.Show("Cập nhật thất bại.");
             }
@@ -164,7 +167,7 @@ namespace APP_DOAN.GiaoDienChinh
                 MessageBox.Show("Lỗi lưu trữ: " + ex.Message);
             }
             finally
-            {
+            {   
                 btnSave.Enabled = true;
                 Cursor = Cursors.Default;
             }

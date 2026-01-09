@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing; // Thêm thư viện để dùng Color
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -11,13 +12,14 @@ namespace APP_DOAN.GiaoDienChinh
     public partial class MonHocDaDangKy : Form
     {
         private IDisposable _courseStudentListener;
-        private bool _isLoading = false;
-
         private readonly string _studentUid;
         private readonly string _idToken;
         private readonly string firebaseDatabaseUrl = "https://nt106-minhduc-default-rtdb.firebaseio.com/";
         private FirebaseClient firebaseClient;
         private List<Course> _allCourses = new();
+
+        // Cờ kiểm soát việc đang tải để tránh gọi chồng chéo
+        private bool _isLoading = false;
 
         public MonHocDaDangKy(string studentUid, string idToken)
         {
@@ -36,20 +38,22 @@ namespace APP_DOAN.GiaoDienChinh
         private async void DangKyMonHoc_Load(object sender, EventArgs e)
         {
             SetupListView();
-            await LoadCourses();
-            ListenCourseStudentChanges();
+            await LoadCourses(); // Tải lần đầu
+            ListenCourseStudentChanges(); // Bắt đầu lắng nghe thay đổi
         }
 
         private void ListenCourseStudentChanges()
         {
+            // Lắng nghe thay đổi ở bảng CourseStudents (đăng ký/hủy đăng ký)
             _courseStudentListener = firebaseClient
                 .Child("CourseStudents")
                 .AsObservable<object>()
-                .Subscribe(_ =>
+                .Subscribe(d =>
                 {
-                    if (!IsHandleCreated || _isLoading) return;
+                    if (!IsHandleCreated) return;
 
-                    BeginInvoke(new Action(async () =>
+                    // Dùng Invoke để đảm bảo luồng UI, nhưng hoãn lại 1 chút để tránh spam
+                    this.Invoke(new Action(async () =>
                     {
                         await LoadCourses();
                     }));
@@ -72,20 +76,19 @@ namespace APP_DOAN.GiaoDienChinh
             lvCourses.Columns.Add("Mã Môn", 100);
             lvCourses.Columns.Add("Tên Môn Học", 250);
             lvCourses.Columns.Add("Giảng Viên", 180);
-            lvCourses.Columns.Add("Sĩ Số", 80);
+            lvCourses.Columns.Add("Sĩ Số", 100); // Mở rộng cột sĩ số chút
         }
 
         private async Task LoadCourses()
         {
+            // Nếu đang tải dở thì bỏ qua yêu cầu mới để tránh spam/trùng lặp
             if (_isLoading) return;
             _isLoading = true;
 
             try
             {
-                lvCourses.Items.Clear();
-
-                // Tải dữ liệu song song để tối ưu tốc độ
-                var taskCourses = firebaseClient.Child("Courses").OnceAsync<CourseModel>();
+                // 1. Tải dữ liệu song song
+                var taskCourses = firebaseClient.Child("Courses").OnceAsync<Course>();
                 var taskStudents = firebaseClient.Child("CourseStudents").OnceAsync<Dictionary<string, StudentInfo>>();
 
                 await Task.WhenAll(taskCourses, taskStudents);
@@ -93,51 +96,44 @@ namespace APP_DOAN.GiaoDienChinh
                 var courses = taskCourses.Result;
                 var courseStudentsSnapshot = taskStudents.Result;
 
-                // Lưu trữ sĩ số của từng môn: Key là CourseID, Value là số lượng sinh viên
+                // 2. Xử lý dữ liệu trong bộ nhớ (không đụng UI)
                 var enrollmentCounts = courseStudentsSnapshot?.ToDictionary(
                     cs => cs.Key,
                     cs => cs.Object?.Count ?? 0
                 ) ?? new Dictionary<string, int>();
 
-                // Danh sách ID các môn mà sinh viên hiện tại đã tham gia
                 var joinedCourseIds = courseStudentsSnapshot?
                     .Where(cs => cs.Object != null && cs.Object.ContainsKey(_studentUid))
                     .Select(cs => cs.Key)
                     .ToHashSet() ?? new HashSet<string>();
 
-                _allCourses.Clear();
+                List<Course> tempList = new List<Course>();
 
                 foreach (var c in courses)
                 {
                     if (c.Object == null) continue;
 
                     bool joined = joinedCourseIds.Contains(c.Key);
-                    int siSo = enrollmentCounts.ContainsKey(c.Key) ? enrollmentCounts[c.Key] : 0;
+                    int siSoHienTai = enrollmentCounts.ContainsKey(c.Key) ? enrollmentCounts[c.Key] : 0;
+
+                    int maxSiSo = c.Object.SiSo;
 
                     var course = new Course
                     {
                         Id = c.Key,
                         MaLop = c.Object.MaLop,
                         TenLop = c.Object.TenLop,
-                        Instructor = c.Object.InstructorName,
+                        Instructor = c.Object.Instructor,
                         IsJoined = joined,
-                        SiSo = siSo // Gán sĩ số vào object
+                        SiSoHienTai = siSoHienTai,
+                        SiSo = maxSiSo // Gán vào thuộc tính SiSo
                     };
-
-                    _allCourses.Add(course);
-
-                    // Thêm vào ListView
-                    var item = new ListViewItem(course.MaLop ?? course.Id);
-                    item.SubItems.Add(course.TenLop ?? "Không có tên");
-                    item.SubItems.Add(course.Instructor ?? "Chưa rõ");
-                    item.SubItems.Add(course.SiSo.ToString()); // Hiển thị sĩ số lên cột thứ 4
-                    item.Tag = course.Id;
-
-                    if (joined)
-                        item.ForeColor = System.Drawing.Color.Green;
-
-                    lvCourses.Items.Add(item);
+                    tempList.Add(course);
                 }
+
+                // 3. Cập nhật UI (Lúc này mới Clear để tránh nhấp nháy và trùng lặp)
+                _allCourses = tempList; // Lưu vào biến toàn cục
+                RefreshListView(_allCourses); // Gọi hàm vẽ lại
             }
             catch (Exception ex)
             {
@@ -145,7 +141,36 @@ namespace APP_DOAN.GiaoDienChinh
             }
             finally
             {
-                _isLoading = false;
+                _isLoading = false; // Mở khóa cho lần tải sau
+            }
+        }
+
+        // Hàm helper để render listview (Dùng chung cho Load và Search)
+        private void RefreshListView(List<Course> dataToShow)
+        {
+            lvCourses.Items.Clear();
+            foreach (var course in dataToShow)
+            {
+                var item = new ListViewItem(course.MaLop ?? course.Id);
+                item.SubItems.Add(course.TenLop ?? "Không có tên");
+                item.SubItems.Add(course.Instructor ?? "Chưa rõ");
+
+                // Hiển thị: Sĩ số hiện tại / Sĩ số tối đa
+                item.SubItems.Add($"{course.SiSoHienTai}/{course.SiSo}");
+
+                item.Tag = course.Id;
+
+                // Logic màu sắc
+                if (course.IsJoined)
+                {
+                    item.ForeColor = Color.Green;
+                }
+                else if (course.SiSoHienTai >= course.SiSo)
+                { // So sánh với SiSo
+                    item.ForeColor = Color.Red;
+                }
+
+                lvCourses.Items.Add(item);
             }
         }
 
@@ -157,10 +182,24 @@ namespace APP_DOAN.GiaoDienChinh
             if (item.Tag == null) return;
 
             string courseId = item.Tag.ToString();
-
             var course = _allCourses.FirstOrDefault(c => c.Id == courseId);
             if (course == null) return;
 
+            // Chặn ngay lập tức nếu đầy và chưa tham gia
+            if (!course.IsJoined && course.SiSoHienTai >= course.SiSo)
+            {
+                MessageBox.Show(
+                    $"❌ Lớp học đã đủ sĩ số ({course.SiSoHienTai}/{course.SiSo}).\nBạn không thể đăng ký lớp này.",
+                    "Lớp đã đầy",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                );
+                item.Selected = false;
+                return;
+            }
+
+
+            // Mở form chi tiết
             ChiTietLopHoc form = new ChiTietLopHoc(course, _studentUid, _idToken);
             form.ShowDialog();
         }
@@ -173,24 +212,20 @@ namespace APP_DOAN.GiaoDienChinh
         private void Find_Click(object sender, EventArgs e)
         {
             string searchText = txtNameClass.Text.ToLower().Trim();
-            lvCourses.Items.Clear();
 
-            var filtered = _allCourses
-                .Where(c => c.TenLop?.ToLower().Contains(searchText) == true)
-                .ToList();
-
-            foreach (var c in filtered)
+            if (string.IsNullOrEmpty(searchText))
             {
-                var item = new ListViewItem(c.MaLop ?? c.Id);
-                item.SubItems.Add(c.TenLop);
-                item.SubItems.Add(c.Instructor);
-                item.SubItems.Add(c.SiSo.ToString()); // Hiển thị lại sĩ số
-                item.Tag = c.Id;
+                RefreshListView(_allCourses); // Nếu ô tìm kiếm trống, hiện tất cả
+            }
+            else
+            {
+                var filtered = _allCourses
+                .Where(c =>
+                    (c.TenLop != null && c.TenLop.ToLower().Contains(searchText)) ||
+                    (c.MaLop != null && c.MaLop.ToLower().Contains(searchText))
+                ).ToList();
 
-                if (c.IsJoined)
-                    item.ForeColor = System.Drawing.Color.Green;
-
-                lvCourses.Items.Add(item);
+                RefreshListView(filtered); // Sử dụng lại hàm vẽ để giữ nguyên logic màu đỏ/xanh
             }
         }
     }
@@ -200,5 +235,6 @@ namespace APP_DOAN.GiaoDienChinh
         public string TenLop { get; set; }
         public string InstructorName { get; set; }
         public string MaLop { get; set; }
+        public int SiSo { get; set; }
     }
 }

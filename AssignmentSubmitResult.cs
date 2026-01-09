@@ -2,14 +2,26 @@
 {
     public class AssignmentSubmitResult
     {
-        public string TenLop { get; set; }
+        // 🔑 Firebase key
+        public string SubmissionId { get; set; }
+
+        // 🔗 Liên kết
+        public string CourseId { get; set; }
+        public string AssignmentId { get; set; }
+        public string StudentUid { get; set; }
+
+        // 📄 File
         public string TenFile { get; set; }
         public string FileUrl { get; set; }
 
-        public long ThoiGianNop { get; set; }   // 🔥 UnixTime
+        // ⏰ Thời gian
+        public long ThoiGianNop { get; set; }
 
-        public string StudentUid { get; set; }
-        public string AssignmentId { get; set; }
+        // 📧 Trạng thái email
+        public bool EmailSent { get; set; }
+
+        // (OPTIONAL) Dùng hiển thị
+        public string TenLop { get; set; }
 
         public AssignmentSubmitResult() { }
     }
