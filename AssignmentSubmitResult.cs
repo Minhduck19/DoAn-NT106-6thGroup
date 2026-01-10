@@ -8,6 +8,7 @@
         // 🔗 Liên kết
         public string CourseId { get; set; }
         public string AssignmentId { get; set; }
+        public string TieuDe { get; set; }
         public string StudentUid { get; set; }
 
         // 📄 File

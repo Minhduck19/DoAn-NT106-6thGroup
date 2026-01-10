@@ -169,7 +169,8 @@ namespace APP_DOAN.GiaoDienChinh
                    CourseId = _courseId,
                   AssignmentId = _assignmentId,
                      StudentUid = _studentUid,
-                    TenFile = Path.GetFileName(txtFilePath.Text),
+                     TieuDe = txtTitle.Text,
+                     TenFile = Path.GetFileName(txtFilePath.Text),
                     FileUrl = fileUrl,
                     ThoiGianNop = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
                    EmailSent = false // 🔥 CHƯA GỬI MAIL
